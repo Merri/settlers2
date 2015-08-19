@@ -59,3 +59,21 @@ Offset     | Size  | Type       | Description
 
 Number of entries can only be determined by reading the file until `0xFF` is encountered.
 
+## Usage differences
+
+### Roman Campaign
+
+- In the original main campaign it is possible to build ships. This means only these WLD files may contain harbor placements.
+- It is possible to use longer titles up to 24 bytes, because UI width and height values are not used.
+- Player faces are not used.
+
+### World Campaign
+- No harbors.
+- Longer titles are usable here.
+- You can set player faces, and this is the only play mode where this information is used.
+
+### Unlimited Play
+- No harbors.
+- Short titles: UI width and height are used to determine whether map can be loaded or not.
+- Player faces have no effect.
+
