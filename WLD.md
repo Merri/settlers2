@@ -78,7 +78,7 @@ Number of entries can only be determined by reading the file until `0xFF` is enc
 - Player faces have no effect.
 
 ### Return to the Roots
-- **How does it handle map titles?**
+- Reads 20 bytes of title, does not require null terminator.
 - Player faces are not used.
 - Harbors are always supported.
 - Ignores a lot of the header: for example you can put anything in the passable areas block and the map will still work.
