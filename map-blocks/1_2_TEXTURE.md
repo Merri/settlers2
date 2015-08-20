@@ -90,11 +90,11 @@ In total the game supports 16 textures officially, and an additional 8 textures 
 
 The following information tells which border gets drawn with more priority.
 
-`<` means that textures on the right side will draw their border on top
-`=` means that textures are equal and no border is drawn
-`>` means that this texture's border is drawn on top of the other texture
+- `<` means that textures on the right side will draw their border on top
+- `=` means that textures are equal and no border is drawn
+- `>` means that this texture's border is drawn on top of the other texture
 
-There can be conflicts where both textures draw their borders. It can look buggy.
+There can be conflicts where both textures draw their borders. It can look buggy. There may be errors in this information as it has been manually collected by eye in the Map Editor and not validated against game's rendering engine.
 
 ### Greenland
 ```
