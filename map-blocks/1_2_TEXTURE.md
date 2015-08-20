@@ -85,3 +85,102 @@ Value | Greenland       | Wasteland         | Winter World   | Notes
 `0x22`| Mountain #2     | Mountain #2       | Mountain #2    | Regular buildings on mountains? Yes!
 
 In total the game supports 16 textures officially, and an additional 8 textures more that could be made use of in customized texture sets. Although the second desert `0x07` is very much pointless; but 23 unique textures via customization is possible.
+
+## Texture border priorities
+
+The following information tells which border gets drawn with more priority.
+
+`<` means that textures on the right side will draw their border on top
+`=` means that textures are equal and no border is drawn
+`>` means that this texture's border is drawn on top of the other texture
+
+There can be conflicts where both textures draw their borders. It can look buggy.
+
+### Greenland
+```
+00 < 01 02 04 06 08 09 0A 0B 0C 0D 0E 0F 12 13
+00 = 11
+00 > 03 05 10 14 15 16 22
+
+01 < 02 04 06 0E 13
+01 = 11
+01 > 00 03 05 08 09 0A 0B 0C 0D 0F 10 12 14 15 16 22
+
+02 < 13
+02 = 11
+02 > 00 01 03 04 05 06 08 09 0A 0B 0C 0D 0E 0F 10 12 14 15 16 22
+
+03 < 00 01 02 04 06 08 09 0A 0B 0C 0D 0E 0F 12 13 22
+03 = 11
+03 > 05 10 14 15 16
+
+04 < 02 06 12
+04 = 11
+04 > 00 01 03 05 08 09 0A 0B 0C 0D 0E 0F 10 13 14 15 16 22
+
+05 < 00 01 02 03 04 06 08 09 0A 0B 0C 0D 0E 0F 12 13 22
+05 = 11
+05 > 10 14 15 16
+
+06 < 02 12
+06 > 00 01 03 04 05 08 09 0A 0B 0C 0D 0E 0F 10 11 12 13 14 15 16 22
+
+08 < 01 02 04 06 09 0A 0B 0C 0D 0E 0F 12 13 22
+08 = 11
+08 > 00 03 05 10 14 15 16 22
+
+09 < 01 02 04 06 0A 0B 0C 0D 0E 0F 12 13 22
+09 = 11
+09 > 00 03 05 08 10 14 15 16 22
+
+0A < 01 02 04 06 0B 0C 0D 0E 0F 12 13 22
+0A = 11
+0A > 00 03 05 08 09 10 14 15 16 22
+
+0B < 01 02 04 06 0E 13
+0B = 11 22
+0B > 00 03 05 08 09 0A 0F 10 12 14 15 16
+
+0C < 01 02 04 06 0E 13
+0C = 11
+0C > 00 03 05 08 09 0A 0F 10 12 14 15 16
+
+0D < 01 02 04 06 0E 13
+0D = 11
+0D > 00 03 05 08 09 0A 0F 10 12 14 15 16
+
+0E < 02 04 06 12 13
+0E = 11
+0E > 00 01 03 05 08 09 0A 0B 0C 0D 0E 0F 10 13 14 15 16 22
+
+0F < 01 02 04 06 08 09 0A 0B 0C 0D 0E 12 13 22
+0F = 11
+0E > 00 03 05 10 14 15 16 22
+
+10 < 00 01 02 03 04 05 06 08 09 0A 0B 0C 0D 0E 0F 12 13 14 15 16 22
+10 = 11
+10 > 14 15 16
+
+11 < 06 12
+11 = 00 01 02 03 04 05 08 09 0A 0B 0C 0D 0E 0F 10 13 14 15 16 22
+
+12 < 02 06
+12 > 00 03 04 05 06 08 09 0A 0E 0F 10 11 13 14 15 16 
+
+13 < 05 0E 12
+13 = 11
+13 > 00 01 02 03 04 08 09 0A 0B 0C 0D 0F 10 14 15 16 22
+
+14 < 00 01 02 03 04 05 06 08 09 0A 0B 0C 0D 0E 0F 10 12 13 15 16 22
+14 = 11
+
+15 < 00 01 02 03 04 05 06 08 09 0A 0B 0C 0D 0E 0F 10 12 13 14 16 22
+15 = 11
+
+16 < 00 01 02 03 04 05 06 08 09 0A 0B 0C 0D 0E 0F 10 12 13 14 15 22
+16 = 11
+
+22 < 00 02 04 06 08 09 0A 0E 0F 13
+22 = 11
+22 > 00 03 05 08 09 0A 0F 10 12 14 15 16
+```
