@@ -56,3 +56,5 @@ ID    | Resource
 `0x1F`| -
 
 That is a lot of unused resource IDs unless there are hidden resources to be found in savegame files.
+
+Also, it might be that values from `0x10` and above are intended as sea resources.
