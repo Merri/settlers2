@@ -1,4 +1,4 @@
-# Map block 11: resources
+# Map Block 11: resources
 
 Value           | Resource
 ---------------:|:-------
