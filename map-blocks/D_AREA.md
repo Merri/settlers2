@@ -1,4 +1,4 @@
-# Map block 13: areas
+# Map Block 13: areas
 
 In this block each node is ranked to specific index based on what area it is.
 
