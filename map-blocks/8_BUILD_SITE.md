@@ -25,23 +25,15 @@ ID     | Greenland texture name
 `0x0A` | Meadow #3
 `0x0E` | Steppe
 `0x0F` | Flower Meadow
-`0x17` | (Unused texture)
+`0x17` | (Unused textures)
+`...`  | None of these trigger non-arable flag.
 `0x3F` | (Last unused texture before harbor repetition)
 
 **However**, nearby objects may still introduce non-arable bitflag on a node.
 
-The following normally unused textures need to be re-checked for this:
-
-ID     | What it is
-:------|:----------
-`0x06` | Water you can build on
-`0x07` | Partially glitchy desert
-`0x11` | Stretched pixel
-`0x22` | Mountain you can build on
-
 ## Non-arable textures
 
-The following textures are known to trigger non-arable bitflag `0x08`:
+The following textures trigger non-arable bitflag `0x08`:
 
 ID     | Greenland texture name
 :------|:----------------------
@@ -50,10 +42,13 @@ ID     | Greenland texture name
 `0x03` | Swamp
 `0x04` | Desert
 `0x05` | Water
+`0x06` | Water you can build on
+`0x07` | Partially glitchy desert
 `0x0B` | Mountain #2
 `0x0C` | Mountain #3
 `0x0D` | Mountain #4
 `0x10` | Lava
+`0x11` | Stretched pixel
 `0x12` | Mountain meadow
 `0x13` | Water like lava/snow
 `0x14` | Unused low resolution lava-like #1
@@ -63,9 +58,7 @@ ID     | Greenland texture name
 Or any of these rules:
 
 - Granite on or around the node
-- Tree in bottom right node
-
-In addition the two rules above also force flag pole to be the best thing that can be built on the node.
+- Tree on the node
 
 ## Calculating building sites
 
