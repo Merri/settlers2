@@ -25,6 +25,8 @@ ID     | Greenland texture name
 `0x0A` | Meadow #3
 `0x0E` | Steppe
 `0x0F` | Flower Meadow
+`0x17` | (Unused texture)
+`0x3F` | (Last unused texture before harbor repetition)
 
 **However**, nearby objects may still introduce non-arable bitflag on a node.
 
@@ -60,8 +62,8 @@ ID     | Greenland texture name
 
 Or any of these rules:
 
-- Any texture around node in bottom right is snow (`0x02`), lava (`0x10`) or `0x13` - `0x16`
 - Granite on or around the node
+- Tree in bottom right node
 
 In addition the two rules above also force flag pole to be the best thing that can be built on the node.
 
