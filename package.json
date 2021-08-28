@@ -1,0 +1,22 @@
+{
+  "name": "@merri/settlers2",
+  "description": "The Settlers II.net",
+  "version": "3.0.0",
+  "author": "Vesa Piittinen <vesa.piittinen@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/merri/settlers2/issues"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "@astrojs/renderer-preact": "^0.2.1",
+    "astro": "^0.20.3",
+    "date-fns": "^2.23.0"
+  }
+}

@@ -1,0 +1,61 @@
+---
+// Component Imports
+import BaseHead from '../components/BaseHead.astro';
+import BlogHeader from '../components/BlogHeader.astro';
+import BlogPostPreview from '../components/BlogPostPreview.astro';
+
+const title = 'Settlers II.net';
+const description = 'Maps, new graphics, and tech info on the original The Settlers II Gold Edition by BlueByte 1996';
+const permalink = 'https://settlers2.net/';
+
+const allPosts = Astro.fetchContent('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md');
+allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+---
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} permalink={permalink} />
+    <link rel="stylesheet" href="/blog.css" />
+
+    <style>
+      body {
+        width: 100%;
+        display: grid;
+        grid-template-rows: 3.5rem 1fr;
+        --gutter: 0.5rem;
+        --doc-padding: 2rem;
+      }
+
+      .content {
+        margin-top: 4rem;
+        margin-bottom: 8rem;
+      }
+
+      .content :global(main > * + *) {
+        margin-top: 1rem;
+      }
+
+      .intro {
+        padding-bottom: 4rem;
+        margin-bottom: 2rem;
+        border-bottom: 4px solid var(--theme-divider);
+      }
+
+      .intro > * {
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <BlogHeader />
+    <div class="layout">
+      <article class="content">
+        <header class="intro">
+          <p>{description}</p>
+        </header>
+        {allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} showFullPost />)}
+        {allPosts.slice(5).map((post) => <BlogPostPreview post={post} />)}
+      </article>
+    </div>
+  </body>
+</html>

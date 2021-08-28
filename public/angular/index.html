@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--[if lt IE 8]><html class="ie"><![endif]-->
+<!--[if IE 8]><html class="ie8 ie"><![endif]-->
+<!--[if IE 9]><html class="ie9 ie"><![endif]-->
+<!--[if !IE]><!--><html lang="en"><!--<![endif]-->
+	<head>
+		<meta charset="UTF-8" />
+		<title>The Settlers II.net Map Service</title>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+		<!--[if IE]><link href="index_ie.css" rel="stylesheet" type="text/css" /><![endif]-->
+		<link href="http://fonts.googleapis.com/css?family=Balthazar" rel="stylesheet" type="text/css" />
+		<link href="http://fonts.googleapis.com/css?family=Alegreya+SC" rel="stylesheet" type="text/css" />
+		<link href="index.css" rel="stylesheet" type="text/css" />
+		<!--[if lt IE 9]><script src="//code.jquery.com/jquery-1.10.2.min.js"></script><![endif]-->
+		<!--[if (gt IE 8)|(!IE)]><!--><script type="text/javascript" src="//code.jquery.com/jquery-2.0.3.min.js"></script><!--<![endif]-->
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+		<script type="text/javascript" src="polyfill.js"></script>
+		<script type="text/javascript" src="editor_world.js"></script>
+		<script type="text/javascript" src="index.js"></script>
+	</head>
+	<body data-ng-app="map">
+		<section data-ng-controller="MapListCtrl" data-local-file-selector>
+			<ul class="maplist">
+				<li class="maplist__item" data-ng-repeat="map in maps">
+					<div class="maplist__map-container">
+						<span class="maplist__dimensions">{{ map.localWorld.width }} x {{ map.localWorld.height }}</span>
+						<canvas class="maplist__map" data-canvas data-ng-class="'water' + map.localWorld.type"></canvas>
+					</div>
+					<h3 class="maplist__item-title">{{ map.localWorld.title | title }}</h3>
+					<p>{{ map.localFile.name }}, {{ map.localFile.size | bytes }}</p>
+				</li>
+			</ul>
+			<form class="dropbox" data-ng-class="maps.length === 0 ? 'dropbox--nofiles' : 'dropbox--files'">
+				<h2 class="dropbox__header"><button class="dropbox--select" type="submit">Select map files to add</button> or drag'n'drop the maps into this page</h2>
+				<table class="dropbox__filelist">
+					<caption class="dropbox__filelist-header">Supported File Formats</caption>
+					<thead>
+						<tr>
+							<th class="dropbox__filelist-left">Format</th>
+							<th class="dropbox__filelist-left">Games / Expansions</th>
+							<th class="dropbox__filelist-left">Locations</th>
+							<th class="dropbox__filelist-center">Savegame</th>
+							<th class="dropbox__filelist-center">Roman Campaign</th>
+							<th class="dropbox__filelist-center">World Campaign</th>
+							<th class="dropbox__filelist-center">Unlimited Play</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="dropbox__filelist-row">
+							<td class="dropbox__filelist-left">WORLD###.DAT</td>
+							<td class="dropbox__filelist-left">
+								Veni Vidi Vici<sup>1</sup><br />
+								Mission CD<br />
+								Gold Edition<br />
+							</td>
+							<td class="dropbox__filelist-left">
+								<kbd>/DATA/MAPS</kbd><sup>1</sup><br />
+								<kbd>/SAVE</kbd><br />
+							</td>
+							<td>Yes</td>
+							<td>Yes<sup>1</sup></td>
+							<td>No</td>
+							<td>Yes<sup>1</sup></td>
+						</tr>
+						<tr class="dropbox__filelist-row">
+							<td class="dropbox__filelist-left">WORLD###.WLD</td>
+							<td class="dropbox__filelist-left">
+								Mission CD<br />
+								Gold Edition<br />
+							</td>
+							<td class="dropbox__filelist-left">
+								<kbd>/DATA/MAPS</kbd><br />
+								<kbd>/DATA/MAPS2</kbd><br />
+								<kbd>/DATA/MAPS3</kbd><br />
+								<kbd>/DATA/MAPS4</kbd><br />
+							</td>
+							<td>No</td>
+							<td>Yes</td>
+							<td>Yes</td>
+							<td>No</td>
+						</tr>
+						<tr class="dropbox__filelist-row">
+							<td class="dropbox__filelist-left">*.SWD</td>
+							<td class="dropbox__filelist-left">
+								Mission CD<br />
+								Gold Edition<br />
+								Map Editor<br />
+								Return to the Roots<br />
+							</td>
+							<td class="dropbox__filelist-left">
+								<kbd>/WORLDS</kbd><br />
+							</td>
+							<td>No</td>
+							<td>No</td>
+							<td>No</td>
+							<td>Yes</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</section>
+		<div id="unsupported-ie">
+			<h6 class="ie__title">You are using unsupported version of Internet Explorer.</h6>
+			<p class="ie__message">While it may work, please consider update to the latest version available or use <a href="http://www.browserchoice.eu/" rel="nofollow">Firefox, Chrome or Opera</a>.</p>
+		</div>
+	</body>
+</html>

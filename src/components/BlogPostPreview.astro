@@ -1,0 +1,87 @@
+---
+import format from 'date-fns/format';
+
+interface AstroPost {
+  title: string;
+  tag?: string;
+  date: string;
+  image?: string;
+  author?: string;
+  description?: string;
+  astro: {
+    headers: string[];
+    source: string;
+    html: string;
+  };
+  url: string;
+}
+
+export interface Props {
+  post: AstroPost;
+  showFullPost?: boolean;
+}
+
+const { post, showFullPost = false } = Astro.props;
+
+const url = post.url.replace(/\/index$/, '');
+const date = new Date(post.publishDate);
+const published = format(date, 'PPP');
+
+const html = showFullPost && post.astro.html;
+
+---
+<article class="post-preview">
+  <header>
+    <time datetime={date.toISOString().slice(0, 10)} class="publish-date">{published}</time>
+    <a href={url}><h2 class="title">{post.title}</h2></a>
+  </header>
+  <section>
+    {showFullPost ? post.astro.html : <p>{post.description ?? 'No description.'}</p>}
+    {!showFullPost && <a href={url}>Read more</a>}
+  </section>
+</article>
+
+<style>
+.post-preview :global(img) {
+  max-width: 100%;
+  height: auto;
+}
+
+.content :global(section > * + *) {
+  margin-top: 1rem;
+}
+
+.post-preview {
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 4px solid var(--theme-divider);
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  align-items: flex-start;
+  justify-content: center;
+
+  padding-bottom: 2rem;
+}
+
+.title,
+.author,
+.publish-date {
+  margin: 0;
+}
+
+.publish-date,
+.author {
+  font-size: 1.25rem;
+  color: var(--theme-text-lighter);
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--theme-text);
+}
+</style>

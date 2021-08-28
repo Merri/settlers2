@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Return to the Roots, The Multiplayer Add-on for The Settlers II (Die Siedler II)</title>
+		<link href="./ui/css/south-street/jquery-ui-1.8.22.custom.css" rel="stylesheet" id="theme">
+		<style type="text/css">
+
+html,body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: url('http://rttr.info/design/rttr/images/background.gif');
+	font-family: 'Segoe UI', 'Trebuchet MS', 'Tahoma', 'Arial', sans-serif;
+	font-size: .725em;
+}
+
+#header {
+	background: -moz-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .7) 95%);
+	margin: 0;
+	padding: 10px;
+	position: relative;
+	text-align: center;
+}
+
+#header a {
+	background: url('http://www.rttr.info/design/rttr/images/logo.png') no-repeat;
+	display: inline-block;
+	height: 116px;
+	line-height: 116px;
+	margin-right: 600px;
+	overflow: hidden;
+	padding-left:200px;
+	width: 0px;
+	white-space: nowrap;
+}
+
+#tabs {
+	box-shadow: -2px 1px 17px rgba(0, 0, 0, .7);
+	margin: -15px auto 0 auto;
+	width: 60em;
+}
+
+#tabs ul.ui-tabs-nav li {
+	background-color: #654513;
+	background-image: -moz-linear-gradient(top, rgba(255, 255, 255, .3) 0%, rgba(255, 255, 255, .4) 85%, rgba(0, 0, 0, .2) 55%);
+}
+
+#tabs ul.ui-tabs-nav li.ui-tabs-selected {
+	background-color: #FCEBD0;
+}
+
+#tabs ul.ui-tabs-nav li.ui-tabs-selected a {
+	color: #000;
+}
+
+#description {
+	background-color: rgba(100, 80, 10, .1);
+	background-image: -moz-linear-gradient(left, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0));
+	border: 1px solid #DCB;
+	border-radius: 2em;
+	padding: 5px 0;
+	position: relative;
+	width: 100%;
+}
+
+#tabs > div:after {
+	clear: both;
+	content: '';
+	display: block;
+}
+
+#description h1 {
+	line-height: 30px;
+	margin: 0;
+	padding: 5px 15px;
+	position: absolute;
+}
+
+#description ul {
+	float: left;
+	margin: 0;
+	padding: 45px 0 10px 50px;
+	width: 40%;
+}
+
+#download_center {
+	text-align: center;
+}
+
+#download_now {
+	margin-top: 20px;
+	font-size: 175%;
+}
+
+#recent {
+	float: right;
+}
+
+		</style>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+		<script type="text/javascript">
+
+$(function(){
+	$('#tabs').tabs();
+	$('#download_now').button();
+});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="header">
+			<a href="http://rttr.info/">Return to the Roots</a>
+			
+		</h1>
+		<div id="tabs">
+			<ul>
+				<li><a href="#download">Download</a></li>
+				<li><a href="#about">About</a></li>
+				<li><a href="#development">Development</a></li>
+				<li><a href="#community">Community</a></li>
+				<li><a href="#contact">Contact</a></li>
+				<li><a href="#links">Links</a></li>
+			</ul>
+			<div id="download">
+				<div id="description">
+					<h1>Return to the Roots</h1>
+					<ul>
+						<li>Internet multiplayer add-on for The Settlers II</li>
+						<li>Adds other features to the game as well!</li>
+						<li>Requires original game to play, buy at <a href="http://www.gog.com/gamecard/the_settlers_2_gold_edition">GOG.com</a></li>
+						<li>Open source</li>
+					</ul>
+					<p id="download_center">
+						<a href="" id="download_now">Download RttR for free<br><small>For Windows - multilingual</small></a><br>
+						<a href="">Download for other systems</a>
+					</p>
+				</div>
+				<div id="recent">
+					<h3>Online matches</h3>
+					<p>...</p>
+					<h3>Activity</h3>
+					<p>Website: 3 users</p>
+					<p>Lobby: 5 users</p>
+				</div>
+				<h2>News</h2>
+				<p>...</p>
+			</div>
+			<div id="about">
+				<h2>Why Return to the Roots?</h2>
+				<p>For legal reasons we cannot use the name "Siedler" and we've been contacted by Ubisoft / Blue Byte. So we came up with another name that would fit the project.</p>
+				<p>... more on history... strongly German based...</p>
+				<p>... going international...</p>
+				<p>... status now...</p>
+				<h3>Screenshots</h3>
+				<p>... a few selected recent screenshots...</p>
+				<p><a href="">Visit screenshot archive</a></p>
+			</div>
+			<div id="development">
+				<h2>How you can help</h2>
+				<p>We are always in need for more developers to help in fixing bugs and implementing new features, but there are other ways you can help even if you are not technically minded!</p>
+				<h3>Source code</h3>
+				<p>... Project hosted on Launchpad...</p>
+				<h3>Reporting bugs</h3>
+				<p>... (see http://www.openttd.org/en/development )...</p>
+				<h3>Graphics</h3>
+				<p>... Artwork always helps...</p>
+				<h3>The New People</h3>
+				<p>... Babylonians ...</p>
+				<h3>Music</h3>
+				<p>... New music inspired by S2...</p>
+				<h3>Translating</h3>
+				<p>... Improving language support...</p>
+			</div>
+			<div id="community">
+				<h2>Forum</h2>
+				<p>...</p>
+			</div>
+			<div id="contact">
+				<h2>Developers</h2>
+				<p>...</p>
+				<h3>IRC</h3>
+				<p>...</p>
+			</div>
+			<div id="links">
+				<h2>Important links</h2>
+				<p>... project links... bugs tracker etc.</p>
+				<h2>Official The Settlers II sites</h2>
+				<p>...</p>
+				<h2>Fansites</h2>
+				<p>...</p>
+				<h2>Other similar projects</h2>
+				<p>...</p>
+			</div>
+		</div>
+	</body>
+</html>

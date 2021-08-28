@@ -1,0 +1,171 @@
+@charset "UTF-8";
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background: url("http://settlers2.net/design/rockwall.png") repeat 0 0 #3F4F2F;
+	font-family: 'Segoe UI', 'Trebuchet MS', 'Tahoma', 'Arial', sans-serif;
+	font-size: .725em;
+}
+form {
+	background: #F5F3E5;
+	border-radius: 2em;
+	margin: 1em;
+	padding: 10px;
+}
+fieldset {
+	background: rgba(0, 96, 0, .1);
+	border: 0;
+	border-radius: 1em;
+	margin: 10px 0;
+	padding: 5px;
+}
+legend { display: none; }
+fieldset h2,fieldset h3 {
+	margin: 5px 0;
+	padding: 2px 0;
+}
+fieldset > p {
+	background: rgba(255, 255, 255, .3);
+	margin: 1px 0;
+	padding: 5px;
+}
+fieldset > p:first-child {
+	border-top-left-radius: .6em;
+	border-top-right-radius: .6em;
+}
+fieldset > p:last-child {
+	border-bottom-left-radius: .6em;
+	border-bottom-right-radius: .6em;
+}
+fieldset > p > label:first-child {
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	width: 10em;
+}
+fieldset > p > button:first-child + * {
+	display: block;
+}
+#header {
+	background: url("http://settlers2.net/wp-content/uploads/2011/09/header_s2.jpg") 0 22%;
+	margin: 0;
+	padding: 2px;
+}
+#header img {
+	border: 0;
+	display: inline-block;
+	height: 94px;
+	margin: 10px;
+}
+
+#tabs {
+	margin: 0 10px 10px 10px;
+}
+
+/* pixel zoom */
+#worlds canvas {
+	background-size: 18px;
+	display: block;
+	-ms-interpolation-mode: nearest-neighbor;
+	image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: optimize-contrast;
+	max-width: 256px;
+}
+
+#worlds {
+	border: hidden;
+	border-collapse: collapse;
+	text-align: left;
+	white-space: nowrap;
+	width: 100%;
+}
+
+#worlds th {
+	border-right: 1px solid #7B7;
+	font-size: 120%;
+	padding: 10px;
+}
+
+#worlds .map {
+	text-align: center;
+	width: 256px;
+}
+
+#worlds td {
+	border: 1px solid #060;
+	border-right-color: #7A7;
+	padding: 5px;
+	vertical-align: top;
+	width: 99%;
+}
+
+#worlds td.map {
+	vertical-align: middle;
+}
+
+#worlds td.title {
+	font-size: 150%;
+	font-weight: bold;
+}
+
+#worlds tr:nth-child(odd) td {
+	background-color: rgba(255, 255, 255, .7);
+}
+
+#worlds tr:nth-child(even) td {
+	background-color: rgba(255, 255, 255, .5);
+}
+
+.water0 {
+	background-image: url('water0.png');
+}
+
+.water1 {
+	background-image: url('water1.png');
+}
+
+.water2 {
+	background-image: url('water2.png');
+}
+
+#dropbox {
+	background: rgba(255, 255, 255, .6);
+	border: 1px solid #4A4;
+	border-radius: 1em;
+	margin: 1em 0;
+	padding: 5px;
+	position: relative;
+	text-align: center;
+}
+
+#dropbox.files {
+	background: rgba(0, 0, 0, .2);
+	border-color: blue;
+	-moz-transition: all .5s ease-in-out;
+	-ms-transition: all .5s ease-in-out;
+	-o-transition: all .5s ease-in-out;
+	-webkit-transition: all .5s ease-in-out;
+	transition: all .5s ease-in-out;
+}
+
+#dropbox.files > * {
+	opacity: .2;
+	-moz-transition: all .5s ease-in-out;
+	-ms-transition: all .5s ease-in-out;
+	-o-transition: all .5s ease-in-out;
+	-webkit-transition: all .5s ease-in-out;
+	transition: all .5s ease-in-out;
+}
+
+#dropbox.ui-progressbar > * {
+	display: none;
+}
+
+#dropbox.ui-progressbar > div {
+	display: block !important;
+}

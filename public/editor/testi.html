@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Testi</title>
+		<link href="./ui/css/south-street/jquery-ui-1.8.22.custom.css" rel="stylesheet" id="theme">
+		<link href="./editor.css" rel="stylesheet" type="text/css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+		<script src="./editor_world.js"></script>
+		<script src="./editor_app.js"></script>
+	</head>
+	<body>
+		<h1 id="header"><a href="/"><img alt="The Settlers II.net" src="http://settlers2.net/wp-content/uploads/2011/09/The-Settlers-II-net-810x320-300x118.png"></a></h1>
+		<form>
+			<p>Recommended browsers: Firefox, Chrome or Internet Explorer 10. Opera works only by drag'n'drop (button does not work). Safari 5 &amp; older IE versions do not work.</p>
+			<div id="dropbox"><button id="selectfiles">Click to add SWD or WLD files</button><span> or drop files inside this box</span></div>
+			<fieldset><legend></legend>
+				<table id="worlds">
+					<thead>
+						<tr>
+							<th class="map">Map</th>
+							<th class="title">Title</th>
+							<th class="author">Author</th>
+							<th class="size">Size</th>
+							<th class="players">Players</th>
+							<th class="continents">Continents</th>
+							<th class="format">Format</th>
+							<th class="tools">Tools</th>
+						</tr>
+					</thead>
+				</table>
+			</fieldset>
+		</form>
+		<div id="uploader">
+			<h2>Map upload</h2>
+			<dl>
+				<dt>Map ID:</dt>
+				<dd id="upload_id"></dd>
+				<dt>Title:</dt>
+				<dd id="upload_title"></dd>
+				<dt>Author:</dt>
+				<dd id="upload_author"></dd>
+				<dt>Size:</dt>
+				<dd><span id="upload_width">0</span> x <span id="upload_height">0</span></dd>
+				<dt>Terrain:</dt>
+				<dd id="upload_terrain"></dd>
+				<dt>Comment:</dt>
+				<dd><textarea id="upload_comment" cols="50" rows="8"></textarea></dd>
+			</dl>
+			
+		</div>
+	</body>
+</html>

@@ -1,0 +1,212 @@
+@charset 'UTF-8';
+
+#unsupported-ie { display: none; }
+
+html,body { margin: 0; padding: 0; }
+html {
+	background: #784;
+	font-family: 'Balthazar', serif;
+	line-height: 1.236094;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-family: 'Alegreya SC', serif;
+	font-weight: inherit;
+	text-rendering: optimizeLegibility;
+}
+abbr { border: 0; white-space: nowrap; }
+small { font-size: 0.763964em; }
+h1 { font-size: 3.236em; }
+h2 { font-size: 2.617924em; }
+h3 { font-size: 2em; }
+h4 { font-size: 1.618em; }
+h5 { font-size: 1.236094em; }
+h6 { font-size: 1em; }
+
+button {
+	cursor: pointer;
+	font: inherit;
+}
+
+.water0 { background-image: url('water0.png'); }
+.water1 { background-image: url('water1.png'); }
+.water2 { background-image: url('water2.png'); }
+
+.dropbox {
+	background: #EEEEEE;
+	box-shadow: inset 0 0 5em white;
+	border: 1px solid #DDD;
+	border-radius: 2em;
+	font-size: 1em;
+	margin: 1em;
+	text-align: center;
+	-webkit-transition: font-size .5s;
+	transition: font-size .5s;
+}
+
+.dropbox:hover {
+	background: #F9F9F9;
+	box-shadow: inset 0 0 5em #EEFFEE;
+}
+
+.dropbox--nofiles {
+	padding: 5em 1em;
+}
+
+.dropbox--files {
+	font-size: 0.618429em;
+}
+
+.dropbox--files .dropbox__filelist {
+	display: none;
+}
+
+.dropbox__header {
+	margin: 1em 0;
+}
+
+.dropbox__filelist {
+	border-collapse: collapse;
+	margin: 0 auto;
+	opacity: .2;
+	-webkit-transition: opacity .3s;
+	transition: opacity .3s;
+}
+
+.dropbox:hover .dropbox__filelist {
+	opacity: 1;
+}
+
+.dropbox__filelist-header {
+	background: #333333;
+	color: white;
+	font-size: 1.236094em;
+	padding: .5em;
+}
+
+.dropbox__filelist-row {
+	background: #DDD;
+	border-bottom: 1px solid #BBB;
+}
+
+.dropbox__filelist-left {
+	padding: 0 1em;
+	text-align: left;
+	vertical-align: top;
+}
+
+.dropbox__filelist-center {
+	padding: 0 .25em;
+	text-align: center;
+}
+
+.maplist {
+	display: block;
+	font-size: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+.maplist__item {
+	background: #333;
+	color: #CCC;
+	display: inline-block;
+	font-size: medium;
+	margin: .5em;
+	padding: .5em;
+	text-align: left;
+	vertical-align: top;
+}
+
+.maplist__map-container {
+	background: #CDC;
+	border: 1px solid #9A9;
+	box-shadow: inset 0 0 25px #898;
+	color: #222;
+	font-size: 0;
+	height: 256px;
+	line-height: 256px;
+	position: relative;
+	text-align: center;
+	width: 256px;
+}
+
+.maplist__dimensions {
+	background: #333;
+	border-right: inherit;
+	border-bottom: inherit;
+	color: #CCC;
+	font-size: medium;
+	font-style: italic;
+	left: -1px;
+	line-height: 1.236094;
+	opacity: 0;
+	padding: .5em;
+	position: absolute;
+	top: -1px;
+	-webkit-transform: scale(.1);
+	transform: scale(.1);
+	-webkit-transform-origin: 0 0;
+	transform-origin: 0 0;
+	transition: opacity .2s ease-in-out, -webkit-transform .2s ease-in-out;
+	transition: opacity .2s ease-in-out, transform .2s ease-in-out;
+	z-index: 1;
+}
+
+.maplist__item:hover .maplist__dimensions {
+	opacity: 1;
+	-webkit-transform: scale(1);
+	transform: scale(1);
+}
+
+@-webkit-keyframes water {
+	0% {
+		background-position: 0px 0px;
+	}
+	100% {
+		background-position: 16px -16px;
+	}
+}
+
+@keyframes water {
+	0% {
+		background-position: 0px 0px;
+	}
+	100% {
+		background-position: 15px -15px;
+	}
+}
+
+.maplist__map {
+/*
+	-webkit-animation-name: water;
+	animation-name: water;
+	-webkit-animation-duration: 5s;
+	animation-duration: 5s;
+	-webkit-animation-iteration-count: ease-out;
+	animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	animation-timing-function: linear;
+*/
+	background-position: 0px 0px;
+	background-size: 16px 16px;
+	box-shadow: 0 0 25px #676;
+	display: inline-block;
+	-ms-interpolation-mode: nearest-neighbor;
+	image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: optimize-contrast;
+	max-height: 256px;
+	max-width: 256px;
+	position: relative;
+	vertical-align: middle;
+	z-index: 0;
+}
+
+.maplist__item-title {
+	font-size: 1.236094em;
+	margin: 0;
+	padding: .25em 0;
+}
