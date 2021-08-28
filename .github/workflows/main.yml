@@ -26,5 +26,5 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
         server-dir: apps/settlers2astro/
-        protocol: sftp
+        protocol: ftps
         port: 22
