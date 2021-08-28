@@ -13,6 +13,6 @@ Following the IRC channel pays off. Yesterday Parasit posted this image:
 
 I made it my afternoon project to draw a new version of that building. So here you have it:
 
-![](images/wooden_fortress_progress3.png)
+![](/forum-rttr/wooden_fortress_progress3.png)
 
 I don't know when this building becomes playable, but Spike has been interested on using it in RttR.

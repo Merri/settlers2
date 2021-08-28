@@ -6,10 +6,10 @@ categories:
   - "buildings"
 ---
 
-![](images/safe_building_palette.png "safe_building_palette")
+![](/wp-content/uploads/2012/09/safe_building_palette.png "safe_building_palette")
 
 In this palette image any color that is different between Greenland, Wasteland or Winter World has been "disabled" by marking it in magenta (color ID 254). Useful if you want to draw new buildings for original game that look exactly the same in each environment.
 
 Here is Charburner in Safe Palette:
 
-![](images/new_people_charburner_safepalette.png "new_people_charburner_safepalette")
+![](/wp-content/uploads/2012/09/new_people_charburner_safepalette.png "new_people_charburner_safepalette")

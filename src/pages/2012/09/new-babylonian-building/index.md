@@ -9,10 +9,10 @@ categories:
 
 Spike asked to do something. I did something. First I did this:
 
-![](images/new_people_storehouse.png)
+![](/forum-rttr/new_people_storehouse.png)
 
 And now it looks like this:
 
-![](images/new_people_storehouse2.png)
+![](/forum-rttr/new_people_storehouse2.png)
 
 It is a Storehouse.

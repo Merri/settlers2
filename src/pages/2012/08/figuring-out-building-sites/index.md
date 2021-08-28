@@ -12,11 +12,11 @@ To start figuring out the mystery I made a simple flat map and then started to m
 
 | Strength | Plus | Minus |
 | --- | --- | --- |
-| 1 | ![](images/plus_1.png "plus_1") | ![](images/minus_1.png "minus_1") |
-| 2 | ![](images/plus_2.png "plus_2") | ![](images/minus_2.png "minus_2") |
-| 3 | ![](images/plus_3.png "plus_3") | ![](images/minus_3.png "minus_3") |
-| 4 | ![](images/plus_4.png "plus_4") | ![](images/minus_4.png "minus_4") |
-| 5 | ![](images/plus_5.png "plus_5") | ![](images/minus_5.png "minus_5") |
+| 1 | ![](/wp-content/uploads/2012/08/plus_1.png "plus_1") | ![](/wp-content/uploads/2012/08/minus_1.png "minus_1") |
+| 2 | ![](/wp-content/uploads/2012/08/plus_2.png "plus_2") | ![](/wp-content/uploads/2012/08/minus_2.png "minus_2") |
+| 3 | ![](/wp-content/uploads/2012/08/plus_3.png "plus_3") | ![](/wp-content/uploads/2012/08/minus_3.png "minus_3") |
+| 4 | ![](/wp-content/uploads/2012/08/plus_4.png "plus_4") | ![](/wp-content/uploads/2012/08/minus_4.png "minus_4") |
+| 5 | ![](/wp-content/uploads/2012/08/plus_5.png "plus_5") | ![](/wp-content/uploads/2012/08/minus_5.png "minus_5") |
 
 The next part is wondering how game's algorithm works. For the most part it seems like there is one point that is more sensitive than others: the bottom right one. You can see this for yourself by comparing images Minus 2 and Plus 2: when the bottom right point is larger by 2, then the icon is a flag.
 

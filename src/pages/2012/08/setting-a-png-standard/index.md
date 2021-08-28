@@ -9,7 +9,7 @@ categories:
 
 I have successfully completed a WLD/SWD/DAT to PNG world converter! A resulting file:
 
-![Europe World Campaign](images/EUROPE.png "EUROPE")
+![Europe World Campaign](/wp-content/uploads/2012/08/EUROPE.png "EUROPE")
 
 It doesn't look like much, but it contains all the information one needs to restore it back into a complete WLD/SWD file! It just needs a lot of recalculations for some data that has been left out.
 

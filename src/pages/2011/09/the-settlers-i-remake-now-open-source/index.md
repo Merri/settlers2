@@ -9,7 +9,7 @@ tags:
 coverImage: "freeserf_2010.jpg"
 ---
 
-![](images/freeserf_2010.jpg "Freeserf (aka The Settlers I remake)")
+![](/wp-content/uploads/2011/09/freeserf_2010.jpg "Freeserf (aka The Settlers I remake)")
 
 Jon Lund Steffensen started a [Settlers I remake project last year](http://jonls.dk/2010/06/settlers-1-remake/). He has now made the project open source, releasing the code as [Freeserf](http://jonls.dk/freeserf/). The source code is available at [GitHub](https://github.com/jonls/freeserf).
 

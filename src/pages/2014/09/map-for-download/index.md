@@ -8,4 +8,4 @@ categories:
 
 Just to display some of the invisible progress of the past days: more texturing features on Greenland maps.
 
-[![Very Nice!](images/VERYNICE.png)](/wp-content/uploads/2014/09/VERYNICE.zip)
+[![Very Nice!](/wp-content/uploads/2014/09/VERYNICE.png)](/wp-content/uploads/2014/09/VERYNICE.zip)
