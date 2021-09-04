@@ -1,4 +1,13 @@
 {
   "moduleResolution": "node",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "$/*": ["*"],
+      "$layouts/*": ["layouts/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "public"],
   "skipLibCheck": true
 }
