@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@astrojs/renderer-preact": "^0.2.1",
-    "astro": "^0.20.3",
+    "astro": "^0.20.4",
     "date-fns": "^2.23.0"
   }
 }

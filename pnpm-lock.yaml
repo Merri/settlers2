@@ -2,12 +2,12 @@ lockfileVersion: 5.3
 
 specifiers:
   '@astrojs/renderer-preact': ^0.2.1
-  astro: ^0.20.3
+  astro: ^0.20.4
   date-fns: ^2.23.0
 
 devDependencies:
   '@astrojs/renderer-preact': 0.2.1
-  astro: 0.20.3
+  astro: 0.20.4
   date-fns: 2.23.0
 
 packages:
@@ -719,7 +719,7 @@ packages:
   /@types/acorn/4.0.6:
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}
     dependencies:
-      '@types/estree': 0.0.48
+      '@types/estree': 0.0.50
     dev: true
 
   /@types/cacheable-request/6.0.2:
@@ -1061,8 +1061,8 @@ packages:
     hasBin: true
     dev: true
 
-  /astro/0.20.3:
-    resolution: {integrity: sha512-PQBWylMIk7GyphtBTLpXnfrk5kJ7JHlXLdrlxqpt0O/0y/U+ATUu4WjuYDCuOBef7EKr63xni+ieZqJLP5qbnw==}
+  /astro/0.20.4:
+    resolution: {integrity: sha512-X3NWn9jWCxx3QSABQuZmeCAYNNaR2LSgCd69SxsaODqa2+kdaB9eISGHBnrHvrF6XKApm4oSPOMVhJawyMh+7Q==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0, npm: '>=6.14.0'}
     hasBin: true
     dependencies:

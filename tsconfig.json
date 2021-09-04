@@ -1,3 +1,4 @@
 {
-  "moduleResolution": "node"
+  "moduleResolution": "node",
+  "skipLibCheck": true
 }
