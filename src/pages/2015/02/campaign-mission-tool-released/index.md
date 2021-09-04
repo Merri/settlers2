@@ -1,7 +1,7 @@
 ---
 title: "Campaign mission tool released"
 publishDate: "2015-02-15"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "maps"
   - "tools"

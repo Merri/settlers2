@@ -1,68 +1,196 @@
-<header class="layout">
-  <article>
-    <h1>
-      <a href="/">
-        <img alt="Settlers II.net" src="/wp-content/uploads/2011/09/The-Settlers-II-net-810x320-300x118.png" width="225" height="89" />
-      </a>
-    </h1>
-  </article>
+<header class="navigation">
+  <nav class="layout" tab-index="-1">
+    <a href="#main" class="visually-hidden">Skip to content</a>
+    <dl class="navigation-list">
+      <dt>
+        <a href="/">
+          <img alt="Settlers II.net" src="/wp-content/uploads/2011/09/The-Settlers-II-net-810x320-300x118.png" width="162" height="64" />
+        </a>
+      </dt>
+      <dd class="open-menu">
+        <button id="open-menu" onclick="document.getElementById('first-link').focus()" type="button">
+          <span class="visually-hidden">Open menu</span>
+        </button>
+      </dd>
+      <!-- TODO:
+      <dd><a href="/learn" id="first-link">Learn</a></dd>
+      <dd><a href="/expand">Expand</a></dd>
+      -->
+      <dd><a href="/map-generator">Map Generator</a></dd>
+      <dd><a href="/documentation" aria-label="Technical Documentation">Tech Docs</a></dd>
+      <dt>Online multiplayer</dt>
+      <dd><a href="/return-to-the-roots">Return to the Roots</a></dd>
+    </dl>
+  </nav>
+  <button id="close-menu" onclick="document.getElementById('open-menu').focus()" type="button">
+    <span class="visually-hidden">Close menu</span>
+  </button>
 </header>
 
 <style>
-header {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  height: 5rem;
-}
-article {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.header-subitem {
-  display: flex;
-  flex-grow: 0;
-  gap: 0.5em;
-  align-items: center;
-  justify-content: center;
-  color: var(--theme-text-lighter);
-  font-size: initial;
-  padding: 0.5rem;
-}
-.header-subitem:hover {
-  color: var(--theme-accent);
-}
-.header-subitem svg {
-  width: 1.5rem;
-  height: 1.5rem;
+#open-menu {
+  background: linear-gradient(
+    to bottom,
+    currentColor 22.5%,
+    transparent 22.5%,
+    transparent 41.25%,
+    currentColor 41.25%,
+    currentColor 58.75%,
+    transparent 58.75%,
+    transparent 77.5%,
+    currentColor 77.5%
+  );
+  background-clip: content-box;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  padding: 2px;
+  height: calc(var(--site-header-height) - 2rem);
+  right: 1rem;
+  top: 1rem;
+  width: calc(var(--site-header-height) - 2rem);
+  z-index: 2;
 }
 
-@media (max-width: 32em) {
-  .header-subitem {
+#close-menu {
+  background: rgba(0, 0, 0, 0.8);
+  background-clip: content-box;
+  box-sizing: border-box;
+  border: 0;
+  border-top: var(--site-header-height) solid white;
+  padding: 0;
+  cursor: default;
+  top: 0;
+  left: 0;
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 375ms ease-in-out, visibility 0s linear 500ms;
+  visibility: hidden;
+}
+
+.navigation {
+  background: white;
+  background-clip: content-box;
+  border-bottom: thin solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 1em white;
+  inset: 0;
+  bottom: unset;
+  height: var(--site-header-height);
+  position: fixed;
+  z-index: 10;
+}
+
+.navigation-list {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 590px) {
+  .open-menu,
+  #close-menu {
     display: none;
+  }
+
+  .navigation-list {
+    grid-column: 2;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: 1fr 1fr;
+    column-gap: 1em;
+    row-gap: 0;
   }
 }
 
-h1 {
-  font-family: ui-serif,serif-ui,serif;
+dt { font-weight: bold; }
+
+dt:first-of-type {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  user-select: none;
+}
+
+dd {
   margin: 0;
-  font-size: 2.25rem;
-  max-width: 100%;
-  display: flex;
-  flex-grow: 1;
 }
 
-.logo {
-  transform: translateY(0.25rem);
-}
+@media (max-width: 589px) {
+  .layout {
+    display: block;
+  }
 
-svg {
-  width: 2.5rem;
-  height: 2.5rem;
-}
+  .navigation-list {
+    height: var(--site-header-height);
+    overflow: hidden;
+    transition: height 375ms ease-in-out;
+  }
 
-h1 a {
-  text-decoration: none;
-  display: inline-flex;
+  dt:first-of-type { margin-bottom: 0.75rem; }
+
+  .open-menu ~ * {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-100%);
+    transition: opacity 375ms ease-in-out, transform 375ms ease-in-out, visibility 0s linear 375ms, z-index 0s linear;
+    visibility: hidden;
+    z-index: -1;
+  }
+
+  .layout:focus-within dt:first-of-type:not(:focus-within) + .open-menu ~ * {
+    opacity: 1;
+    pointer-events: unset;
+    transform: translateY(0);
+    transition: opacity 375ms ease-in-out, transform 375ms ease-in-out, visibility 0s linear, z-index 0s linear 375ms;
+    visibility: visible;
+    z-index: 0;
+  }
+
+  .layout:focus-within .navigation-list { height: 400px; }
+
+  .layout:focus-within #open-menu {
+    background: transparent;
+    z-index: -1;
+  }
+
+  .layout:focus-within + #close-menu {
+    opacity: 1;
+    pointer-events: unset;
+    transition: opacity 375ms ease-in-out, visibility 0s linear;
+    visibility: visible;
+  }
+
+  .layout:focus-within .navigation-list::before {
+    -webkit-text-fill-color: currentColor;
+    text-fill-color: currentColor;
+    -webkit-text-stroke: 3px currentColor;
+    text-stroke: 3px currentColor;
+    content: '╳';
+    font-size: 2rem;
+    position: absolute;
+    right: 1.25rem;
+    top: 0.5rem;
+    z-index: 3;
+  }
+
+  .open-menu ~ dt,
+  dd > a {
+    background: white;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    display: block;
+    line-height : 1;
+    margin: 0.25rem;
+    padding: 0.75rem;
+    position: relative;
+  }
+
+  .open-menu ~ dt {
+    margin-top: 1rem;
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 ---
 title: "Texture and palette differences"
 publishDate: "2011-08-28"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "textures"
 coverImage: "Textures.png"

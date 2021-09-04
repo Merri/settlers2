@@ -1,7 +1,7 @@
 ---
 title: "Map Generator has been fixed"
 publishDate: "2020-06-29"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "yleinen"
 ---

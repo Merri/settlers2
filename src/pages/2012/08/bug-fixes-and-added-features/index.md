@@ -1,7 +1,7 @@
 ---
 title: "Bug fixes and added features"
 publishDate: "2012-08-15"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

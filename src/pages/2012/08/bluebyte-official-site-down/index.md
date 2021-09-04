@@ -1,7 +1,7 @@
 ---
 title: "BlueByte official site down"
 publishDate: "2012-08-25"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

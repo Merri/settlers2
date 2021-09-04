@@ -1,7 +1,7 @@
 ---
 title: "New Greenland texture"
 publishDate: "2011-08-21"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "return-to-the-roots"
   - "textures"

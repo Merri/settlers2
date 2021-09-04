@@ -1,7 +1,7 @@
 ---
 title: "Thoughts on maps, PNG & JavaScript"
 publishDate: "2012-07-31"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

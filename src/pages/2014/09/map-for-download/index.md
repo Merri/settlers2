@@ -1,7 +1,7 @@
 ---
 title: "Map for download"
 publishDate: "2014-09-09"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "tools"
 ---

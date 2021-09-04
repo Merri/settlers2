@@ -1,7 +1,7 @@
 ---
 title: "One more texture ID to use"
 publishDate: "2012-08-19"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "textures"
 ---

@@ -1,7 +1,7 @@
 ---
 title: "Gathering objects information"
 publishDate: "2012-08-28"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

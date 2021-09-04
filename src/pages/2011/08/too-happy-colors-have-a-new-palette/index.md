@@ -1,7 +1,7 @@
 ---
 title: "Too happy colors? Have a new palette!"
 publishDate: "2011-08-19"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "tools"
 ---

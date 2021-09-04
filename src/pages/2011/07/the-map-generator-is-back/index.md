@@ -1,7 +1,7 @@
 ---
 title: "The map generator is back!"
 publishDate: "2011-07-16"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

@@ -1,7 +1,7 @@
 ---
 title: "Working on it after so many years"
 publishDate: "2011-07-24"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

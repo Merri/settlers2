@@ -1,7 +1,7 @@
 ---
 title: "Map header's last unknown byte now known!"
 publishDate: "2012-09-08"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "return-to-the-roots"
   - "site-news"

@@ -1,7 +1,7 @@
 ---
 title: "Return to the Roots has a new domain!"
 publishDate: "2011-09-15"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "communities"
   - "return-to-the-roots"

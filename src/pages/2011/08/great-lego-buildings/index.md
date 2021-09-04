@@ -1,7 +1,7 @@
 ---
 title: "Great LEGO buildings"
 publishDate: "2011-08-27"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "buildings"
   - "communities"

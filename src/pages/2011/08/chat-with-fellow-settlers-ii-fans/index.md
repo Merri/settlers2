@@ -1,7 +1,7 @@
 ---
 title: "Chat with fellow Settlers II fans!"
 publishDate: "2011-08-16"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "communities"
 ---

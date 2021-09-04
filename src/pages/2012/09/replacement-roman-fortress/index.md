@@ -1,7 +1,7 @@
 ---
 title: "Replacement Roman Fortress"
 publishDate: "2012-09-22"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "buildings"
   - "replacement-graphics"

@@ -1,7 +1,7 @@
 ---
 title: "Another \"minor\" update"
 publishDate: "2013-10-12"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

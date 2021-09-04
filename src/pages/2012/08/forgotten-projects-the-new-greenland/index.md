@@ -1,7 +1,7 @@
 ---
 title: "Forgotten projects: The New Greenland"
 publishDate: "2012-08-23"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "textures"
 ---

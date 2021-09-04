@@ -1,7 +1,7 @@
 ---
 title: "Hacker's guide to WORLD800.DAT"
 publishDate: "2012-09-02"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "tools"
 ---

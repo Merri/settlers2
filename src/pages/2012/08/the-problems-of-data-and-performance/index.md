@@ -1,7 +1,7 @@
 ---
 title: "The problems of data and performance"
 publishDate: "2012-08-16"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

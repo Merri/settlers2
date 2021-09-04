@@ -1,7 +1,7 @@
 ---
 title: "Getting into something usable"
 publishDate: "2012-08-10"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

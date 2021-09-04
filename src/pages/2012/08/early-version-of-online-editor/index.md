@@ -1,7 +1,7 @@
 ---
 title: "Early version of Online Editor"
 publishDate: "2012-08-12"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

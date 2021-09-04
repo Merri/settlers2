@@ -1,7 +1,7 @@
 ---
 title: "Technical documentation @ Cheats page"
 publishDate: "2011-07-23"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

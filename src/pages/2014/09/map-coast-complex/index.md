@@ -1,7 +1,7 @@
 ---
 title: "Map: Coast Complex"
 publishDate: "2014-09-27"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "maps"
   - "site-news"

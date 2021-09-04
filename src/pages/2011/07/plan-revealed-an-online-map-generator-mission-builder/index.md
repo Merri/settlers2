@@ -1,7 +1,7 @@
 ---
 title: "Plan revealed: an online map generator & mission builder"
 publishDate: "2011-07-22"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

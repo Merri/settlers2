@@ -1,7 +1,7 @@
 ---
 title: "A new upcoming settlerish game"
 publishDate: "2015-08-18"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "yleinen"
 ---

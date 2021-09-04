@@ -3,9 +3,10 @@
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/BlogHeader.astro';
 import BlogPostPreview from '../components/BlogPostPreview.astro';
+import Logo from '../components/Logo.astro';
 
 const title = 'Settlers II.net';
-const description = 'Maps, new graphics, and tech info on the original The Settlers II Gold Edition by BlueByte 1996';
+const description = 'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community';
 const permalink = 'https://settlers2.net/';
 
 const allPosts = Astro.fetchContent('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md');
@@ -18,15 +19,12 @@ allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
 
     <style>
       body {
-        width: 100%;
-        display: grid;
-        grid-template-rows: 3.5rem 1fr;
         --gutter: 0.5rem;
         --doc-padding: 2rem;
       }
 
       .content {
-        margin-top: 4rem;
+        margin-top: 1rem;
         margin-bottom: 8rem;
       }
 
@@ -35,6 +33,9 @@ allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
       }
 
       .intro {
+        font-size: 1.125em;
+        margin-left: 1.25rem;
+        margin-right: 1.25rem;
         padding-bottom: 4rem;
         margin-bottom: 2rem;
         border-bottom: 4px solid var(--theme-divider);
@@ -43,12 +44,36 @@ allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
       .intro > * {
         margin: 0;
       }
+
+      footer a { font-weight: inherit; }
+
+      footer {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        line-height: 1.25;
+        padding: 0 3rem 1.5rem;
+        text-align: center;
+      }
+
+      footer small,
+      footer a { display: inline-block; }
+
+      footer small { margin-top: 0.5rem; }
+
+      footer dd a { color: inherit; }
+
+      footer dl,
+      footer dd { margin: 0; }
+
+      footer dt { font-size: 1.25rem; font-weight: 600; }
+      footer dd { display: inline-block; padding: 0.5rem; }
     </style>
   </head>
 
   <body>
     <BlogHeader />
-    <div class="layout">
+    <main class="layout" id="main">
       <article class="content">
         <header class="intro">
           <p>{description}</p>
@@ -56,6 +81,20 @@ allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
         {allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} showFullPost />)}
         {allPosts.slice(5).map((post) => <BlogPostPreview post={post} />)}
       </article>
-    </div>
+    </main>
+    <footer>
+      <dl>
+        <dt>
+          Settlers II.net by <a href="https://twitter.com/merrinen">Vesa Piittinen</a> 2009 &ndash; {new Date().getFullYear()}<br />
+          <small>The Settlers II: Veni Vidi Vici, Mission CD, and Gold Edition by BlueByte 1996</small>
+        </dt>
+        <dd>
+          <a href="https://astro.build">Built with <span class="visually-hidden">Astro</span><Logo /></a>
+        </dd>
+        <dd>
+          <a href="https://github.com/Merri/settlers2">Site sources at GitHub</a>
+        </dd>
+      </dl>
+    </footer>
   </body>
 </html>

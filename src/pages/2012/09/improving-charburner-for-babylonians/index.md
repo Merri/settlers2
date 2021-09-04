@@ -1,7 +1,7 @@
 ---
 title: "Improving Charburner for Babylonians"
 publishDate: "2012-09-15"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "buildings"
   - "return-to-the-roots"

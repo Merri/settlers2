@@ -1,7 +1,7 @@
 ---
 title: "Map Generator improvements this week"
 publishDate: "2014-09-12"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

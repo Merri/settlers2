@@ -1,7 +1,7 @@
 ---
 title: "TEX5.LBM Greenland Debug Texture"
 publishDate: "2015-09-05"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "textures"
 ---

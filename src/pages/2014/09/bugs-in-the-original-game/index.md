@@ -1,7 +1,7 @@
 ---
 title: "Bugs in the original game"
 publishDate: "2014-09-28"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "bugs"
 ---

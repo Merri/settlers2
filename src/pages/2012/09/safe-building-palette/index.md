@@ -1,7 +1,7 @@
 ---
 title: "Safe building palette"
 publishDate: "2012-09-16"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "buildings"
 ---

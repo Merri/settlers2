@@ -1,7 +1,7 @@
 ---
 title: "Figuring out building sites"
 publishDate: "2012-08-07"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

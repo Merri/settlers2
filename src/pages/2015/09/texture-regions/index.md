@@ -1,7 +1,7 @@
 ---
 title: "Texture regions"
 publishDate: "2015-09-04"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "textures"
 ---

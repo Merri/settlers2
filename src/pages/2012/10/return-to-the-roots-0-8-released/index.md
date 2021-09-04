@@ -1,7 +1,7 @@
 ---
 title: "Return to the Roots 0.8 released!"
 publishDate: "2012-10-01"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "return-to-the-roots"
 ---

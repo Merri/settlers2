@@ -1,7 +1,7 @@
 ---
 title: "Sidequest for more texture sets in S2"
 publishDate: "2012-08-06"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "textures"
 ---

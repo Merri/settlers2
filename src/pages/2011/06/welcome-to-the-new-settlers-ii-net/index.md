@@ -1,7 +1,7 @@
 ---
 title: "Welcome to the new Settlers II.net!"
 publishDate: "2011-06-25"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "communities"
   - "gog-com"

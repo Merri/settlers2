@@ -1,7 +1,7 @@
 ---
 title: "Important milestone!"
 publishDate: "2014-08-31"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

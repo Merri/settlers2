@@ -1,7 +1,7 @@
 ---
 title: "RttR Campaign"
 publishDate: "2012-09-04"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "return-to-the-roots"
 ---

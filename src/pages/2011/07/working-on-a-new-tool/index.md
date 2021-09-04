@@ -1,7 +1,7 @@
 ---
 title: "Working on a new tool"
 publishDate: "2011-07-13"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "tools"
 ---

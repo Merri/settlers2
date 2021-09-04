@@ -1,7 +1,7 @@
 ---
 title: "Downloadable generated maps"
 publishDate: "2014-08-26"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

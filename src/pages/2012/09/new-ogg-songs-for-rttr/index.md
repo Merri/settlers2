@@ -1,7 +1,7 @@
 ---
 title: "New OGG songs (for RttR)"
 publishDate: "2012-09-22"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "return-to-the-roots"
 ---

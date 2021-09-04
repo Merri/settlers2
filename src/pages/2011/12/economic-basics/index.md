@@ -1,7 +1,7 @@
 ---
 title: "Economic Basics"
 publishDate: "2011-12-30"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "buildings"
 ---

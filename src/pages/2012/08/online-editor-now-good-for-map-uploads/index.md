@@ -1,7 +1,7 @@
 ---
 title: "Online Editor now good for map uploads!"
 publishDate: "2012-08-31"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

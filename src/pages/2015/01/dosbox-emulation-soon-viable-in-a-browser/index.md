@@ -1,7 +1,7 @@
 ---
 title: "DOSBox emulation soon viable in a browser!"
 publishDate: "2015-01-07"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

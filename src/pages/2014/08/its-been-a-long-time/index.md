@@ -1,7 +1,7 @@
 ---
 title: "It's been a long time"
 publishDate: "2014-08-24"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

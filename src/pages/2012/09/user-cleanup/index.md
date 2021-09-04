@@ -1,7 +1,7 @@
 ---
 title: "User cleanup"
 publishDate: "2012-09-01"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

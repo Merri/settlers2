@@ -1,7 +1,7 @@
 ---
 title: "Talking about maps and related things"
 publishDate: "2011-08-02"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
 ---

@@ -1,7 +1,7 @@
 ---
 title: "The missing pieces of map file format"
 publishDate: "2011-08-09"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "tools"
 ---

@@ -1,7 +1,7 @@
 ---
 title: "Where is the international community?"
 publishDate: "2011-09-08"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "communities"
   - "return-to-the-roots"

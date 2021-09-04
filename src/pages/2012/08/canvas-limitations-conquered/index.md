@@ -1,7 +1,7 @@
 ---
 title: "Canvas limitations conquered"
 publishDate: "2012-08-02"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "site-news"
   - "tools"

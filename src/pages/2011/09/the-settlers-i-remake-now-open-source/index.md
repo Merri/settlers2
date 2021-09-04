@@ -1,7 +1,7 @@
 ---
 title: "Settlers I remake now open source"
 publishDate: "2011-09-04"
-layout: '../../../../layouts/BlogPost.astro'
+layout: '$layouts/BlogPost.astro'
 categories: 
   - "freeserf"
 tags: 
