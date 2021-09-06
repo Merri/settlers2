@@ -81,8 +81,8 @@ function accordionDetails(details, transitionMs = 250) {
 	/**
 	 * To cover all basic usability track clicks, Enter, and Space.
 	 */
-	details.addEventListener('click', beforeToggle);
-	details.addEventListener('keydown', (event) => {
+	summary.addEventListener('click', beforeToggle);
+	summary.addEventListener('keydown', (event) => {
 		if (event.key === 'Enter' || event.key === 'Space') {
 			beforeToggle(event);
 		}
