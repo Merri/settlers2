@@ -1,0 +1,63 @@
+---
+import format from 'date-fns/format';
+
+interface AstroPost {
+	title: string;
+	tag?: string;
+	publishDate: string;
+	image?: string;
+	author?: string;
+	description?: string;
+	astro: {
+		headers: string[];
+		source: string;
+		html: string;
+	};
+	url: string;
+}
+
+export interface Props {
+	posts: AstroPost[]
+}
+
+const postsByYear = new Map();
+
+Astro.props.posts.forEach(post => {
+	const url = post.url.replace(/\/index$/, '');
+	const date = new Date(post.publishDate);
+	const published = format(date, 'MMM dd');
+	const publishDate = format(date, 'yyyy-MM-dd');
+	const year = format(date, 'yyyy');
+
+	if (!postsByYear.has(year)) postsByYear.set(year, []);
+	postsByYear.get(year).push({ ...post, date, publishDate, published, url });
+});
+
+// Hack of the Year award
+const render = [];
+
+---
+
+<h2>Post Archive</h2>
+
+{postsByYear.forEach((posts, year) => render.push(
+	<details>
+		<summary>Year {year}</summary>
+		<div class="accordion">
+			<div>
+				<ul>
+					{posts.map((post) => <li>
+						<time datetime={post.publishDate}>{post.published}</time>: <a href={post.url}>{post.title}</a>
+					</li>)}
+				</ul>
+			</div>
+		</div>
+	</details>
+))}
+
+{render}
+
+<style>
+details { max-width: unset; }
+time { font-family: var(--font-mono) }
+</style>

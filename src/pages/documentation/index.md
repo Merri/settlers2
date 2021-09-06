@@ -19,6 +19,11 @@ layout: '$layouts/BlogPost.astro'
 - [Objects](/documentation/objects)
 - [Objects landscape table](/documentation/objects-landscape-table)
 
+### Do it yourself
+
+- [Tools](/documentation/tools) to help analyze the game
+
+
 ## Game root directory
 
 <pre>

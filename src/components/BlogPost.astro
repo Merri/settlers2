@@ -4,10 +4,10 @@ import format from 'date-fns/format';
 import Author from './Author.astro';
 
 export interface Props {
-  title: string;
-  author: string;
-  publishDate: string;
-  heroImage: string;
+	title: string;
+	author: string;
+	publishDate: string;
+	heroImage: string;
 }
 
 const { id, title, author, date, publishDate, heroImage, alt } = Astro.props;
@@ -18,158 +18,84 @@ const datePublished = format(published, 'PPPP');
 ---
 
 <div class="layout">
-  <article class="content">
-  <div>
-    <header>
-      {heroImage && <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage} alt={alt} />}
-      <p class="publish-date"><time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time></p>
-      <h1 class="title">{title}</h1>
-      <Author name="@Merri" href="https://twitter.com/merrinen" />
-    </header>
-    <main id="main">
-      <slot />
-    </main>
-  </article>
+	<article class="content">
+	<div>
+		<header>
+			{heroImage && <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage} alt={alt} />}
+			<p class="publish-date"><time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time></p>
+			<h1 class="title">{title}</h1>
+			<Author name="@Merri" href="https://twitter.com/merrinen" />
+		</header>
+		<main id="main">
+			<slot />
+		</main>
+	</article>
 </div>
 
 <style>
 .hero-image {
-  box-sizing: border-box;
-  height: auto;
-  object-fit: cover;
-  object-position: center;
-  margin-bottom: 4rem;
-  margin-top: 2rem;
-  max-width: 1280px;
-  padding: 0 4rem;
-  width: calc(100vw - 1.125rem);
+	box-sizing: border-box;
+	height: auto;
+	object-fit: cover;
+	object-position: center;
+	margin-bottom: 4rem;
+	margin-top: 2rem;
+	max-width: 1280px;
+	padding: 0 4rem;
+	width: calc(100vw - 1.125rem);
 }
 
 @media (max-width: 50em) {
-  .hero-image {
-    margin-bottom: 2rem;
-    margin-top: 1rem;
-    padding: 0 1.5rem;
-    width: 100%;
-  }
+	.hero-image {
+		margin-bottom: 2rem;
+		margin-top: 1rem;
+		padding: 0 1.5rem;
+		width: 100%;
+	}
 }
 
 .content {
-  margin-bottom: 8rem;
+	margin-bottom: 8rem;
 }
 
 .content :global(main > * + *) {
-  margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 .content :global(h2) {
-  margin-top: 4rem;
+	margin-top: 4rem;
 }
 
 header {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
 
-  padding-bottom: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 4px solid var(--theme-divider);
+	padding-bottom: 2rem;
+	margin-bottom: 2rem;
+	border-bottom: 4px solid var(--theme-divider);
 }
 
 .title,
 .author,
 .publish-date {
-  margin: 0;
+	margin: 0;
 }
 
 .publish-date,
 .author {
-  color: var(--theme-text-lighter);
+	color: var(--theme-text-lighter);
 }
 
 .title {
-  font-size: 2.25rem;
-  font-weight: 700;
+	font-size: 2.25rem;
+	font-weight: 700;
 }
 
 main :global(img) {
-  max-width: 100%;
-  height: auto;
+	max-width: 100%;
+	height: auto;
 }
 </style>
-<script type="module">
-
-function accordionDetails(details, transitionMs = 250) {
-    const accordion = details.querySelector('.accordion');
-    const summary = details.querySelector('summary');
-    const div = accordion && accordion.querySelector('div');
-    if (!accordion || !summary || !div) return;
-
-    let timeout
-
-    function setOpen(open) {
-        accordion.setAttribute('data-open', open);
-        summary.setAttribute('data-open', open);
-    }
-
-    /**
-     * When we are about to close we need to delay the actual close.
-     * If we didn't do that the contents would close immediately.
-     */
-    function beforeToggle(event) {
-        if (event.defaultPrevented) return;
-        // Just to allow animated accordion to follow fast toggles
-        if (timeout) {
-            event.preventDefault();
-            setOpen(true);
-            clearTimeout(timeout);
-            timeout = undefined;
-        } else if (details.open) {
-            event.preventDefault();
-            setOpen(false);
-            timeout = setTimeout(() => {
-                details.open = false;
-                timeout = undefined;
-            }, transitionMs);
-        }
-    }
-
-    function afterToggle() {
-        setOpen(details.open);
-    }
-
-    /**
-     * To cover all basic usability track clicks, Enter, and Space.
-     */
-    details.addEventListener('click', beforeToggle);
-    details.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === 'Space') {
-            beforeToggle(event);
-        }
-    });
-    details.addEventListener('toggle', afterToggle);
-
-    // Provide customized transition time to CSS.
-    const transitionStyle = transitionMs > 0 ? `--ms:${transitionMs}ms;` : '';
-
-    // Always know the actual height of the contents.
-    const observer = new ResizeObserver(entries => {
-        const entry = entries[0];
-        const height = Math.ceil(entry.contentBoxSize
-            ? (entry.contentBoxSize[0] || entry.contentBoxSize).blockSize
-            : entry.contentRect.height);
-        details.style = `${transitionStyle}--height:${Math.ceil(height)}px;`;
-    });
-
-    // And we are ready to initialize.
-    observer.observe(div);
-    afterToggle();
-}
-
-const elements = document.body.querySelectorAll('details');
-elements.forEach((details) => {
-    accordionDetails(details);
-});
-</script>

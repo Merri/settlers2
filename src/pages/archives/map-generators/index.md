@@ -1,6 +1,7 @@
 ---
 title: "Map Generators"
-date: "2011-07-18"
+publishDate: "2011-07-18"
+layout: '$layouts/BlogPost.astro'
 ---
 
 There are a few map generators made for the game.

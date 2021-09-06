@@ -4,7 +4,7 @@ import format from 'date-fns/format';
 interface AstroPost {
   title: string;
   tag?: string;
-  date: string;
+  publishDate: string;
   image?: string;
   author?: string;
   description?: string;
@@ -18,26 +18,23 @@ interface AstroPost {
 
 export interface Props {
   post: AstroPost;
-  showFullPost?: boolean;
 }
 
-const { post, showFullPost = false } = Astro.props;
+const { post } = Astro.props;
 
 const url = post.url.replace(/\/index$/, '');
 const date = new Date(post.publishDate);
 const published = format(date, 'PPP');
-
-const html = showFullPost && post.astro.html;
+const ymd = format(date, 'yyyy-MM-dd');
 
 ---
 <article class="post-preview">
   <header>
-    <time datetime={date.toISOString().slice(0, 10)} class="publish-date">{published}</time>
+    <time datetime={ymd} class="publish-date">{published}</time>
     <a href={url}><h2 class="title">{post.title}</h2></a>
   </header>
   <section>
-    {showFullPost ? post.astro.html : <p>{post.description ?? 'No description.'}</p>}
-    {!showFullPost && <a href={url}>Read more</a>}
+    {post.astro.html}
   </section>
 </article>
 

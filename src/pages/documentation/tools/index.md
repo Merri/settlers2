@@ -46,6 +46,6 @@ This map file is filled with all object indexes (0 to 255). Just change object t
 
 In a hex editor you can find object types starting at position 0x1D90 (= 7568 bytes). The default C8 = decorative landscape object.
 
-[Object viewer](/wp-content/uploads/2012/08/Object-viewer.zip) `[OBJECTS.SWD]`
+[Object viewer `[OBJECTS.SWD]`](/wp-content/uploads/2012/08/Object-viewer.zip)
 
 [![](/wp-content/uploads/2012/08/S2_objects-300x225.png)](/wp-content/uploads/2012/08/S2_objects.png)

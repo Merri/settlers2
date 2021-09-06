@@ -36,3 +36,78 @@ const { title, description, permalink } = Astro.props;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gentium+Basic:ital,wght@0,400;0,700;1,400;1,700&amp;family=Kaisei+HarunoUmi:wght@500;700&amp;display=swap" rel="stylesheet">
+
+<script type="module">
+
+function accordionDetails(details, transitionMs = 250) {
+	const accordion = details.querySelector('.accordion');
+	const summary = details.querySelector('summary');
+	const div = accordion && accordion.querySelector('div');
+	if (!accordion || !summary || !div) return;
+
+	let timeout
+
+	function setOpen(open) {
+		accordion.setAttribute('data-open', open);
+		summary.setAttribute('data-open', open);
+	}
+
+	/**
+	 * When we are about to close we need to delay the actual close.
+	 * If we didn't do that the contents would close immediately.
+	 */
+	function beforeToggle(event) {
+		if (event.defaultPrevented) return;
+		// Just to allow animated accordion to follow fast toggles
+		if (timeout) {
+			event.preventDefault();
+			setOpen(true);
+			clearTimeout(timeout);
+			timeout = undefined;
+		} else if (details.open) {
+			event.preventDefault();
+			setOpen(false);
+			timeout = setTimeout(() => {
+				details.open = false;
+				timeout = undefined;
+			}, transitionMs);
+		}
+	}
+
+	function afterToggle() {
+		setOpen(details.open);
+	}
+
+	/**
+	 * To cover all basic usability track clicks, Enter, and Space.
+	 */
+	details.addEventListener('click', beforeToggle);
+	details.addEventListener('keydown', (event) => {
+		if (event.key === 'Enter' || event.key === 'Space') {
+			beforeToggle(event);
+		}
+	});
+	details.addEventListener('toggle', afterToggle);
+
+	// Provide customized transition time to CSS.
+	const transitionStyle = transitionMs > 0 ? `--ms:${transitionMs}ms;` : '';
+
+	// Always know the actual height of the contents.
+	const observer = new ResizeObserver(entries => {
+		const entry = entries[0];
+		const height = Math.ceil(entry.contentBoxSize
+			? (entry.contentBoxSize[0] || entry.contentBoxSize).blockSize
+			: entry.contentRect.height);
+		details.style = `${transitionStyle}--height:${Math.ceil(height)}px;`;
+	});
+
+	// And we are ready to initialize.
+	observer.observe(div);
+	afterToggle();
+}
+
+const elements = document.body.querySelectorAll('details');
+elements.forEach((details) => {
+	accordionDetails(details);
+});
+</script>

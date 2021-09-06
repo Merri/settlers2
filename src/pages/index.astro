@@ -1,9 +1,10 @@
 ---
 // Component Imports
-import BaseHead from '../components/BaseHead.astro';
-import BlogHeader from '../components/BlogHeader.astro';
-import BlogPostPreview from '../components/BlogPostPreview.astro';
-import Logo from '../components/Logo.astro';
+import BaseHead from '$/components/BaseHead.astro';
+import BlogHeader from '$/components/BlogHeader.astro';
+import BlogArchive from '$/components/BlogArchive.astro';
+import BlogPostPreview from '$/components/BlogPostPreview.astro';
+import Logo from '$/components/Logo.astro';
 
 const title = 'Settlers II.net';
 const description = 'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community';
@@ -78,8 +79,8 @@ allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
         <header class="intro">
           <p>{description}</p>
         </header>
-        {allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} showFullPost />)}
-        {allPosts.slice(5).map((post) => <BlogPostPreview post={post} />)}
+        {allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} />)}
+		<BlogArchive posts={allPosts} />
       </article>
     </main>
     <footer>
