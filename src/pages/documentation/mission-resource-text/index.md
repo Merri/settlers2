@@ -2,6 +2,7 @@
 title: "Mission Resource Text"
 publishDate: "2011-07-17"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 210
 ---
 
 Each setting on this page is followed by **numeric parameters** (except for `!ENABLE_ALL_HOUSES`).

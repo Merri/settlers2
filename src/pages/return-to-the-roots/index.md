@@ -4,6 +4,7 @@ publishDate: "2011-09-07"
 layout: '$layouts/BlogPost.astro'
 heroImage: '/wp-content/uploads/2011/09/rttr-logo.png'
 alt: 'Return to the Roots / Siedler 2.5'
+disqusIdentifier: 466
 ---
 
 Return to the Roots or **RttR** is an **open source** add-on type of remake of The Settlers II. This means it requires the original game files in order to work as Ubisoft did not give Settlers Freaks (the group developing RttR) a permission to redistribute the files. This means you need The Settlers II: Gold Edition for RttR to work.

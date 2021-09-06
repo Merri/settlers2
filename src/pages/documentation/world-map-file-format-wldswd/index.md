@@ -2,6 +2,7 @@
 title: "World Map File Format (WLD/SWD)"
 publishDate: "2011-07-23"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 253
 ---
 
 The documentation is still incomplete. If you know more or find incorrect information why not [contribute changes via GitHub](https://github.com/Merri/settlers2)?

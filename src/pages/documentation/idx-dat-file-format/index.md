@@ -2,6 +2,7 @@
 title: "IDX & DAT File Format"
 publishDate: "2011-07-23"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 250
 ---
 
 The IDX is an index for a DAT archive file.

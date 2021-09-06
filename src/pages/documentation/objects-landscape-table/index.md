@@ -2,6 +2,7 @@
 title: "Objects: landscape table"
 publishDate: "2012-08-29"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 702
 ---
 
 From this table you can find the landscape objects (type `0xC8`) and `MIS#BOBS.LST` objects that can be loaded separately in missions.

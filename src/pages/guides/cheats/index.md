@@ -2,6 +2,7 @@
 title: "Cheats"
 publishDate: "2011-07-16"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 143
 ---
 
 The code to activate cheats is `WINTER` (or `THUNDER` in versions earlier than 1.51). You can type this anytime to turn cheats on/off. When you have cheats on you can see an icon with exclamation in the top right corner of the screen:

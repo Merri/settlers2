@@ -2,6 +2,7 @@
 title: "BBM File Format"
 publishDate: "2011-07-23"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 236
 ---
 
 The BBM files are **palette files** and are the easiest The Settlers II files to read.

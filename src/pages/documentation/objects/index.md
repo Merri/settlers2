@@ -2,6 +2,7 @@
 title: "Objects"
 publishDate: "2012-08-28"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 637
 ---
 
 There are several kind of objects in the game. Objects are identified from two different blocks in a map file, blocks 5 & 6. Block 5 carries index information while Block 6 tells the type of an object.

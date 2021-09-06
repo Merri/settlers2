@@ -2,6 +2,7 @@
 title: "Graphics files (LBM)"
 publishDate: "2011-06-25"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 13
 ---
 
 The game uses LBM files which originate from Amiga's Deluxe Paint. These images are used for full screen graphics such as title and loading screens. The problem with the files of The Settlers II is that they're uncompressed PBM variant, which happens to be a very rare format in the PC world. To give an example, Paint Shop Pro has long been able to both read & write LBM files, but the files it produces by default are compressed and use the ILBM variant of LBM files. You can turn off the compression, but the files are ILBM and make them unusable in The Settlers II.

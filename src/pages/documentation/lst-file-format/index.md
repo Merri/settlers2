@@ -2,6 +2,7 @@
 title: "LST File Format"
 publishDate: "2011-07-23"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 238
 ---
 
 LST is an archive format that can contain multiple type of information.

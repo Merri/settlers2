@@ -3,6 +3,7 @@ title: "The Babylonians"
 publishDate: "2011-09-07"
 layout: '$layouts/BlogPost.astro'
 heroImage: "/wp-content/uploads/2011/09/2011-09-07-NewPeopleOverview.jpg"
+disqusIdentifier: 469
 ---
 
 This is a project for creating a new people to play with in <a href="/return-to-the-roots">Return to the Roots</a>. It was started by Spike and it has contributions by Parasit.

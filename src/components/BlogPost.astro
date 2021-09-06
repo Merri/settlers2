@@ -19,7 +19,6 @@ const datePublished = format(published, 'PPPP');
 
 <div class="layout">
 	<article class="content">
-	<div>
 		<header>
 			{heroImage && <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage} alt={alt} />}
 			<p class="publish-date"><time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time></p>

@@ -2,7 +2,7 @@
 title: 'The Settlers II Technical File Format Documentation'
 publishDate: '2021-09-01'
 layout: '$layouts/BlogPost.astro'
-
+disqusIdentifier: 474
 ---
 
 ## File formats

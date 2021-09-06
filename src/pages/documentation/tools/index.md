@@ -2,6 +2,7 @@
 title: "Tools"
 publishDate: "2012-08-23"
 layout: '$layouts/BlogPost.astro'
+disqusIdentifier: 611
 ---
 
 Some stuff that might help, mostly stuff that helps us to figure out how the original The Settlers II works in a technical level.
