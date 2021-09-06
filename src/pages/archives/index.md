@@ -3,6 +3,7 @@ title: "The Settlers II Archives"
 publishDate: "2021-09-06"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 429
+disqusCanonical: 'https://settlers2.net/the-settlers-2'
 ---
 
 Welcome to the Archives! Here you can find all sorts of preserved content you can download.

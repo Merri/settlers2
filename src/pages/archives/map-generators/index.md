@@ -3,6 +3,7 @@ title: "Map Generators"
 publishDate: "2011-07-18"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 218
+disqusCanonical: 'https://settlers2.net/the-settlers-2/map-generators'
 ---
 
 There are a few map generators made for the game.

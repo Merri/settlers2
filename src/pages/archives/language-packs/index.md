@@ -3,6 +3,7 @@ title: "Language Packs"
 publishDate: "2011-06-25"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 2
+disqusCanonical: 'https://settlers2.net/the-settlers-2/language-packs'
 ---
 
 The new Gold Edition release in GOG.com is English only, which effectively means there is a need for localized versions. These self extracting downloads help you meet this need. See installation instructions below.

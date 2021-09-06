@@ -3,6 +3,7 @@ title: "Datasheet for Buildings"
 publishDate: "2011-07-14"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 97
+disqusCanonical: 'https://settlers2.net/the-settlers-2/datasheet-for-buildings'
 ---
 
 These tables cover base concepts of buildings in the game.

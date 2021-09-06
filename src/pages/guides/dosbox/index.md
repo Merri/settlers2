@@ -3,6 +3,7 @@ title: "DOSBox"
 publishDate: "2011-07-14"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 65
+disqusCanonical: 'https://settlers2.net/the-settlers-2/dosbox'
 ---
 
 This page is for those adventurous persons who wish to setup The Settlers II by themselves without paying for [GOG.com's version](https://www.gog.com/game/the_settlers_2_gold_edition) (which runs the game via preconfigured DOSBox). In this case you already own the game on a CD and are not willing to pay again, or maybe you wish to try out a demo version before rushing things and buying a copy from GOG.com.

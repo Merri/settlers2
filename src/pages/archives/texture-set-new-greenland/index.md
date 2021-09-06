@@ -3,6 +3,7 @@ title: "Texture set: New Greenland"
 publishDate: "2012-08-24"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 621
+disqusCanonical: 'https://settlers2.net/the-settlers-2/texture-set-new-greenland'
 ---
 
 This is a new texture set for the game to replace the original Greenland texture with something that is an attempt to look a bit better while also providing a few more unused textures to give a little bit more flavor.

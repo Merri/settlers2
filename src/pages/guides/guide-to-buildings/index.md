@@ -3,6 +3,7 @@ title: "Guide to Buildings"
 publishDate: "2011-06-25"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 8
+disqusCanonical: 'https://settlers2.net/the-settlers-2/guide-to-buildings'
 ---
 
 A regular Worker becomes a specialist worker if there is a required tool available. The specialist for each building is contained within parantheses as is the tool required by the specialist.

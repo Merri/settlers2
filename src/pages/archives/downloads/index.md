@@ -3,6 +3,7 @@ title: "Downloads"
 publishDate: "2012-09-02"
 layout: '$layouts/BlogPost.astro'
 disqusIdentifier: 752
+disqusCanonical: 'https://settlers2.net/the-settlers-2/downloads'
 ---
 
 A very complete demo + update listing for The Settlers II! Original files mostly retrieved from BlueByte FTP server back when it was still online.
