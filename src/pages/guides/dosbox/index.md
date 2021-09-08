@@ -2,7 +2,7 @@
 title: "DOSBox"
 publishDate: "2011-07-14"
 layout: '$layouts/BlogPost.astro'
-disqusIdentifier: 65
+disqusIdentifier: "65 http://settlers2.net/?page_id=65"
 disqusCanonical: 'https://settlers2.net/the-settlers-2/dosbox'
 ---
 

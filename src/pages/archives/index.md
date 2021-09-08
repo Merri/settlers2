@@ -2,7 +2,7 @@
 title: "The Settlers II Archives"
 publishDate: "2021-09-06"
 layout: '$layouts/BlogPost.astro'
-disqusIdentifier: 429
+disqusIdentifier: "429 http://settlers2.net/?page_id=42"
 disqusCanonical: 'https://settlers2.net/the-settlers-2'
 ---
 

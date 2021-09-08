@@ -2,7 +2,7 @@
 title: "Cheats"
 publishDate: "2011-07-16"
 layout: '$layouts/BlogPost.astro'
-disqusIdentifier: 143
+disqusIdentifier: "143 http://settlers2.net/?page_id=143"
 disqusCanonical: 'https://settlers2.net/the-settlers-2/cheats'
 ---
 

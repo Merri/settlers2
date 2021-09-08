@@ -2,7 +2,7 @@
 title: "Guide to Buildings"
 publishDate: "2011-06-25"
 layout: '$layouts/BlogPost.astro'
-disqusIdentifier: 8
+disqusIdentifier: "8 http://settlers2.net/?page_id=8"
 disqusCanonical: 'https://settlers2.net/the-settlers-2/guide-to-buildings'
 ---
 

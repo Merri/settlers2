@@ -2,7 +2,7 @@
 title: "Datasheet for Buildings"
 publishDate: "2011-07-14"
 layout: '$layouts/BlogPost.astro'
-disqusIdentifier: 97
+disqusIdentifier: "97 http://settlers2.net/?page_id=97"
 disqusCanonical: 'https://settlers2.net/the-settlers-2/datasheet-for-buildings'
 ---
 
