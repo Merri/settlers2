@@ -132,7 +132,11 @@ html {
   background-image:
     linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 5.125rem, rgba(0, 0, 0, 0.2) 5.625rem, rgba(0, 0, 0, 0.1) 6.125rem, rgba(0, 0, 0, 0.05) 6.5rem, transparent 7.5rem, transparent),
     linear-gradient(to right, rgba(255, 255, 255, 0.125), rgba(255, 255, 255, 0.75) 25%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0)),
-    url('/design/rockwall-25.png');
+    url('/design/rockwall-25.png'),
+    linear-gradient(to bottom, rgba(245, 222, 179, 0.85), rgba(245, 222, 179, 0.85)),
+    url('/assets/gate-60.jpg');
+  background-position: center center, center center, 0 0, center center, 14px var(--site-header-height);
+  background-size: 100% 100%, 100% 100%, 64px 64px, 100% 100%, calc(100% - 28px);
   box-shadow: inset 0 0 3rem 0 rgba(0, 0, 0, 0.75);
   box-sizing: border-box;
   min-height: 100vh;
