@@ -1,0 +1,24 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import BlogHeader from '../../components/BlogHeader.astro';
+import { MapGenerator } from '../../components/MapGenerator/index.tsx';
+
+const title = 'The Settlers II.net Map Generator';
+const description = 'Generate maps for The Settlers II Gold Edition and Return to the Roots';
+const permalink = 'https://settlers2.net/map-generator'
+
+---
+<html lang="en">
+  	<head>
+    	<BaseHead title={title} description={description} permalink={permalink} />
+		<link rel="stylesheet" href="/blog.css" />
+	</head>
+	<body>
+		<BlogHeader />
+		<main class="layout" id="main">
+      		<article class="content">
+				<MapGenerator client:only />
+			</article>
+		</main>
+	</body>
+</html>

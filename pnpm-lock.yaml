@@ -2,18 +2,22 @@ lockfileVersion: 5.3
 
 specifiers:
   '@astrojs/renderer-preact': ^0.2.1
-  astro: ^0.20.4
+  astro: ^0.20.5
   date-fns: ^2.23.0
+  random-seedable: ^1.0.7
+
+dependencies:
+  date-fns: 2.23.0
+  random-seedable: 1.0.7
 
 devDependencies:
   '@astrojs/renderer-preact': 0.2.1
-  astro: 0.20.4
-  date-fns: 2.23.0
+  astro: 0.20.5
 
 packages:
 
-  /@astrojs/markdown-support/0.3.0:
-    resolution: {integrity: sha512-q5dYehJQT7A0qXQ7GYbnrm9LN8fzvqWXUOdVBqEZ+rg0tDDCHuQJxXpq4bVd6/jqs7oOHGcAVIONj6ShomrKhQ==}
+  /@astrojs/markdown-support/0.3.1:
+    resolution: {integrity: sha512-7NWZM8PPj0l9t4PLOzCFwPP2UWY0QN5fwF8rvYXuK8825kujpH0Lo04NqHYTn7afKUDA8yXlefOouC7jJGaC2A==}
     dependencies:
       '@silvenon/remark-smartypants': 1.0.0
       github-slugger: 1.4.0
@@ -1061,12 +1065,12 @@ packages:
     hasBin: true
     dev: true
 
-  /astro/0.20.4:
-    resolution: {integrity: sha512-X3NWn9jWCxx3QSABQuZmeCAYNNaR2LSgCd69SxsaODqa2+kdaB9eISGHBnrHvrF6XKApm4oSPOMVhJawyMh+7Q==}
+  /astro/0.20.5:
+    resolution: {integrity: sha512-ORFUg2rbQCOHkZBmFHQ1XOjpG9yqUCJI9GVnH24SftJNAsR3hJaiGFT98ykLIfq2W+pFCnGp56WQ5/g678V+gg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0, npm: '>=6.14.0'}
     hasBin: true
     dependencies:
-      '@astrojs/markdown-support': 0.3.0
+      '@astrojs/markdown-support': 0.3.1
       '@astrojs/parser': 0.20.2
       '@astrojs/prism': 0.2.2
       '@astrojs/renderer-preact': 0.2.1_@babel+core@7.15.0
@@ -1114,6 +1118,7 @@ packages:
       sass: 1.38.2
       semver: 7.3.5
       send: 0.17.1
+      shiki: 0.9.10
       shorthash: 0.0.2
       slash: 4.0.0
       snowpack: 3.8.8
@@ -1577,7 +1582,7 @@ packages:
   /date-fns/2.23.0:
     resolution: {integrity: sha512-5ycpauovVyAk0kXNZz6ZoB9AYMZB4DObse7P3BPWmyEjXNORTI8EJ6X0uaSAq4sCHzM1uajzrkr6HnsLQpxGXA==}
     engines: {node: '>=0.11'}
-    dev: true
+    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -3691,6 +3696,12 @@ packages:
       mimic-fn: 2.1.0
     dev: true
 
+  /onigasm/2.2.5:
+    resolution: {integrity: sha512-F+th54mPc0l1lp1ZcFMyL/jTs2Tlq4SqIHKIXGZOR/VkHkF9A7Fr5rRr5+ZG/lWeRsyrClLYRq7s/yFQ/XhWCA==}
+    dependencies:
+      lru-cache: 5.1.1
+    dev: true
+
   /open/8.2.1:
     resolution: {integrity: sha512-rXILpcQlkF/QuFez2BJDf3GsqpjGKbkUUToAIGo9A0Q6ZkoSGogZJulrUdwRkrAsoQvoZsrjCYt8+zblOk7JQQ==}
     engines: {node: '>=12'}
@@ -4130,6 +4141,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /random-seedable/1.0.7:
+    resolution: {integrity: sha512-hzyTGDWjY9B7Vm9y4/+x1pL6yWp4Fh/7MQXoyuRUnuBAic7u5+6D5HpkyFKGxiTZKZn85EqevOXpY0+A+npQYQ==}
+    dev: false
+
   /randombytes/2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
     dependencies:
@@ -4523,6 +4538,14 @@ packages:
   /shebang-regex/3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
+    dev: true
+
+  /shiki/0.9.10:
+    resolution: {integrity: sha512-xeM7Oc6hY+6iW5O/T5hor8ul7mEprzyl5y4r5zthEHToQNw7MIhREMgU3r2gKDB0NaMLNrkcEQagudCdzE13Lg==}
+    dependencies:
+      json5: 2.2.0
+      onigasm: 2.2.5
+      vscode-textmate: 5.2.0
     dev: true
 
   /shorthash/0.0.2:
@@ -5211,6 +5234,10 @@ packages:
     resolution: {integrity: sha512-smLS+18RjXYMl9joyJxMNI9l4w7biW8ilSDaVRvFBDwOH8P0BK1ognFQTpg0wyQ6wIKLTblHJvROW692L/E53Q==}
     engines: {node: '>=6.0'}
     hasBin: true
+    dev: true
+
+  /vscode-textmate/5.2.0:
+    resolution: {integrity: sha512-Uw5ooOQxRASHgu6C7GVvUxisKXfSgW4oFlO+aa+PAkgmH89O3CXxEEzNRNtHSqtXFTl0nAC1uYj0GMSH27uwtQ==}
     dev: true
 
   /vue/3.2.6:

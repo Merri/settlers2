@@ -6,12 +6,14 @@ import BlogArchive from '$/components/BlogArchive.astro';
 import BlogPostPreview from '$/components/BlogPostPreview.astro';
 import Logo from '$/components/Logo.astro';
 
+import { Props as Post } from '../components/BlogPost.astro';
+
 const title = 'Settlers II.net';
 const description = 'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community';
 const permalink = 'https://settlers2.net/';
 
-const allPosts = Astro.fetchContent('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md');
-allPosts.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+const allPosts: Post[] = Astro.fetchContent('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md');
+allPosts.sort((a, b) => +new Date(b.publishDate) - +new Date(a.publishDate));
 ---
 <html lang="en">
   <head>

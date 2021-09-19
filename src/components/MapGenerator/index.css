@@ -1,0 +1,17 @@
+.settlers2-map {
+    background: #fff url('/assets/map-generator/water-0.png');
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    vertical-align: top;
+}
+
+.settlers2-map--wasteland {
+    background-image: url('/assets/map-generator/water-1.png');
+}
+
+.settlers2-map--winter-world {
+    background-image: url('/assets/map-generator/water-2.png');
+}
