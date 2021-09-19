@@ -10,14 +10,30 @@ jobs:
     steps:
     - name: Get latest code
       uses: actions/checkout@v2
+
     - name: Use Node.js 14 LTS
       uses: actions/setup-node@v1
       with:
         node-version: '14'
+
+    - name: Cache pnpm modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-
+
+    - name: Use pnpm
+      uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.0.2
+
     - name: 🔨 Build Project
       run: |
         pnpm install
         pnpm run build --if-present
+
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
