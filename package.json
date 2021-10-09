@@ -20,7 +20,7 @@
     "astro": "^0.20.9"
   },
   "dependencies": {
-    "date-fns": "^2.24.0",
+    "date-fns": "^2.25.0",
     "random-seedable": "^1.0.8"
   }
 }
