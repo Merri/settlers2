@@ -1,22 +1,36 @@
 import './index.css'
 
+import { XORShift } from 'random-seedable'
+
+const random = new XORShift()
+
 import { Component, createRef } from 'preact/compat'
 
 import Generator from '$/lib/generator'
 
 import { IncDec } from './IncDec'
+import { StatisticsTable } from './StatisticsTable'
 import { TextureOptions } from './TextureOptions'
-import { Unsupported } from './Unsupported'
+import { NumberInput } from './NumberInput'
 
-const generator = Generator()
+const generator = Generator(random)
 
-function generateAndGetResources() {
+const hasLocalStorage = (function (key) {
+	try {
+		localStorage[key] = key
+		localStorage.removeItem(key)
+		return true
+	} catch (error) {
+		return false
+	}
+})('_')
+
+function generateAndGetResources(seed: number) {
+	random.seed = seed
 	return generator.applyResources({})
 }
 
 interface State {
-	hasLocalStorage: boolean
-	meetsRequirements: boolean
 	compatibility: string
 	maxPlayers: number
 	playerMinDistance: number
@@ -48,6 +62,7 @@ interface State {
 	height: number
 	width: number
 	title: string
+	seed: number
 }
 
 export class MapGenerator extends Component<{}, State> {
@@ -57,9 +72,10 @@ export class MapGenerator extends Component<{}, State> {
 	constructor(props: {}) {
 		super(props)
 
+		const width = hasLocalStorage ? ~~localStorage.width : 160
+		const height = hasLocalStorage ? ~~localStorage.height : 160
+
 		this.state = {
-			hasLocalStorage: false,
-			meetsRequirements: !!window.ArrayBuffer && !!window.Uint8Array && !!window.Uint32Array,
 			compatibility: 'return-to-the-roots',
 			maxPlayers: 7,
 			playerMinDistance: 50,
@@ -74,8 +90,8 @@ export class MapGenerator extends Component<{}, State> {
 				noiseOnWater: false,
 			},
 			seedOptions: {
-				width: 160,
-				height: 160,
+				width,
+				height,
 				borderProtection: 8,
 				likelyhood: [0, 0.004, 0.024, 0.64, 0.48, 0.48, 0.48],
 				massRatio: 50,
@@ -88,48 +104,27 @@ export class MapGenerator extends Component<{}, State> {
 				texture: 8,
 				waterTexture: 5,
 			},
-			height: 160,
-			width: 160,
+			height,
+			width,
 			title: 'Untitled',
+			seed: 1,
 		}
 	}
 
-	componentWillMount() {
-		var hasLocalStorage = false
-
-		if (this.state.meetsRequirements) {
-			// if localStorage / cookies are disabled then accessing localStorage will throw an error
-			try {
-				hasLocalStorage = !!localStorage
-			} catch (err) {}
-
-			if (hasLocalStorage) {
-				if (localStorage.width) this.state.seedOptions.width = ~~localStorage.width
-				if (localStorage.height) this.state.seedOptions.height = ~~localStorage.height
-			}
-
-			this.setState({
-				hasLocalStorage: hasLocalStorage,
-				// make initial render of the page to have canvas elements in the right size
-				width: this.state.seedOptions.width,
-				height: this.state.seedOptions.height,
-			})
-
-			generator.setColorMap('alternative').then(() => {
-				this.setState({
-					viewType: 'pretty',
-				})
-
-				this.handleSeed()
-			}, this.handleSeed)
-		}
+	componentDidMount() {
+		generator.setColorMap('alternative').then(() => {
+			this.setState({ viewType: 'pretty' })
+			this.handleSeed()
+		}, this.handleSeed)
 	}
 
 	generateHeightMap = () => {
+		random.seed = this.state.seed
 		generator.createHeight(this.state.heightOptions)
 	}
 
 	generateTextures = () => {
+		random.seed = this.state.seed
 		generator.createBaseTextures(this.state.textureOptions)
 	}
 
@@ -147,36 +142,48 @@ export class MapGenerator extends Component<{}, State> {
 		console.timeEnd('Draw')
 	}
 
-	handleSeed = () => {
+	handleSeed = (event: MouseEvent | 'random' | 'given' = undefined) => {
+		const mode = event instanceof Event ? (event.target as HTMLButtonElement).value : event || 'random'
+		const randomSeed = mode === 'random'
 		console.time('New Seed, Height Map, Textures and Resources')
-		this.state.seedOptions.startingPoints = (this.state.seedOptions.width + this.state.seedOptions.height) * 0.2
-		this.state.seedOptions.likelyhood = [
+
+		const seed = randomSeed ? (Date.now() & 0xfffffffe) + 1 : this.state.seed
+		const seedOptions = { ...this.state.seedOptions }
+		const startingPoints = (1 + (seedOptions.width * seedOptions.height * seedOptions.massRatio) / 40960) | 0
+
+		seedOptions.startingPoints = startingPoints
+		seedOptions.likelyhood = [
 			0,
-			(this.state.seedOptions.width + this.state.seedOptions.height) * 0.000005 + 0.001,
-			(this.state.seedOptions.width + this.state.seedOptions.height) * 0.000015 + 0.01,
-			(this.state.seedOptions.width + this.state.seedOptions.height) * 0.0005 + 0.5,
-			(this.state.seedOptions.width + this.state.seedOptions.height) * 0.0002 + 0.4,
-			(this.state.seedOptions.width + this.state.seedOptions.height) * 0.0002 + 0.4,
-			(this.state.seedOptions.width + this.state.seedOptions.height) * 0.0002 + 0.4,
+			((seedOptions.width + seedOptions.height) & seed) * 0.000005 + 0.001,
+			((seedOptions.width & seed) + seedOptions.height) * (0.00025 / startingPoints) + 0.01,
+			(seedOptions.width + (seedOptions.height & seed)) * 0.0005 + 0.5,
+			((seedOptions.width + seedOptions.height) & seed) * 0.0003 + 0.25,
+			((seedOptions.width & seed) + seedOptions.height) * 0.0002 + 0.125,
+			(seedOptions.width + (seedOptions.height & seed)) * 0.0001 + 0.0625,
 		]
 
-		if (this.state.hasLocalStorage) {
-			localStorage.width = this.state.seedOptions.width
-			localStorage.height = this.state.seedOptions.height
+		if (hasLocalStorage) {
+			localStorage.width = seedOptions.width
+			localStorage.height = seedOptions.height
 		}
+
+		console.log('seedOptions', seedOptions)
 
 		this.setState(
 			{
+				seed,
 				width: this.state.seedOptions.width,
 				height: this.state.seedOptions.height,
+				seedOptions,
 			},
-			function () {
-				generator.seed(this.state.seedOptions)
+			() => {
+				random.seed = seed
+				generator.seed(seedOptions)
 				this.generateHeightMap()
 				this.generateTextures()
 				this.setState({
 					players: [],
-					resources: generateAndGetResources(),
+					resources: generateAndGetResources(seed),
 				})
 				console.timeEnd('New Seed, Height Map, Textures and Resources')
 				this.handleDraw()
@@ -200,7 +207,7 @@ export class MapGenerator extends Component<{}, State> {
 		console.time('Resources')
 		this.setState({
 			players: [],
-			resources: generateAndGetResources(),
+			resources: generateAndGetResources(this.state.seed),
 		})
 		console.timeEnd('Resources')
 		this.handleDraw()
@@ -208,6 +215,7 @@ export class MapGenerator extends Component<{}, State> {
 
 	handlePlayers = () => {
 		console.time('Players')
+		random.seed = Date.now()
 		this.setState({
 			players: generator.getRandomPlayerPositions(this.state.maxPlayers, this.state.playerMinDistance),
 		})
@@ -216,34 +224,31 @@ export class MapGenerator extends Component<{}, State> {
 	}
 
 	handleDownload = () => {
-		// @ts-ignore
-		saveAs(
+		const link = document.createElement('a')
+		const blobUrl = URL.createObjectURL(
 			generator.getFileBlob({
 				terrain: this.state.textureOptions.terrain,
 				title: this.state.title,
-			}),
-			this.state.title.replace(/[\|&;\$%@"<>\(\)\+,]/g, '_') + '.swd'
+			})
 		)
+		link.href = blobUrl
+		link.download = this.state.title.replace(/[\|&;\$%@"<>\(\)\+,]/g, '_') + '.swd'
+		link.click()
+		URL.revokeObjectURL(blobUrl)
 	}
 
-	handleCompatibility = (value) => {
-		this.setState({
-			compatibility: value,
-		})
+	handleCompatibility = (compatibility) => {
+		this.setState({ compatibility })
 	}
 
 	handleSetWidth = (event) => {
-		this.state.seedOptions.width = ~~event.target.value
-		this.setState({
-			seedOptions: this.state.seedOptions,
-		})
+		const seedOptions = { ...this.state.seedOptions, width: ~~(event.target as HTMLSelectElement).value }
+		this.setState({ seedOptions })
 	}
 
-	handleSetHeight = (event) => {
-		this.state.seedOptions.height = ~~event.target.value
-		this.setState({
-			seedOptions: this.state.seedOptions,
-		})
+	handleSetHeight = (event: Event) => {
+		const seedOptions = { ...this.state.seedOptions, height: ~~(event.target as HTMLSelectElement).value }
+		this.setState({ seedOptions })
 	}
 
 	handleTerrain = (event) => {
@@ -256,8 +261,9 @@ export class MapGenerator extends Component<{}, State> {
 		this.handleDraw()
 	}
 
-	handleMassRatio = (value) => {
-		this.state.seedOptions.massRatio = ~~value
+	handleMassRatio = (massRatio: number) => {
+		const seedOptions = { ...this.state.seedOptions, massRatio }
+		this.setState({ seedOptions }, () => this.handleSeed('given'))
 	}
 
 	handleBaseLevel = (value) => {
@@ -326,20 +332,6 @@ export class MapGenerator extends Component<{}, State> {
 		return this.state.width > 256 || this.state.height > 256 || areas.length > 250
 	}
 
-	// This hack works around Firefox's issue with not triggering onChange when value changes.
-	// The bug was reported in 2002 and it's still not fixed by 2014.
-	// Quite religious take on W3C's brain fart! https://bugzilla.mozilla.org/show_bug.cgi?id=126379
-	handleFirefoxOnChangeInKeyDown = (event) => {
-		var el = event.target
-		// we have to delay because onKeyDown triggers before the value has changed
-		setTimeout(function () {
-			// onChange event triggers when blur is called...
-			el.blur()
-			// and then get right back in
-			el.focus()
-		})
-	}
-
 	handleMaxPlayerChange = (event) => {
 		this.setState({
 			maxPlayers: ~~event.target.value,
@@ -357,44 +349,43 @@ export class MapGenerator extends Component<{}, State> {
 	}
 
 	render() {
-		if (!this.state.meetsRequirements) {
-			return <Unsupported />
-		}
+		const gold = this.state.resources.mineGold || 0
+		const coal = this.state.resources.mineCoal || 0
+		const ironOre = this.state.resources.mineIronOre || 0
+		const granite = this.state.resources.mineGranite || 0
+		const mineTotal = gold + coal + ironOre + granite || 0
+		const players = this.state.players.map((player, index) => {
+			let className = 'player-position'
 
-		var gold = this.state.resources.mineGold || 0,
-			coal = this.state.resources.mineCoal || 0,
-			ironOre = this.state.resources.mineIronOre || 0,
-			granite = this.state.resources.mineGranite || 0,
-			mineTotal = gold + coal + ironOre + granite + 0.0001,
-			players = this.state.players.map((player, index) => {
-				var className = 'player-position',
-					style = {
-						left: player.x + 'px',
-						top: player.y + 'px',
-					}
+			const style = {
+				left: player.x + 'px',
+				top: player.y + 'px',
+			}
 
-				if (index > 6) {
-					className += ' ' + className + '--rttr'
+			if (index > 6) {
+				className += ' ' + className + '--rttr'
+			}
+
+			return <i className={className} id={'player' + index} style={style}></i>
+		})
+
+		const totalAreas = generator.getAreas() || []
+
+		const areas = totalAreas.reduce(
+			function (prevValue, curValue, index, array) {
+				if (curValue.type === 1) {
+					prevValue.land++
+					prevValue.landTotalMass += curValue.mass
+				} else if (curValue.type === 2) {
+					prevValue.water++
+					prevValue.waterTotalMass += curValue.mass
 				}
+				return prevValue
+			},
+			{ land: 0, landTotalMass: 0, water: 0, waterTotalMass: 0 }
+		)
 
-				return <i className={className} id={'player' + index} style={style}></i>
-			}),
-			totalAreas = generator.getAreas() || [],
-			areas = totalAreas.reduce(
-				function (prevValue, curValue, index, array) {
-					if (curValue.type === 1) {
-						prevValue.land++
-						prevValue.landTotalMass += curValue.mass
-					} else if (curValue.type === 2) {
-						prevValue.water++
-						prevValue.waterTotalMass += curValue.mass
-					}
-					return prevValue
-				},
-				{ land: 0, landTotalMass: 0, water: 0, waterTotalMass: 0 }
-			),
-			mapClass = 'settlers2-map'
-
+		let mapClass = 'settlers2-map'
 		mapClass += ' ' + mapClass + '--'
 
 		switch (this.state.textureOptions.terrain) {
@@ -408,57 +399,14 @@ export class MapGenerator extends Component<{}, State> {
 				mapClass += 'greenland'
 		}
 
-		const totalMass = areas.landTotalMass + areas.waterTotalMass
-
 		return (
 			<div>
 				{/*<Compatibility onChange={this.handleCompatibility} value={this.state.compatibility} />*/}
-				<p>
-					<span className="input-container" data-chars-remaining={19 - this.state.title.length}>
-						<input
-							className="settlers2-map-title"
-							type="text"
-							maxLength={19}
-							value={this.state.title}
-							onChange={this.handleTitleChange}
-							placeholder="Title"
-						/>
-					</span>
-					<br />
-					<button onClick={this.handleDownload}>Download</button>{' '}
-					<small className="settlers2-playable-on">
-						Map is playable on{' '}
-						{this.isRttROnly(totalAreas) ? (
-							<b>Return to the Roots only</b>
-						) : (
-							<span>The Settlers II &amp; Return to the Roots</span>
-						)}
-					</small>
-				</p>
-				<div className="player-positions">
-					<canvas
-						width={this.state.width}
-						height={this.state.height}
-						ref={this.seedRef}
-						className="settlers2-map"
-					></canvas>
-					<canvas
-						width={this.state.width}
-						height={this.state.height}
-						ref={this.canvasRef}
-						className={mapClass}
-					></canvas>
-					{players}
-				</div>
 				<ul className="seed-options">
 					<li>
 						<label>
 							Width:{' '}
-							<select
-								value={this.state.seedOptions.width}
-								onChange={this.handleSetWidth}
-								onKeyDown={this.handleFirefoxOnChangeInKeyDown}
-							>
+							<select value={this.state.seedOptions.width} onChange={this.handleSetWidth}>
 								<optgroup label="The Settlers II &amp; RttR">
 									{[64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256].map(function (
 										value
@@ -477,11 +425,7 @@ export class MapGenerator extends Component<{}, State> {
 					<li>
 						<label>
 							Height:{' '}
-							<select
-								value={this.state.seedOptions.height}
-								onChange={this.handleSetHeight}
-								onKeyDown={this.handleFirefoxOnChangeInKeyDown}
-							>
+							<select value={this.state.seedOptions.height} onChange={this.handleSetHeight}>
 								<optgroup label="The Settlers II &amp; RttR">
 									{[64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256].map(function (
 										value
@@ -500,25 +444,35 @@ export class MapGenerator extends Component<{}, State> {
 					<li>
 						Target playable landmass%:{' '}
 						<IncDec
+							delay={500}
 							minimumValue={1}
 							maximumValue={99}
 							value={'' + this.state.seedOptions.massRatio}
 							onChange={this.handleMassRatio}
 						/>
 					</li>
-					<li>
-						<button onClick={this.handleSeed}>New World</button>
-					</li>
 				</ul>
-				<br style={{ clear: 'both' }} />
+				<p>
+					<label>
+						Seed: <NumberInput value={this.state.seed} onChange={(seed) => this.setState({ seed })} />
+					</label>{' '}
+					<button name="seed" value="given" onClick={this.handleSeed} type="button">
+						Use seed
+					</button>{' '}
+					<button name="seed" value="random" onClick={this.handleSeed} type="button">
+						Use seed from time
+					</button>
+				</p>
+				<canvas
+					width={this.state.width}
+					height={this.state.height}
+					ref={this.canvasRef}
+					className={mapClass}
+				></canvas>
 				<p>
 					<label>
 						Display:
-						<select
-							value={this.state.viewType}
-							onChange={this.handleViewTypeChange}
-							onKeyDown={this.handleFirefoxOnChangeInKeyDown}
-						>
+						<select value={this.state.viewType} onChange={this.handleViewTypeChange}>
 							<optgroup label="World">
 								<option value="fast">Settlers II (fast)</option>
 								<option value="pretty">Detailed (slow)</option>
@@ -536,16 +490,14 @@ export class MapGenerator extends Component<{}, State> {
 					</label>
 				</p>
 				<section>
-					<header>Landscape Options</header>
+					<header>
+						<h3>Landscape Options</h3>
+					</header>
 					<p>These settings allow you to control the base landscape, the main look and feel of the world.</p>
 					<dl>
 						<dt>Environment:</dt>
 						<dd>
-							<select
-								value={this.state.textureOptions.terrain}
-								onChange={this.handleTerrain}
-								onKeyDown={this.handleFirefoxOnChangeInKeyDown}
-							>
+							<select value={this.state.textureOptions.terrain} onChange={this.handleTerrain}>
 								<option value="0">Greenland</option>
 								<option value="1">Wasteland</option>
 								<option value="2">Winter World</option>
@@ -599,6 +551,7 @@ export class MapGenerator extends Component<{}, State> {
 						<dt>Default playable area terrain:</dt>
 						<dd>
 							<TextureOptions
+								name="playable-terrain"
 								terrain={this.state.textureOptions.terrain}
 								texture={this.state.textureOptions.texture}
 								textures={[14, 0, 8, 9, 10, 15, 18, 34, 6]}
@@ -608,6 +561,7 @@ export class MapGenerator extends Component<{}, State> {
 						<dt>Default unplayable area terrain:</dt>
 						<dd>
 							<TextureOptions
+								name="unplayable-terrain"
 								terrain={this.state.textureOptions.terrain}
 								texture={this.state.textureOptions.waterTexture}
 								textures={[5, 2, 3, 4, 16, 7, 17, 19, 20, 21, 22]}
@@ -619,8 +573,19 @@ export class MapGenerator extends Component<{}, State> {
 						<button onClick={this.handleResources}>Randomize Resources</button>
 					</p>
 				</section>
+				<div className="player-positions">
+					<canvas
+						width={this.state.width}
+						height={this.state.height}
+						ref={this.seedRef}
+						className="settlers2-map"
+					></canvas>
+					{players}
+				</div>
 				<section>
-					<header>Player Options</header>
+					<header>
+						<h3>Player Options</h3>
+					</header>
 					<dl>
 						<dt>Maximum number of players:</dt>
 						<dd>
@@ -663,55 +628,44 @@ export class MapGenerator extends Component<{}, State> {
 						<button onClick={this.handlePlayers}>Randomize Players</button>
 					</p>
 				</section>
-				<h3>Statistics</h3>
-				<table>
-					<thead>
-						<tr>
-							<th>Resource</th>
-							<th>Value</th>
-							<th>% of max</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Players</td>
-							<td>{this.state.players.length}</td>
-							<td>-</td>
-						</tr>
-						<tr>
-							<td>Trees</td>
-							<td>{this.state.resources.tree || 0}</td>
-							<td>{Math.round(((this.state.resources.tree || 0) / areas.landTotalMass) * 100)} %</td>
-						</tr>
-						<tr>
-							<td>Granite</td>
-							<td>{this.state.resources.granite || 0}</td>
-							<td>
-								{Math.round(((this.state.resources.granite || 0) / (areas.landTotalMass * 7)) * 100)} %
-							</td>
-						</tr>
-						<tr>
-							<td>Mountain coal</td>
-							<td>{coal}</td>
-							<td>{Math.round((coal / mineTotal) * 100)} %</td>
-						</tr>
-						<tr>
-							<td>Mountain iron ore</td>
-							<td>{ironOre}</td>
-							<td>{Math.round((ironOre / mineTotal) * 100)} %</td>
-						</tr>
-						<tr>
-							<td>Mountain gold</td>
-							<td>{gold}</td>
-							<td>{Math.round((gold / mineTotal) * 100)} %</td>
-						</tr>
-						<tr>
-							<td>Mountain granite</td>
-							<td>{granite}</td>
-							<td>{Math.round((granite / mineTotal) * 100)} %</td>
-						</tr>
-					</tbody>
-				</table>
+				<section>
+					<header>
+						<h3>Statistics</h3>
+					</header>
+					<StatisticsTable
+						coal={coal}
+						gold={gold}
+						granite={granite}
+						ironOre={ironOre}
+						landTotalMass={areas.landTotalMass}
+						mineTotal={mineTotal}
+						players={players.length}
+						resources={this.state.resources}
+					/>
+				</section>
+				<p>
+					<label className="input-container" data-chars-remaining={19 - this.state.title.length}>
+						Title:{' '}
+						<input
+							className="settlers2-map-title"
+							type="text"
+							maxLength={19}
+							value={this.state.title}
+							onChange={this.handleTitleChange}
+							placeholder="Title"
+						/>
+					</label>
+					<br />
+					<button onClick={this.handleDownload}>Download</button>{' '}
+					<small className="settlers2-playable-on">
+						Map is playable on{' '}
+						{this.isRttROnly(totalAreas) ? (
+							<b>Return to the Roots only</b>
+						) : (
+							<span>The Settlers II &amp; Return to the Roots</span>
+						)}
+					</small>
+				</p>
 			</div>
 		)
 	}

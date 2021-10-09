@@ -1,8 +1,10 @@
+import { XORShift } from 'random-seedable'
+
 import S2Map from './map'
 
 import { CP437, COLOR, RESOURCE, SITE, TERRAIN, TEXTURE, TEXTURE_INFO, TREE_INFO } from './constants'
 
-export default function Generator() {
+export default function Generator(random: XORShift) {
 	let map,
 		areas,
 		baseLevel,
@@ -47,8 +49,8 @@ export default function Generator() {
 			givenStartingPoints = ~~options.startingPoints,
 			givenMassRatio = ~~options.massRatio
 
-		// width = 1024 || (~~(Math.random() * 20) + 7) * 16,
-		// height = 1024 || (~~(Math.random() * 20) + 7) * 16,
+		// width = 1024 || (~~(random.float() * 20) + 7) * 16,
+		// height = 1024 || (~~(random.float() * 20) + 7) * 16,
 		width = ~~options.width
 		height = ~~options.height
 		size = width * height
@@ -86,8 +88,8 @@ export default function Generator() {
 		// randomize some starting points
 		let value = 255
 		while (startingPoints < givenStartingPoints) {
-			const x = ~~(Math.random() * (width - borderProtection * 2)) + borderProtection
-			const y = ~~(Math.random() * (height - borderProtection * 2)) + borderProtection
+			const x = ~~(random.float() * (width - borderProtection * 2)) + borderProtection
+			const y = ~~(random.float() * (height - borderProtection * 2)) + borderProtection
 			const index = y * width + x
 
 			if (seedMap[index] === 0) {
@@ -96,10 +98,10 @@ export default function Generator() {
 			}
 		}
 		/*
-        x = ~~(Math.random() * (width - borderProtection * 2)) + borderProtection;
-        y = ~~(Math.random() * (height - borderProtection * 2)) + borderProtection;
+        x = ~~(random.float() * (width - borderProtection * 2)) + borderProtection;
+        y = ~~(random.float() * (height - borderProtection * 2)) + borderProtection;
         index = y * width + x;
-        var direction = ~~(Math.random() * 6),
+        var direction = ~~(random.float() * 6),
             around;
         while (startingPoints < givenStartingPoints) {
             around = map.getNodesByIndex(index);
@@ -128,9 +130,9 @@ export default function Generator() {
 
             if (x >= borderProtection && x < (width - borderProtection)
                 && y >= borderProtection && y < (height - borderProtection)) {
-                if (Math.random() < 0.15 && seedMap[index] === 0) {
+                if (random.float() < 0.15 && seedMap[index] === 0) {
                     if ((startingPoints & 7) === 0) {
-                        direction = (6 + (direction + ~~(Math.random() * 3) - 1)) % 6;
+                        direction = (6 + (direction + ~~(random.float() * 3) - 1)) % 6;
                     }
                     expandTo(index, value);
                     startingPoints++;
@@ -158,7 +160,7 @@ export default function Generator() {
 							~~(seedMap[around.bottomLeft] > 1) +
 							~~(seedMap[around.bottomRight] > 1)
 
-						if (Math.random() <= likelyhood[total]) {
+						if (random.float() <= likelyhood[total]) {
 							if (expander > 0) {
 								expandTo(index, ~~((value / expander) * total) + 2, i)
 							} else {
@@ -274,7 +276,7 @@ export default function Generator() {
 								x,
 								y,
 								0,
-								~~(Math.random() * (options.randomize * 2 + 1) - options.randomize)
+								~~(random.float() * (options.randomize * 2 + 1) - options.randomize)
 							)
 						}
 						index++
@@ -284,7 +286,7 @@ export default function Generator() {
 				index = 0
 				for (y = 0; y < height; y++) {
 					for (x = 0; x < width; x++) {
-						map.changeHeight(x, y, 0, ~~(Math.random() * (options.randomize * 2 + 1) - options.randomize))
+						map.changeHeight(x, y, 0, ~~(random.float() * (options.randomize * 2 + 1) - options.randomize))
 						index++
 					}
 				}
@@ -361,7 +363,7 @@ export default function Generator() {
 						(data[siteBlock + siteNodes.bottomLeft] & 0xf7) === 0x01 &&
 						(data[siteBlock + siteNodes.bottomRight] & 0xf7) === 0x01
 					) {
-						map.setTexture(i, mountainTextures[~~(Math.random() * 4)])
+						map.setTexture(i, mountainTextures[~~(random.float() * 4)])
 					}
 				}
 			}
@@ -380,7 +382,7 @@ export default function Generator() {
 						(data[siteBlock + siteNodes.bottomLeft] & 0xf7) === 0x01 &&
 						(data[siteBlock + siteNodes.bottomRight] & 0xf7) === 0x01
 					) {
-						map.setTexture(i, mountainTextures[~~(Math.random() * 4)])
+						map.setTexture(i, mountainTextures[~~(random.float() * 4)])
 					}
 				}
 			}
@@ -400,9 +402,17 @@ export default function Generator() {
 							~~((data[siteBlock + siteNodes.bottomLeft] & 0xf7) === 0x01) +
 							~~((data[siteBlock + siteNodes.bottomRight] & 0xf7) === 0x01)
 					) {
-						map.setTexture(i, mountainTextures[~~(Math.random() * 4)])
+						map.setTexture(i, mountainTextures[~~(random.float() * 4)])
 					}
 				}
+			}
+		}
+
+		// draw snow tops
+		for (i = 0; i < size; i++) {
+			if (data[i] >= biggestHeight - 1) {
+				// snow
+				map.setTexture(i, 0x02)
 			}
 		}
 
@@ -611,7 +621,7 @@ export default function Generator() {
 			if (map.isAnyTextureWithAnyOfFlags(i, TEXTURE.ROCK)) {
 				map.replaceTextureAnyOfFlags(i, 0x12, TEXTURE.ARABLE)
 			} else if (map.isMixedTextureWithAllOfFlags(i, TEXTURE.WATER | TEXTURE.HABITABLE)) {
-				if (Math.random() < 0.5) {
+				if (random.float() < 0.5) {
 					map.replaceTextureAnyOfFlags(i, 0x04, TEXTURE.WATER | TEXTURE.HABITABLE)
 				}
 			} else if (map.isMixedTextureWithAllOfFlags(i, TEXTURE.WATER | TEXTURE.ROCK)) {
@@ -623,7 +633,7 @@ export default function Generator() {
 
 		for (i = 0; i < size; i++) {
 			if (map.isMixedTextureWithAllOfFlags(i, TEXTURE.ARID | TEXTURE.ARABLE)) {
-				if (Math.random() < 0.75) {
+				if (random.float() < 0.75) {
 					map.replaceTextureAnyOfFlags(i, 0x0e, TEXTURE.ARABLE)
 				}
 			}
@@ -631,22 +641,37 @@ export default function Generator() {
 
 		for (i = 0; i < size; i++) {
 			if (map.isMixedTextureWithAllOfFlags(i, TEXTURE.STEPPE | TEXTURE.ARABLE)) {
-				if (Math.random() < 0.75) {
+				if (random.float() < 0.75) {
 					map.replaceTextureAnyOfFlags(i, 0x00, TEXTURE.MEADOW)
 				}
 			} else if (map.isMixedTextureWithAllOfFlags(i, TEXTURE.WATER | TEXTURE.ARID)) {
-				if (Math.random() < 0.15) {
+				if (random.float() < 0.15) {
 					map.setTexture(i, 0x0e)
 				}
 			} else if (map.isMixedTextureWithAllOfFlags(i, TEXTURE.STEPPE | TEXTURE.ARID)) {
-				if (Math.random() < 0.5) {
+				if (random.float() < 0.5) {
 					map.setTexture(i, 0x0e)
 				}
 			} else if (map.isEachTextureSame(i, 0x03)) {
-				if (Math.random() < 0.05) {
+				if (random.float() < 0.05) {
 					map.setTexture(i, 0x13)
 				}
 			}
+		}
+
+		const swampPositions = []
+
+		for (i = 0; i < size; i++) {
+			if (
+				data[siteBlock + i] !== SITE.IMPASSABLE &&
+				map.isMixedTextureWithAllOfFlags(i, TEXTURE.WATER | TEXTURE.MEADOW)
+			) {
+				swampPositions.push(i)
+			}
+		}
+
+		while (swampPositions.length) {
+			map.setTexture(swampPositions.shift(), 0x03)
 		}
 
 		/*
@@ -682,7 +707,7 @@ export default function Generator() {
 
 			if (sites.length > 0 && players.length < maxPlayerCount) {
 				// randomize a position from given plausible sites
-				var index = sites[~~(Math.random() * sites.length)]
+				var index = sites[~~(random.float() * sites.length)]
 				var x = index % width
 				var y = ~~((index - x) / width)
 
@@ -798,19 +823,19 @@ export default function Generator() {
 				} else if (textureFlag & TEXTURE.ROCK) {
 					// add coal / iron ore / gold / granite
 					newResource = seedMap[i] & 0x3f
-					// this had 0x20 at some point (think more about this)
-					if (newResource < 0x2c) {
-						newResource = RESOURCE.COAL | (i & 0x07)
-						resources.mineCoal += i & 0x07
-					} else if (newResource < 0x30) {
-						newResource = RESOURCE.GOLD | (i & 0x07)
-						resources.mineGold += i & 0x07
+					const quantity = (((i & 0x07) / 7) * 5 + 2) | 0
+					if (newResource < 0x1e) {
+						newResource = RESOURCE.COAL | quantity
+						resources.mineCoal += quantity
+					} else if (newResource < 0x28) {
+						newResource = RESOURCE.GOLD | quantity
+						resources.mineGold += quantity
 					} else if (newResource < 0x3e) {
-						newResource = RESOURCE.IRON_ORE | (i & 0x07)
-						resources.mineIronOre += i & 0x07
+						newResource = RESOURCE.IRON_ORE | quantity
+						resources.mineIronOre += quantity
 					} else {
-						newResource = RESOURCE.GRANITE | (i & 0x07)
-						resources.mineGranite += i & 0x07
+						newResource = RESOURCE.GRANITE | quantity
+						resources.mineGranite += quantity
 					}
 				} else if (textureFlag & TEXTURE.HABITABLE) {
 					if (textureFlag & TEXTURE.ARABLE) {
@@ -844,7 +869,7 @@ export default function Generator() {
 
 		// apply trees
 		while (usableLandmass > 0 && resources.tree < options.treeRatio) {
-			i = ~~(Math.random() * size)
+			i = ~~(random.float() * size)
 			if (data[touchBlock + i] === 0) {
 				nearbyNodes = map.getRadiusNodes(i % width, ~~((i - (i % width)) / width), seedMap[i] & 0x07)
 				for (j = 0; j < nearbyNodes.length; j++) {
@@ -852,18 +877,20 @@ export default function Generator() {
 					// see if we this location is free to use
 					if (data[touchBlock + k] === 0) {
 						// random here avoids getting stuck...
-						if ((seedMap[k] & 0x03) < 2 || Math.random() < 0.2) {
+						if ((seedMap[k] & 0x03) < 2 || random.float() < 0.2) {
+							const allowPalmTrees = map.isMixedTextureWithAllOfFlags(k, TEXTURE.WATER | TEXTURE.ARID)
+							const treeCount = allowPalmTrees ? 9 : 6
 							// mark done
 							data[touchBlock + k] = 1
-							treeIndex = ~~(Math.random() * 6)
+							treeIndex = ~~(random.float() * treeCount)
 							// skip through palm trees
-							if (treeIndex > 2) {
+							if (!allowPalmTrees && treeIndex > 2) {
 								treeIndex += 3
 							}
 							// type
 							data[objectTypeBlock + k] = 0xc4 | (treeIndex >> 2)
 							// Pine / Birch / Oak / Palm 1
-							data[objectIndexBlock + k] = 0x30 | ((treeIndex & 3) * 0x40) | ~~(Math.random() * 0x08)
+							data[objectIndexBlock + k] = 0x30 | ((treeIndex & 3) * 0x40) | ~~(random.float() * 0x08)
 							// increase counter
 							resources.tree++
 							usableLandmass--
@@ -878,7 +905,7 @@ export default function Generator() {
 
 		// apply granite
 		while (usableLandmass > 0 && resources.granite < options.graniteRatio) {
-			i = ~~(Math.random() * size)
+			i = ~~(random.float() * size)
 			if (data[touchBlock + i] === 0) {
 				nearbyNodes = map.getRadiusNodes(i % width, ~~((i - (i % width)) / width), seedMap[i] & 0x07)
 				for (j = 0; j < nearbyNodes.length; j++) {
@@ -886,13 +913,13 @@ export default function Generator() {
 					// see if we this location is free to use
 					if (data[touchBlock + k] === 0) {
 						// random here avoids getting stuck...
-						if ((seedMap[k] & 0x03) < 2 || Math.random() < 0.2) {
+						if ((seedMap[k] & 0x03) < 2 || random.float() < 0.2) {
 							// mark done
 							data[touchBlock + k] = 1
 							// type
 							data[objectTypeBlock + k] = 0xcc | (seedMap[k] & 0x01)
 							// quantity
-							data[objectIndexBlock + k] = ~~(Math.random() * 5) + 2
+							data[objectIndexBlock + k] = ~~(random.float() * 5) + 2
 							// increase counter
 							resources.granite++
 							usableLandmass--
