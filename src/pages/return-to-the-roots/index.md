@@ -19,10 +19,60 @@ Meet the [Babylonians](/return-to-the-roots/the-new-people)!
 
 You can find latest stable releases and nightly builds at [RttR download page](https://www.rttr.info/index.php?com=dynamic&mod=2).
 
-- [RttR Discord](https://discord.gg/kyTQsSx)
-- [RttR Facebook](https://www.facebook.com/s25rttr)
-- [RttR Twitter](https://twitter.com/s25RttR)
-- [RttR YouTube](https://www.youtube.com/user/returntotheroots)
+<nav>
+	<strong>Community links</strong><br />
+	<a href="https://discord.gg/kyTQsSx">
+		<img alt="" src="/assets/icons/Discord-Logo-Icon.svg#icon" loading="lazy" onload="this.nextElementSibling.querySelector('use').setAttribute('href', this.src);this.remove()" onerror="this.onload()" />
+		<svg width="4rem" height="4rem">
+			<title>Return to the Roots Discord</title>
+			<use></use>
+		</svg>
+	</a>
+	<a href="https://www.facebook.com/s25rttr">
+		<img alt="" src="/assets/icons/Facebook-Logo-Icon.svg#icon" loading="lazy" onload="this.nextElementSibling.querySelector('use').setAttribute('href', this.src);this.remove()" onerror="this.onload()" />
+		<svg width="4rem" height="4rem">
+			<title>Return to the Roots Facebook</title>
+			<use></use>
+		</svg>
+	</a>
+	<a href="https://twitter.com/s25RttR">
+		<img alt="" src="/assets/icons/Twitter-Logo-Icon.svg#icon" loading="lazy" onload="this.nextElementSibling.querySelector('use').setAttribute('href', this.src);this.remove()" onerror="this.onload()" />
+		<svg width="4rem" height="4rem">
+			<title>Return to the Roots Twitter</title>
+			<use></use>
+		</svg>
+	</a>
+	<a href="https://www.youtube.com/user/returntotheroots">
+		<img alt="" src="/assets/icons/YouTube-Logo-Icon.svg#icon" loading="lazy" onload="this.nextElementSibling.querySelector('use').setAttribute('href', this.src);this.remove()" onerror="this.onload()" />
+		<svg width="4rem" height="4rem">
+			<title>Return to the Roots YouTube</title>
+			<use></use>
+		</svg>
+	</a>
+</nav>
+<style>
+	nav { text-align: center; }
+	nav > a {
+		display: inline-block;
+	}
+	nav > a:hover svg {
+		--icon-color: unset;
+		--icon-dark-color: unset;
+		--icon-light-color: unset;
+	}
+	img[src$="#icon"] {
+		position: absolute;
+		visibility: hidden;
+		width: 4rem;
+		height: 4rem;
+	}
+	svg {
+		--icon-light-color: rgba(255, 255, 255, 0.875);
+		--icon-dark-color: rgba(0, 0, 0, 0.75);
+		--icon-color: currentColor;
+		margin: 1rem;
+	}
+</style>
 
 ### Help developing game, create graphics, report bugs
 
