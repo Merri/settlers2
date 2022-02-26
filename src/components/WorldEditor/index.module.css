@@ -1,0 +1,4 @@
+.bars {
+	display: flex;
+	gap: 0.125rem;
+}

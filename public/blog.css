@@ -496,3 +496,21 @@ details > summary[data-open="false"]::after { transform: rotate(45deg) }
     opacity: 1;
     transform: translateY(0%);
 }
+
+@property --icon-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: unset;
+}
+
+@property --icon-light-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: unset;
+}
+
+@property --icon-dark-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: unset;
+}

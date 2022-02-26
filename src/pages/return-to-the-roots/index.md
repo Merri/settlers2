@@ -67,8 +67,8 @@ You can find latest stable releases and nightly builds at [RttR download page](h
 		height: 4rem;
 	}
 	svg {
-		--icon-light-color: rgba(255, 255, 255, 0.875);
-		--icon-dark-color: rgba(0, 0, 0, 0.75);
+		--icon-light-color: rgba(255, 255, 255, 0.75);
+		--icon-dark-color: rgba(0, 0, 0, 0.375);
 		--icon-color: currentColor;
 		margin: 1rem;
 	}

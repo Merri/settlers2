@@ -1,4 +1,21 @@
-export enum Animal {
+export enum BlockType {
+	HeightMap = 0,
+	Texture1 = 1,
+	Texture2 = 2,
+	Roads = 3,
+	Object1 = 4,
+	Object2 = 5,
+	Animal = 6,
+	Unknown = 7,
+	BuildSite = 8,
+	UnknownFill7 = 9,
+	Icon = 10,
+	Resource = 11,
+	LightMap = 12,
+	RegionMap = 13,
+}
+
+export enum AnimalType {
 	None = 0,
 	Rabbit = 1,
 	Fox = 2,
@@ -13,7 +30,7 @@ export enum Animal {
 	InvalidFill = 255,
 }
 
-export enum AreaTypeFlag {
+export enum RegionType {
 	Unused = 0,
 	Land = 1,
 	Water = 2,
@@ -30,6 +47,13 @@ export enum ResourceFlag {
 	Granite = 0x58,
 	/** Fish will run out once all 7 fishes have been caught. */
 	Fish = 0x87,
+}
+
+export enum ObjectType {
+	Tree = 0xc4,
+	Granite = 0xcc,
+	/** Mask away two lowest bits */
+	Match = 0xfc,
 }
 
 export enum ConstructionSite {
@@ -84,7 +108,7 @@ export enum TextureFeatureFlag {
  * Two high bits are reserved for feature flags.
  */
 export enum TextureFlag {
-	/** Use to remove the flags and to only retain  */
+	/** Use to remove the flags and to only retain texture id. */
 	ToIdValue = 0x3f,
 	/** Indicates a harbour building can be built here. */
 	Harbor = 0x40,
@@ -99,6 +123,10 @@ interface TextureData {
 	y: number
 	width: number
 	height: number
+}
+
+export enum Texture {
+	Water = 0x05,
 }
 
 export const Textures = new Map<number, TextureData>([
