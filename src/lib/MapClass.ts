@@ -12,7 +12,7 @@ import {
 
 const BLOCKS = 14
 
-function getNodesByIndex(index: number, width: number, height: number) {
+export function getNodesByIndex(index: number, width: number, height: number) {
 	let x = index % width,
 		y = (index - x) / width,
 		xL = (x > 0 ? x : width) - 1,
@@ -132,7 +132,7 @@ interface TextureNodes {
 	topRight: number
 }
 
-function getTextureNodesByIndex(index: number, width: number, height: number): TextureNodes {
+export function getTextureNodesByIndex(index: number, width: number, height: number): TextureNodes {
 	let x = index % width,
 		y = (index - x) / width,
 		xL = (x > 0 ? x : width) - 1,
