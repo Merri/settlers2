@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'preact/compat'
 import { MapClass } from '$/lib/MapClass'
-import { AnimalType, BlockType } from '$/lib/types'
+import { AnimalType, BlockType, ObjectType } from '$/lib/types'
 import { sanitizeAsCp437 } from '$/lib/cp437'
 
 import styles from './index.module.css'
+import { MapCanvas } from './Map'
 
 interface WorldFile {
 	filename: string
@@ -48,10 +49,9 @@ function getAnimalName(animalType: AnimalType) {
 	}
 }
 
-function calculateHeightElevations(view: DataView) {
+function calculateHeightElevations(heightMap: Uint8Array) {
 	const elevations = new Array(61).fill(0)
 
-	const heightMap = new Uint8Array(view.buffer, view.byteOffset, view.byteLength)
 	const log: string[] = []
 
 	heightMap.forEach((value, index) => {
@@ -200,7 +200,10 @@ export function WorldEditor() {
 			<dl>
 				{worlds.map(({ filename, world }, index) => (
 					<div key={index}>
-						<dt>{world.title || <code>{filename}</code>}</dt>
+						<dt>
+							<MapCanvas world={world} />
+							{world.title || <code>{filename}</code>}
+						</dt>
 						<dd>
 							<table>
 								<thead>
@@ -258,7 +261,7 @@ export function WorldEditor() {
 											<select
 												data-index={index}
 												name="terrain"
-												onInput={handleNumberInput}
+												onChange={handleNumberInput}
 												value={world.terrain}
 											>
 												<option value={0}>Greenland</option>
@@ -321,7 +324,7 @@ export function WorldEditor() {
 											<select
 												data-index={index}
 												name="validationFlag"
-												onInput={handleNumberInput}
+												onChange={handleNumberInput}
 												value={world.validationFlag}
 											>
 												<option value={0}>Allow in all game modes</option>
@@ -354,19 +357,27 @@ export function WorldEditor() {
 												world.blocks[BlockType.Object2].byteOffset,
 												world.blocks[BlockType.Object2].byteLength
 											)
-												.reduce((hq, objectType, index) => {
+												.reduce((obj, objectType, index) => {
+													let meta = ''
 													if (objectType === 0x80) {
-														const player =
-															world.blocks[BlockType.Object1].getUint8(index) + 1
+														meta = `Player ${
+															world.blocks[BlockType.Object1][index] + 1
+														} headquarters`
+													} else if (objectType === 0xc8) {
+														if (world.blocks[BlockType.Object1][index] === 0x16) {
+															meta = `Gate`
+														}
+													}
+													if (meta) {
 														const x = index % world.width
 														const y = Math.round((index - x) / world.width)
-														hq.push({ player, x, y })
+														obj.push({ meta, x, y })
 													}
-													return hq
-												}, [] as { player: number; x: number; y: number }[])
-												.map(({ player, x, y }, idx) => (
+													return obj
+												}, [] as { meta: string; x: number; y: number }[])
+												.map(({ meta, x, y }, idx) => (
 													<span key={idx}>
-														Player {player} headquarters: {x} &times; {y}
+														{meta}: {x} &times; {y}
 														<br />
 													</span>
 												))}

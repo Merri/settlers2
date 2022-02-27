@@ -177,7 +177,7 @@ type Animals = [number, number, number][]
 export class NotMapError extends Error {}
 
 export class MapClass {
-	blocks: Record<BlockType, DataView | null> = {
+	blocks: Record<BlockType, Uint8Array | null> = {
 		[BlockType.HeightMap]: null,
 		[BlockType.Texture1]: null,
 		[BlockType.Texture2]: null,
@@ -250,9 +250,9 @@ export class MapClass {
 	private initBlocks = (size: number) => {
 		this.fileBuffer = new ArrayBuffer(size * BLOCKS)
 		Object.keys(this.blocks).forEach((index) => {
-			this.blocks[index] = new DataView(this.fileBuffer, ~~index * size, size)
+			this.blocks[index] = new Uint8Array(this.fileBuffer, ~~index * size, size)
 		})
-		new Uint8Array(this.blocks[BlockType.UnknownFill7].buffer).fill(7)
+		this.blocks[BlockType.UnknownFill7].fill(7)
 	}
 
 	private initFromFile = (view: DataView, headerSize: 0 | 2342, blockHeaderSize: 4 | 16) => {
@@ -306,7 +306,7 @@ export class MapClass {
 					break
 				}
 				// garbage?
-				if (regionType === 0 || regionType > 2 || regionX >= width || regionY >= height || regionSize >= size) {
+				if (regionType > 2 || regionX >= width || regionY >= height || regionSize >= size) {
 					break
 				}
 				regions.push([regionType, regionX, regionY, regionSize])
@@ -342,11 +342,7 @@ export class MapClass {
 				)
 			}
 
-			const target = new Uint8Array(
-				this.blocks[blockIndex].buffer,
-				this.blocks[blockIndex].byteOffset,
-				this.blocks[blockIndex].byteLength
-			)
+			const target = this.blocks[blockIndex]
 			const source = new Uint8Array(view.buffer, readIndex, blockSize)
 			readIndex += blockSize
 
@@ -419,22 +415,22 @@ export class MapClass {
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
 
-		const bottomLeft = t2.getUint8(nodes.bottomLeft) & TextureFlag.ToIdValue
+		const bottomLeft = t2[nodes.bottomLeft] & TextureFlag.ToIdValue
 		if (bottomLeft !== texture) return false
 
-		const bottomRight = t2.getUint8(nodes.bottomRight) & TextureFlag.ToIdValue
+		const bottomRight = t2[nodes.bottomRight] & TextureFlag.ToIdValue
 		if (bottomRight !== texture) return false
 
-		const top = t2.getUint8(nodes.top) & TextureFlag.ToIdValue
+		const top = t2[nodes.top] & TextureFlag.ToIdValue
 		if (top !== texture) return false
 
-		const topLeft = t1.getUint8(nodes.topLeft) & TextureFlag.ToIdValue
+		const topLeft = t1[nodes.topLeft] & TextureFlag.ToIdValue
 		if (topLeft !== texture) return false
 
-		const topRight = t1.getUint8(nodes.topRight) & TextureFlag.ToIdValue
+		const topRight = t1[nodes.topRight] & TextureFlag.ToIdValue
 		if (topRight !== texture) return false
 
-		const bottom = t1.getUint8(nodes.bottom) & TextureFlag.ToIdValue
+		const bottom = t1[nodes.bottom] & TextureFlag.ToIdValue
 		if (bottom !== texture) return false
 
 		return true
@@ -445,22 +441,22 @@ export class MapClass {
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
 
-		const bottomLeft = Textures.get(t2.getUint8(nodes.bottomLeft) & TextureFlag.ToIdValue).featureFlags & flags
+		const bottomLeft = Textures.get(t2[nodes.bottomLeft] & TextureFlag.ToIdValue).featureFlags & flags
 		if (bottomLeft === 0) return false
 
-		const bottomRight = Textures.get(t2.getUint8(nodes.bottomRight) & TextureFlag.ToIdValue).featureFlags & flags
+		const bottomRight = Textures.get(t2[nodes.bottomRight] & TextureFlag.ToIdValue).featureFlags & flags
 		if (bottomRight === 0) return false
 
-		const top = Textures.get(t2.getUint8(nodes.top) & TextureFlag.ToIdValue).featureFlags & flags
+		const top = Textures.get(t2[nodes.top] & TextureFlag.ToIdValue).featureFlags & flags
 		if (top === 0) return false
 
-		const topLeft = Textures.get(t1.getUint8(nodes.topLeft) & TextureFlag.ToIdValue).featureFlags & flags
+		const topLeft = Textures.get(t1[nodes.topLeft] & TextureFlag.ToIdValue).featureFlags & flags
 		if (topLeft === 0) return false
 
-		const topRight = Textures.get(t1.getUint8(nodes.topRight) & TextureFlag.ToIdValue).featureFlags & flags
+		const topRight = Textures.get(t1[nodes.topRight] & TextureFlag.ToIdValue).featureFlags & flags
 		if (topRight === 0) return false
 
-		const bottom = Textures.get(t1.getUint8(nodes.bottom) & TextureFlag.ToIdValue).featureFlags & flags
+		const bottom = Textures.get(t1[nodes.bottom] & TextureFlag.ToIdValue).featureFlags & flags
 		if (bottom === 0) return false
 
 		return true
@@ -476,32 +472,12 @@ export class MapClass {
 	updateBuildSiteMap = () => {
 		const size = this.width * this.height
 		// input from
-		const heightMap = new Uint8Array(
-			this.blocks[BlockType.HeightMap].buffer,
-			this.blocks[BlockType.HeightMap].byteOffset,
-			size
-		)
-		const t1 = new Uint8Array(
-			this.blocks[BlockType.Texture1].buffer,
-			this.blocks[BlockType.Texture1].byteOffset,
-			size
-		)
-		const t2 = new Uint8Array(
-			this.blocks[BlockType.Texture2].buffer,
-			this.blocks[BlockType.Texture2].byteOffset,
-			size
-		)
-		const o2 = new Uint8Array(
-			this.blocks[BlockType.Object2].buffer,
-			this.blocks[BlockType.Object2].byteOffset,
-			size
-		)
+		const heightMap = this.blocks[BlockType.HeightMap]
+		const t1 = this.blocks[BlockType.Texture1]
+		const t2 = this.blocks[BlockType.Texture2]
+		const o2 = this.blocks[BlockType.Object2]
 		// output to
-		const buildSite = new Uint8Array(
-			this.blocks[BlockType.BuildSite].buffer,
-			this.blocks[BlockType.BuildSite].byteOffset,
-			size
-		)
+		const buildSite = this.blocks[BlockType.BuildSite]
 
 		for (let i = 0; i < size; i++) {
 			const nodes = getNodesByIndex(i, this.width, this.height)
@@ -678,11 +654,7 @@ export class MapClass {
 	 */
 	updateRegions = () => {
 		const size = this.width * this.height
-		const regionMap = new Uint8Array(
-			this.blocks[BlockType.RegionMap].buffer,
-			this.blocks[BlockType.RegionMap].byteOffset,
-			size
-		)
+		const regionMap = this.blocks[BlockType.RegionMap]
 		const indexProcessed = new Set<number>()
 		regionMap.fill(0)
 		this.regions = []
@@ -895,16 +867,8 @@ export class MapClass {
 	 */
 	updateLightMap = () => {
 		const size = this.width * this.height
-		const heightMap = new Uint8Array(
-			this.blocks[BlockType.HeightMap].buffer,
-			this.blocks[BlockType.HeightMap].byteOffset,
-			size
-		)
-		const lightMap = new Uint8Array(
-			this.blocks[BlockType.LightMap].buffer,
-			this.blocks[BlockType.LightMap].byteOffset,
-			size
-		)
+		const heightMap = this.blocks[BlockType.HeightMap]
+		const lightMap = this.blocks[BlockType.LightMap]
 		heightMap.forEach((height, index) => {
 			let shade = 0
 			const around = getNodesByIndex(index, this.width, this.height)
@@ -938,7 +902,7 @@ export class MapClass {
 				break
 			}
 			// garbage?
-			if (regionType === 0 || regionType > 2 || regionX >= width || regionY >= height || regionSize >= size) {
+			if (regionType > 2 || regionX >= width || regionY >= height || regionSize >= size) {
 				throw new NotMapError(`Given region data is invalid for current map`)
 			}
 			regions.push([regionType, regionX, regionY, regionSize])
@@ -979,11 +943,7 @@ export class MapClass {
 				const startIndex = 14 + blockIndex * (size + 4)
 				view.setUint32(startIndex, size, true)
 				const target = new Uint8Array(buffer, startIndex + 4, size)
-				const source = new Uint8Array(
-					this.blocks[blockIndex].buffer,
-					this.blocks[blockIndex].byteOffset,
-					this.blocks[blockIndex].byteLength
-				)
+				const source = this.blocks[blockIndex]
 				target.set(source)
 			}
 
@@ -1046,11 +1006,7 @@ export class MapClass {
 			view.setUint16(0x93a + offset, 1, true)
 			view.setUint32(0x93c + offset, size, true)
 			// block data
-			const source = new Uint8Array(
-				this.blocks[blockIndex].buffer,
-				this.blocks[blockIndex].byteOffset,
-				this.blocks[blockIndex].byteLength
-			)
+			const source = this.blocks[blockIndex]
 			blocks.set(source, offset + 16)
 		}
 

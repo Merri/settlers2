@@ -1,0 +1,13 @@
+.container {
+	-webkit-overflow-scrolling: touch;
+	max-height: 256px;
+	max-width: 256px;
+	overflow: auto;
+}
+
+.container > canvas {
+	display: block;
+	image-rendering: crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: pixelated;
+}
