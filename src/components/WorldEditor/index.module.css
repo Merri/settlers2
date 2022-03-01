@@ -2,3 +2,35 @@
 	display: flex;
 	gap: 0.125rem;
 }
+
+.horizontallyScrollable {
+	overflow: hidden;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.buttonRow {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.button {
+	appearance: none;
+	background: white;
+	border: none;
+	color: #333;
+	cursor: pointer;
+	font-size: 0.875rem;
+	font-weight: bold;
+	flex: none;
+	height: 256px;
+	width: 256px;
+	padding: 1rem;
+	vertical-align: middle;
+}
+
+.buttonSelected {
+	composes: button;
+	background-color: var(--theme-accent);
+	color: white;
+}

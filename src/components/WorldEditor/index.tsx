@@ -109,7 +109,7 @@ export function WorldEditor() {
 		})
 
 		setErrors(errors)
-		setWorlds((worlds) => worlds.concat(worldFiles))
+		setWorlds((worlds) => worldFiles.concat(worlds))
 	}
 
 	const downloadWld = useCallback(
@@ -206,22 +206,26 @@ export function WorldEditor() {
 				</div>
 			)}
 			<h2>Maps</h2>
-			<div>
-				{worlds.map(({ filename, world }, index) => {
-					const isSelected = index === selected
-					return (
-						<button
-							aria-selected={isSelected}
-							onClick={onClickWorld}
-							type="button"
-							value={index}
-							key={index}
-						>
-							<MapCanvas {...world} color1={isSelected ? 0 : 255} color2={isSelected ? 255 : 0} />
-							{filename}
-						</button>
-					)
-				})}
+			<div className={styles.horizontallyScrollable}>
+				<div className={styles.buttonRow}>
+					{worlds.map(({ filename, world }, index) => {
+						const isSelected = index === selected
+						return (
+							<button
+								className={isSelected ? styles.buttonSelected : styles.button}
+								aria-selected={isSelected}
+								onClick={onClickWorld}
+								type="button"
+								value={index}
+								key={index}
+								title={world.title}
+							>
+								<MapCanvas {...world} color1={isSelected ? 0 : 255} color2={isSelected ? 255 : 0} />
+								{filename}
+							</button>
+						)
+					})}
+				</div>
 			</div>
 			{world != null && (
 				<>
