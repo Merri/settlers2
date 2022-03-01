@@ -6,7 +6,7 @@ import styles from './Map.module.css'
 import { BlockType, TextureFlag, Trees } from '$/lib/types'
 import { palettes, texturePaletteIndex } from '$/lib/palette'
 
-function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass) {
+function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, color2 = 255) {
 	const buffer = canvas.getContext('2d')
 	const imageData = buffer.getImageData(0, 0, world.width, world.height)
 	const image = imageData.data
@@ -28,23 +28,26 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass) {
 		let baseHeight = heightMap[i]
 		g += 12 * (heightMap[nodes.topRight] - baseHeight)
 		g += 8 * (heightMap[nodes.topLeft] - baseHeight)
+		g += 8 * (heightMap[nodes.right] - baseHeight)
 		g -= 8 * (heightMap[nodes.left] - baseHeight)
-		g -= 16 * (heightMap[bottomLeft] - baseHeight)
+		g -= 8 * (heightMap[nodes.bottomLeft] - baseHeight)
+		g -= 12 * (heightMap[bottomLeft] - baseHeight)
 		if (g > 0) g = g * 0.85
 		if (g < 0) g = g * 0.25
+		g = Math.min(255, Math.max(0, g))
 
 		const tNodes = getTextureNodesByIndex(i, world.width, world.height)
-		const i1 = texPalette[t1[tNodes.topLeft] & TextureFlag.ToIdValue]
-		const i2 = texPalette[t2[tNodes.top] & TextureFlag.ToIdValue]
-		const i3 = texPalette[t1[tNodes.topRight] & TextureFlag.ToIdValue]
-		const i4 = texPalette[t2[tNodes.bottomLeft] & TextureFlag.ToIdValue]
-		const i5 = texPalette[t1[tNodes.bottom] & TextureFlag.ToIdValue]
-		const i6 = texPalette[t2[tNodes.bottomRight] & TextureFlag.ToIdValue]
+		const i1 = texPalette[t1[tNodes.top1Left] & TextureFlag.ToIdValue]
+		const i2 = texPalette[t2[tNodes.top2] & TextureFlag.ToIdValue]
+		const i3 = texPalette[t1[tNodes.top1Right] & TextureFlag.ToIdValue]
+		const i4 = texPalette[t2[tNodes.bottom2Left] & TextureFlag.ToIdValue]
+		const i5 = texPalette[t1[tNodes.bottom1] & TextureFlag.ToIdValue]
+		const i6 = texPalette[t2[tNodes.bottom2Right] & TextureFlag.ToIdValue]
 
 		const lightRatio = Math.abs(g - 128) / 224
-		const lightR = lightRatio * (g < 100 ? 0 : 255)
-		const lightG = lightRatio * (g < 128 ? 0 : 255)
-		const lightB = lightRatio * (g < 144 ? 0 : 255)
+		const lightR = lightRatio * (g < 100 ? color1 : color2)
+		const lightG = lightRatio * (g < 128 ? color1 : color2)
+		const lightB = lightRatio * (g < 144 ? color1 : color2)
 		const colorRatio = 1 - lightRatio
 
 		const r1 = palette[i1 * 3] * colorRatio + lightR
@@ -105,11 +108,11 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass) {
 	buffer.putImageData(imageData, 0, 0)
 }
 
-export function MapCanvas({ world }: { world: MapClass }) {
+export function MapCanvas({ color1, color2, ...world }: MapClass & { color1: number; color2: number }) {
 	const ref = useRef<HTMLCanvasElement>()
 
 	useEffect(() => {
-		if (ref.current && world) drawToCanvas(ref.current, world)
+		if (ref.current && world) drawToCanvas(ref.current, world as MapClass, color1, color2)
 	}, [world])
 
 	return (

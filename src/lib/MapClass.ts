@@ -119,17 +119,12 @@ function getNodesAtRadius(index: number, radius: number, width: number, height: 
 
 interface TextureNodes {
 	/** Texture2 */
-	bottomLeft: number
-	/** Texture2 */
-	bottomRight: number
-	/** Texture2 */
-	top: number
-	/* Texture1 */
-	bottom: number
-	/* Texture1 */
-	topLeft: number
-	/* Texture1 */
-	topRight: number
+	bottom2Left: number
+	bottom2Right: number
+	top2: number
+	bottom1: number
+	top1Left: number
+	top1Right: number
 }
 
 export function getTextureNodesByIndex(index: number, width: number, height: number): TextureNodes {
@@ -146,21 +141,21 @@ export function getTextureNodesByIndex(index: number, width: number, height: num
 		let xR = (x + 1) % width
 
 		return {
-			bottomLeft: y + xL,
-			bottom: index,
-			bottomRight: index,
-			topLeft: yT + x,
-			top: yT + x,
-			topRight: yT + xR,
+			bottom2Left: y + xL,
+			bottom1: index,
+			bottom2Right: index,
+			top1Left: yT + x,
+			top2: yT + x,
+			top1Right: yT + xR,
 		}
 	} else {
 		return {
-			bottomLeft: y + xL,
-			bottom: index,
-			bottomRight: index,
-			topLeft: yT + xL,
-			top: yT + xL,
-			topRight: yT + x,
+			bottom2Left: y + xL,
+			bottom1: index,
+			bottom2Right: index,
+			top1Left: yT + xL,
+			top2: yT + xL,
+			top1Right: yT + x,
 		}
 	}
 }
@@ -283,7 +278,7 @@ export class MapClass {
 		if (headerSize === 2342) {
 			const isLongTitle =
 				view.getUint8(29) !== 0 && (view.getUint16(30, true) !== width || view.getUint16(32, true) !== height)
-			this.terrain = view.getUint8(34)
+			this.terrain = Math.min(2, view.getUint8(34))
 			this.playerCount = view.getUint8(35)
 			const isGreenland = this.terrain === 0
 			// normal title maximum length is 19, but the game reads bytes until it finds a null character
@@ -415,22 +410,22 @@ export class MapClass {
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
 
-		const bottomLeft = t2[nodes.bottomLeft] & TextureFlag.ToIdValue
+		const bottomLeft = t2[nodes.bottom2Left] & TextureFlag.ToIdValue
 		if (bottomLeft !== texture) return false
 
-		const bottomRight = t2[nodes.bottomRight] & TextureFlag.ToIdValue
+		const bottomRight = t2[nodes.bottom2Right] & TextureFlag.ToIdValue
 		if (bottomRight !== texture) return false
 
-		const top = t2[nodes.top] & TextureFlag.ToIdValue
+		const top = t2[nodes.top2] & TextureFlag.ToIdValue
 		if (top !== texture) return false
 
-		const topLeft = t1[nodes.topLeft] & TextureFlag.ToIdValue
+		const topLeft = t1[nodes.top1Left] & TextureFlag.ToIdValue
 		if (topLeft !== texture) return false
 
-		const topRight = t1[nodes.topRight] & TextureFlag.ToIdValue
+		const topRight = t1[nodes.top1Right] & TextureFlag.ToIdValue
 		if (topRight !== texture) return false
 
-		const bottom = t1[nodes.bottom] & TextureFlag.ToIdValue
+		const bottom = t1[nodes.bottom1] & TextureFlag.ToIdValue
 		if (bottom !== texture) return false
 
 		return true
@@ -441,22 +436,22 @@ export class MapClass {
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
 
-		const bottomLeft = Textures.get(t2[nodes.bottomLeft] & TextureFlag.ToIdValue).featureFlags & flags
+		const bottomLeft = Textures.get(t2[nodes.bottom2Left] & TextureFlag.ToIdValue).featureFlags & flags
 		if (bottomLeft === 0) return false
 
-		const bottomRight = Textures.get(t2[nodes.bottomRight] & TextureFlag.ToIdValue).featureFlags & flags
+		const bottomRight = Textures.get(t2[nodes.bottom2Right] & TextureFlag.ToIdValue).featureFlags & flags
 		if (bottomRight === 0) return false
 
-		const top = Textures.get(t2[nodes.top] & TextureFlag.ToIdValue).featureFlags & flags
+		const top = Textures.get(t2[nodes.top2] & TextureFlag.ToIdValue).featureFlags & flags
 		if (top === 0) return false
 
-		const topLeft = Textures.get(t1[nodes.topLeft] & TextureFlag.ToIdValue).featureFlags & flags
+		const topLeft = Textures.get(t1[nodes.top1Left] & TextureFlag.ToIdValue).featureFlags & flags
 		if (topLeft === 0) return false
 
-		const topRight = Textures.get(t1[nodes.topRight] & TextureFlag.ToIdValue).featureFlags & flags
+		const topRight = Textures.get(t1[nodes.top1Right] & TextureFlag.ToIdValue).featureFlags & flags
 		if (topRight === 0) return false
 
-		const bottom = Textures.get(t1[nodes.bottom] & TextureFlag.ToIdValue).featureFlags & flags
+		const bottom = Textures.get(t1[nodes.bottom1] & TextureFlag.ToIdValue).featureFlags & flags
 		if (bottom === 0) return false
 
 		return true
@@ -484,16 +479,16 @@ export class MapClass {
 			const tn1 = getTextureNodesByIndex(i, this.width, this.height)
 			const tn2 = getTextureNodesByIndex(nodes.bottomRight, this.width, this.height)
 
-			const tex1 = t1[tn1.topLeft] & TextureFlag.ToIdValue
-			const tex2 = t2[tn1.top] & TextureFlag.ToIdValue
-			const tex3 = t1[tn1.topRight] & TextureFlag.ToIdValue
-			const tex4 = t2[tn1.bottomLeft] & TextureFlag.ToIdValue
-			const tex5 = t1[tn1.bottom] & TextureFlag.ToIdValue
-			const tex6 = t2[tn1.bottomRight] & TextureFlag.ToIdValue
-			const tex7 = t1[tn2.topRight] & TextureFlag.ToIdValue
-			const tex8 = t2[tn2.bottomLeft] & TextureFlag.ToIdValue
-			const tex9 = t1[tn2.bottom] & TextureFlag.ToIdValue
-			const texA = t2[tn2.bottomRight] & TextureFlag.ToIdValue
+			const tex1 = t1[tn1.top1Left] & TextureFlag.ToIdValue
+			const tex2 = t2[tn1.top2] & TextureFlag.ToIdValue
+			const tex3 = t1[tn1.top1Right] & TextureFlag.ToIdValue
+			const tex4 = t2[tn1.bottom2Left] & TextureFlag.ToIdValue
+			const tex5 = t1[tn1.bottom1] & TextureFlag.ToIdValue
+			const tex6 = t2[tn1.bottom2Right] & TextureFlag.ToIdValue
+			const tex7 = t1[tn2.top1Right] & TextureFlag.ToIdValue
+			const tex8 = t2[tn2.bottom2Left] & TextureFlag.ToIdValue
+			const tex9 = t1[tn2.bottom1] & TextureFlag.ToIdValue
+			const texA = t2[tn2.bottom2Right] & TextureFlag.ToIdValue
 
 			const tex1Flags = Textures.get(tex1).featureFlags
 			const tex2Flags = Textures.get(tex2).featureFlags
