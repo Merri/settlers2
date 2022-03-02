@@ -369,6 +369,10 @@ export class MapClass {
 
 		const footerSize = view.byteLength - readIndex
 
+		if (footerSize >= size) {
+			this.log.push('File footer is very large!')
+		}
+
 		const animalOverflow = footerSize % 5
 		if (animalOverflow > 1) {
 			this.log.push(`File footer (animals) contains more bytes than expected`)
