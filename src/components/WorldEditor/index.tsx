@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'preact/compat'
 import { MapClass } from '$/lib/MapClass'
 import { AnimalType, BlockType } from '$/lib/types'
-import { sanitizeAsCp437 } from '$/lib/cp437'
+import { cp437ToString, sanitizeAsCp437 } from '$/lib/cp437'
 
 import styles from './index.module.css'
 import { MapCanvas } from './Map'
@@ -9,6 +9,8 @@ import { MapCanvas } from './Map'
 interface WorldFile {
 	filename: string
 	world: MapClass
+	originalFilepath?: string
+	ticks?: number
 }
 
 const leaderNames = [
@@ -74,6 +76,10 @@ function download(filename: string, contents: BlobPart, mimeType = 'application/
 	//requestAnimationFrame(() => URL.revokeObjectURL(url))
 }
 
+function asHex(num: number, byteSize = 2) {
+	return ('0'.repeat(byteSize - 1) + num.toString(16)).slice(-byteSize).toUpperCase()
+}
+
 export function WorldEditor() {
 	const [errors, setErrors] = useState<string[]>([])
 	const [worlds, setWorlds] = useState<WorldFile[]>([])
@@ -82,14 +88,61 @@ export function WorldEditor() {
 	async function onChange(event: Event) {
 		if (!(event.target instanceof HTMLInputElement)) return
 
+		const saveGameMeta = new Map<
+			string,
+			{
+				ticks: number
+				terrain: number
+				playerCount: number
+				hqX: [number, number, number, number, number, number, number]
+				hqY: [number, number, number, number, number, number, number]
+				originalFilepath: string
+				title: string
+				width: number
+				height: number
+			}
+		>()
 		const regions = new Map<string, ArrayBuffer>()
 		const errors: string[] = []
 		const worldFiles: WorldFile[] = []
 
 		for (const file of Array.from(event.target.files)) {
 			const arrayBuffer = await file.arrayBuffer()
+			const control = /^CNTRL(\d\d\d)\.DAT$/i.exec(file.name)
 			const region = /^CONTI(\d\d\d)\.DAT$/i.exec(file.name)
-			if (region) {
+			if (control) {
+				if (arrayBuffer.byteLength === 0x242) {
+					const view = new DataView(arrayBuffer)
+
+					saveGameMeta.set(control[1], {
+						ticks: view.getUint32(0, true),
+						terrain: view.getUint8(0x20),
+						originalFilepath: cp437ToString(new Uint8Array(arrayBuffer, 0x161, 0xc7)),
+						title: cp437ToString(new Uint8Array(arrayBuffer, 0x22d)),
+						width: view.getUint16(0x229, true),
+						height: view.getUint16(0x22b, true),
+						playerCount: view.getUint16(0xe9, true),
+						hqX: [
+							view.getUint16(0xeb, true),
+							view.getUint16(0xef, true),
+							view.getUint16(0xf3, true),
+							view.getUint16(0xf7, true),
+							view.getUint16(0xfb, true),
+							view.getUint16(0xff, true),
+							view.getUint16(0x103, true),
+						],
+						hqY: [
+							view.getUint16(0xed, true),
+							view.getUint16(0xf1, true),
+							view.getUint16(0xf5, true),
+							view.getUint16(0xf9, true),
+							view.getUint16(0xfd, true),
+							view.getUint16(0x101, true),
+							view.getUint16(0x105, true),
+						],
+					})
+				}
+			} else if (region) {
 				regions.set(region[1], arrayBuffer)
 			} else {
 				try {
@@ -101,10 +154,29 @@ export function WorldEditor() {
 			}
 		}
 
-		worldFiles.forEach(({ filename, world }) => {
-			const region = /^WORLD(\d\d\d)\.DAT$/i.exec(filename)
-			if (region && regions.has(region[1])) {
-				world.setRegions(new DataView(regions.get(region[1])))
+		worldFiles.forEach((worldFile) => {
+			const { world } = worldFile
+			const worldNumber = /^WORLD(\d\d\d)\.DAT$/i.exec(worldFile.filename)
+			if (worldNumber) {
+				if (regions.has(worldNumber[1])) {
+					world.setRegions(new DataView(regions.get(worldNumber[1])))
+				}
+				if (saveGameMeta.has(worldNumber[1])) {
+					const save = saveGameMeta.get(worldNumber[1])
+					// loose check that at least the world size matches!
+					if (world.width === save.width && world.height === save.height) {
+						world.terrain = save.terrain
+						world.playerCount = save.playerCount
+						world.hqX = save.hqX
+						world.hqY = save.hqY
+						world.title = save.title
+						world.author = 'Savegame'
+						worldFile.originalFilepath = save.originalFilepath
+						worldFile.ticks = save.ticks
+					} else {
+						console.warn(`CNTRL${worldNumber[1]}.DAT did not match ${worldFile.filename} dimensions!`)
+					}
+				}
 			}
 		})
 
@@ -188,12 +260,24 @@ export function WorldEditor() {
 		setSelected(~~event.target.value)
 	}, [])
 
-	const { filename, world } = worlds[selected] ?? {}
+	const { filename, originalFilepath, ticks = 0, world } = worlds[selected] ?? {}
 	const index = selected
+
+	const ms = (ticks % 7) * 125
+	const secs = Math.floor(ticks / 8) % 60
+	const mins = Math.floor(ticks / 8 / 60) % 60
+	const hours = Math.floor(ticks / 8 / 3600)
+	const time = `${('0' + hours).slice(-2)}:${('0' + mins).slice(-2)}:${('0' + secs).slice(-2)}.${('00' + ms).slice(
+		-3
+	)}`
 
 	return (
 		<div>
 			<h1>World Editor</h1>
+			<p>
+				Currently accepts SWD, WLD, or <code>CNTRL###.DAT</code>+<code>CONTI###.DAT</code>+
+				<code>WORLD###.DAT</code>
+			</p>
 			<input type="file" multiple onChange={onChange} />
 			{errors.length > 0 && (
 				<div>
@@ -239,8 +323,26 @@ export function WorldEditor() {
 						<tbody>
 							<tr>
 								<td>Filename</td>
-								<td>{filename}</td>
+								<td>
+									<code>{filename}</code>
+								</td>
 							</tr>
+							{ticks != null && (
+								<tr>
+									<td>Game time</td>
+									<td>
+										<code>{time}</code>
+									</td>
+								</tr>
+							)}
+							{originalFilepath != null && (
+								<tr>
+									<td>Original path &amp; filename</td>
+									<td>
+										<code>{originalFilepath}</code>
+									</td>
+								</tr>
+							)}
 							<tr>
 								<td>Title</td>
 								<td>
@@ -375,19 +477,13 @@ export function WorldEditor() {
 								</td>
 							</tr>
 							<tr>
-								<td>Block: object</td>
+								<td>Block 4 &amp; 5: object</td>
 								<td>
-									{new Uint8Array(
-										world.blocks[BlockType.Object2].buffer,
-										world.blocks[BlockType.Object2].byteOffset,
-										world.blocks[BlockType.Object2].byteLength
-									)
+									{world.blocks[BlockType.Object2]
 										.reduce((obj, objectType, index) => {
 											let meta = ''
 											if (objectType === 0x80) {
-												meta = `Player ${
-													world.blocks[BlockType.Object1][index] + 1
-												} headquarters`
+												meta = `Building ${asHex(world.blocks[BlockType.Object1][index] + 1)}`
 											} else if (objectType === 0xc8) {
 												if (world.blocks[BlockType.Object1][index] === 0x16) {
 													meta = `Gate`
@@ -400,38 +496,65 @@ export function WorldEditor() {
 											}
 											return obj
 										}, [] as { meta: string; x: number; y: number }[])
+										.sort((a, b) => a.meta.localeCompare(b.meta))
 										.map(({ meta, x, y }, idx) => (
 											<span key={idx}>
-												{meta}: {x} &times; {y}
+												{meta}: {asHex(x)} &times; {asHex(y)}{' '}
+												<small>
+													({x} &times; {y})
+												</small>
 												<br />
 											</span>
 										))}
 								</td>
 							</tr>
-							<tr>
-								<td>Block: animals</td>
-								<td>
-									{Object.entries(
-										new Uint8Array(
-											world.blocks[BlockType.Animal].buffer,
-											world.blocks[BlockType.Animal].byteOffset,
-											world.blocks[BlockType.Animal].byteLength
-										).reduce((record, animalType) => {
-											if (animalType > 0 && animalType < 255) {
-												const name = getAnimalName(animalType)
-												if (record[name] == null) record[name] = 0
-												record[name]++
-											}
-											return record
-										}, {} as Record<string, number>)
-									).map(([name, count]) => (
-										<span key={name}>
-											{name}: {count}
-											<br />
-										</span>
-									))}
-								</td>
-							</tr>
+							{world.blocks[BlockType.Animal].every((val) => val !== 0xff) ? (
+								<tr>
+									<td>Block 6: animals</td>
+									<td>
+										{Object.entries(
+											world.blocks[BlockType.Animal].reduce((record, animalType) => {
+												if (animalType > 0 && animalType < 255) {
+													const name = getAnimalName(animalType)
+													if (record[name] == null) record[name] = 0
+													record[name]++
+												}
+												return record
+											}, {} as Record<string, number>)
+										).map(([name, count]) => (
+											<span key={name}>
+												{name}: {count}
+												<br />
+											</span>
+										))}
+									</td>
+								</tr>
+							) : (
+								<tr>
+									<td>Block 6 &amp; 7: unique index</td>
+									<td>
+										<select>
+											{world.blocks[BlockType.Animal]
+												.reduce((record, loByte, i) => {
+													const hiByte = world.blocks[BlockType.Unknown][i]
+													if (loByte !== 255 && hiByte !== 255) {
+														const index = loByte | (hiByte << 8)
+														const x = i % world.width
+														const y = Math.ceil((i - x) / world.width)
+														record.push({ x, y, index })
+													}
+													return record
+												}, [] as { x: number; y: number; index: number }[])
+												.sort((a, b) => a.index - b.index)
+												.map(({ x, y, index }) => (
+													<option key={index}>
+														{index} @ {x}&times;{y}
+													</option>
+												))}
+										</select>
+									</td>
+								</tr>
+							)}
 							<tr>
 								<td>Footer: animals</td>
 								<td>

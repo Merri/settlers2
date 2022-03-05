@@ -18,8 +18,10 @@
 	appearance: none;
 	background: white;
 	border: none;
+	box-sizing: content-box;
 	color: #333;
 	cursor: pointer;
+	font-family: var(--font-mono);
 	font-size: 0.875rem;
 	font-weight: bold;
 	flex: none;

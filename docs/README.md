@@ -11,4 +11,4 @@ Things that require more analyzing and documentation include save game files. Kn
 Thanks to everyone in the community who has contributed to analyzing the files in the past few years!
 
 - Xaser for his [WLD_reference.txt](http://www.le-softworks.com/WLD_reference.txt)
-- [Return to the Roots](http://www.rttr.info) team for their work on all the other files
+- [Return to the Roots](https://www.rttr.info) team for their work on all the other files

@@ -353,16 +353,26 @@ export class MapClass {
 					if (currentByte === key) {
 						const count = source[++i]
 						if (count === 0) {
-							this.log.push(
-								`Uncompression error in block index ${blockIndex}: invalid to copy zero bytes`
-							)
+							target[writePos] = key
+							writePos++
+						} else {
+							const byteToCopy = source[++i]
+							target.fill(byteToCopy, writePos, writePos + count)
+							writePos += count
 						}
-						const byteToCopy = source[++i]
-						target.fill(byteToCopy, writePos, writePos + count)
-						writePos += count
 					} else {
 						target[writePos++] = currentByte
 					}
+				}
+				// should never see these messages!
+				if (writePos < size) {
+					this.log.push(
+						`Critical decompression error in block index ${blockIndex}: ${size - writePos} bytes too short!`
+					)
+				} else if (writePos > size) {
+					this.log.push(
+						`Critical decompression error in block index ${blockIndex}: ${writePos - size} bytes too long!`
+					)
 				}
 			}
 		}
