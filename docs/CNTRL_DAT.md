@@ -1,6 +1,18 @@
-# CONTI###.DAT file format
+# CNTRL###.DAT file format
 
-This file exists alongside WORLD###.DAT files. In typical save games the file size is always 578 bytes.
+This file exists alongside WORLD###.DAT files.
+
+## Beta
+
+File size is 78 bytes.
+
+## Version 1.0
+
+File size is always 358 bytes.
+
+## Version 1.51
+
+File size is always 578 bytes.
 
 Offset     | Size  | Type       | Description
 :----------|:------|:-----------|:-----------
