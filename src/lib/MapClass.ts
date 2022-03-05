@@ -182,7 +182,7 @@ export class MapClass {
 		[BlockType.Animal]: null,
 		[BlockType.Unknown]: null,
 		[BlockType.BuildSite]: null,
-		[BlockType.UnknownFill7]: null,
+		[BlockType.FogOfWar]: null,
 		[BlockType.Icon]: null,
 		[BlockType.Resource]: null,
 		[BlockType.LightMap]: null,
@@ -247,7 +247,7 @@ export class MapClass {
 		Object.keys(this.blocks).forEach((index) => {
 			this.blocks[index] = new Uint8Array(this.fileBuffer, ~~index * size, size)
 		})
-		this.blocks[BlockType.UnknownFill7].fill(7)
+		this.blocks[BlockType.FogOfWar].fill(7)
 	}
 
 	private initFromFile = (view: DataView, headerSize: 0 | 2342, blockHeaderSize: 4 | 16) => {

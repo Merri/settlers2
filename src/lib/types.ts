@@ -8,7 +8,7 @@ export enum BlockType {
 	Animal = 6,
 	Unknown = 7,
 	BuildSite = 8,
-	UnknownFill7 = 9,
+	FogOfWar = 9,
 	Icon = 10,
 	Resource = 11,
 	LightMap = 12,
