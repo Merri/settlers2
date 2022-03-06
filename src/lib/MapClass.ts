@@ -364,6 +364,14 @@ export class MapClass {
 						target[writePos++] = currentByte
 					}
 				}
+				// Patch: only one byte missing? replicate last written byte
+				if (writePos + 1 === size) {
+					this.log.push(
+						`Decompression error in block index ${blockIndex}: last byte missing, replicating previous byte`
+					)
+					target[writePos] = target[writePos - 1]
+					writePos++
+				}
 				// should never see these messages!
 				if (writePos < size) {
 					this.log.push(

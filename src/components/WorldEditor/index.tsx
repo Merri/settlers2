@@ -5,6 +5,8 @@ import { cp437ToString, sanitizeAsCp437 } from '$/lib/cp437'
 
 import styles from './index.module.css'
 import { MapCanvas } from './Map'
+import { asHex } from '$/lib/hex'
+import { validateMapClass } from '$/lib/MapValidation'
 
 interface WorldFile {
 	filename: string
@@ -74,10 +76,6 @@ function download(filename: string, contents: BlobPart, mimeType = 'application/
 	link.href = url
 	link.dispatchEvent(new MouseEvent('click'))
 	//requestAnimationFrame(() => URL.revokeObjectURL(url))
-}
-
-function asHex(num: number, byteSize = 2) {
-	return ('0'.repeat(byteSize - 1) + num.toString(16)).slice(-byteSize).toUpperCase()
 }
 
 export function WorldEditor() {
@@ -188,6 +186,7 @@ export function WorldEditor() {
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
 			const { filename, world } = worlds[~~event.target.value]
+			//const cleanup = document.querySelector<HTMLInputElement>('input[name="cleanup"]').checked
 			const buffer = world.getFileBuffer({ format: 'WLD' })
 			const name = filename.replace(/\.(SWD|DAT)$/i, '.WLD')
 			download(name, buffer)
@@ -199,6 +198,7 @@ export function WorldEditor() {
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
 			const { filename, world } = worlds[~~event.target.value]
+			//const cleanup = document.querySelector<HTMLInputElement>('input[name="cleanup"]').checked
 			const buffer = world.getFileBuffer({ format: 'SWD' })
 			const name = filename.replace(/\.(WLD|DAT)$/i, '.SWD')
 			download(name, buffer)
@@ -270,6 +270,8 @@ export function WorldEditor() {
 	const time = `${('0' + hours).slice(-2)}:${('0' + mins).slice(-2)}:${('0' + secs).slice(-2)}.${('00' + ms).slice(
 		-3
 	)}`
+
+	const validation = world ? validateMapClass(world) : []
 
 	return (
 		<div>
@@ -581,14 +583,29 @@ export function WorldEditor() {
 							<pre>{world.log.join('\n')}</pre>
 						</div>
 					)}
-					<button type="button" onClick={downloadSwd} value={index}>
-						Download SWD
-					</button>
-					{', '}
-					<button type="button" onClick={downloadWld} value={index}>
-						Download WLD
-					</button>{' '}
-					or{' '}
+					{validation.length > 0 && (
+						<div>
+							<h4>Validation log</h4>
+							<pre>{validation.join('\n')}</pre>
+						</div>
+					)}
+					<div>
+						<p style={{ display: 'none' }}>
+							<label>
+								<input type="checkbox" name="cleanup" value={index} /> Ensure map is playable
+							</label>
+							<br />
+							<small>When enabled the map data is cleaned up of any invalid / unknown data.</small>
+						</p>
+						<p>Choose a map format:</p>
+						<button type="button" onClick={downloadSwd} value={index}>
+							SWD
+						</button>
+						{' or '}
+						<button type="button" onClick={downloadWld} value={index}>
+							Campaign WLD
+						</button>
+					</div>
 					<button type="button" onClick={downloadWorldDat} value={index}>
 						Download WORLD.DAT
 					</button>{' '}
