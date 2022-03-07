@@ -36,3 +36,9 @@
 	background-color: var(--theme-accent);
 	color: white;
 }
+
+.downloadSwdWld {
+	background: white;
+	border-radius: 0.5rem;
+	padding: 1rem;
+}

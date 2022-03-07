@@ -10,6 +10,288 @@ import {
 	ConstructionSite,
 } from './types'
 
+type MapClassBlocks = Record<BlockType, Uint8Array | null>
+
+function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
+	const size = world.width * world.height
+	const heightMap = new Uint8Array(size)
+	const texture1 = new Uint8Array(size)
+	const texture2 = new Uint8Array(size)
+	const object1 = new Uint8Array(size)
+	const object2 = new Uint8Array(size)
+	const animal = new Uint8Array(size)
+	const buildSite = new Uint8Array(size)
+	const resource = new Uint8Array(size)
+	const lightMap = new Uint8Array(size)
+	const regionMap = new Uint8Array(size)
+
+	heightMap.set(world.blocks[BlockType.HeightMap])
+
+	world.blocks[BlockType.Texture1].forEach((value, index) => {
+		// textures
+		texture1[index] = value & 0x7f
+		texture2[index] = world.blocks[BlockType.Texture2][index] & 0x3f
+		// objects
+		let o1 = world.blocks[BlockType.Object1][index]
+		const o2 = world.blocks[BlockType.Object2][index]
+
+		if (o2 === 0x80) return
+
+		const variant = o2 & 0x03
+		const type = (o2 >> 2) & 0x03
+		const flags = o2 >> 4
+
+		if (flags & 0x01) return
+		if (flags & 0x02) return
+		if (type === 0x00) {
+			if (flags & 0x07) return
+			if (variant) return
+		} else if (type === 0x01) {
+			if (variant > 2) return
+			const id = (variant << 2) | (o1 >> 6)
+			const isCut = (o1 >> 3) & 0x01
+			const size = (o1 >> 4) & 0x03
+			const step = o1 & 0x07
+
+			if (isCut) return
+			if (id > 8) return
+			// make it a fully grown tree
+			if (size < 3) o1 |= 0x30
+		} else if (type === 0x02) {
+			if (variant > 0) return
+			if (value > 0x2b) return
+		} else if (type === 0x03) {
+			if (variant > 1) return
+			if (value > 7) return
+		}
+
+		object1[index] = o1
+		object2[index] = o2
+	})
+
+	world.hqX.forEach((x, player) => {
+		const y = world.hqY[player]
+		const index = x + y * world.width
+		world.blocks[BlockType.Object1][index] = player + 1
+		world.blocks[BlockType.Object2][index] = 0x80
+	})
+
+	const hasAnimals = world.blocks[BlockType.Animal].every((value) => value !== 0xff)
+
+	if (hasAnimals) {
+		animal.set(world.blocks[BlockType.Animal])
+	}
+
+	world.animals.forEach(([type, x, y]) => {
+		animal[x + y * world.width] = type
+	})
+
+	// calculating buildSite requires heightMap, texture1, texture2, object2
+	for (let i = 0; i < size; i++) {
+		const nodes = getNodesByIndex(i, world.width, world.height)
+		const tn1 = getTextureNodesByIndex(i, world.width, world.height)
+		const tn2 = getTextureNodesByIndex(nodes.bottomRight, world.width, world.height)
+
+		const tex1 = texture1[tn1.top1Left] & TextureFlag.ToIdValue
+		const tex2 = texture2[tn1.top2] & TextureFlag.ToIdValue
+		const tex3 = texture1[tn1.top1Right] & TextureFlag.ToIdValue
+		const tex4 = texture2[tn1.bottom2Left] & TextureFlag.ToIdValue
+		const tex5 = texture1[tn1.bottom1] & TextureFlag.ToIdValue
+		const tex6 = texture2[tn1.bottom2Right] & TextureFlag.ToIdValue
+		const tex7 = texture1[tn2.top1Right] & TextureFlag.ToIdValue
+		const tex8 = texture2[tn2.bottom2Left] & TextureFlag.ToIdValue
+		const tex9 = texture1[tn2.bottom1] & TextureFlag.ToIdValue
+		const texA = texture2[tn2.bottom2Right] & TextureFlag.ToIdValue
+
+		const tex1Flags = Textures.get(tex1).featureFlags
+		const tex2Flags = Textures.get(tex2).featureFlags
+		const tex3Flags = Textures.get(tex3).featureFlags
+		const tex4Flags = Textures.get(tex4).featureFlags
+		const tex5Flags = Textures.get(tex5).featureFlags
+		const tex6Flags = Textures.get(tex6).featureFlags
+		const tex7Flags = Textures.get(tex7).featureFlags
+		const tex8Flags = Textures.get(tex8).featureFlags
+		const tex9Flags = Textures.get(tex9).featureFlags
+		const texAFlags = Textures.get(texA).featureFlags
+
+		// water or swamp texture count
+		const wets =
+			((tex1Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
+			((tex2Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
+			((tex3Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
+			((tex4Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
+			((tex5Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
+			((tex6Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0)
+
+		const objectType = object2[i] & ObjectType.Match
+
+		if (
+			wets === 6 ||
+			objectType === ObjectType.Granite ||
+			// snow or lava
+			(tex1Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex2Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex3Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex4Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex5Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex6Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme
+		) {
+			buildSite[i] = ConstructionSite.Impassable
+			continue
+		}
+
+		if (objectType === ObjectType.Tree) {
+			buildSite[i] = ConstructionSite.Tree
+			continue
+		}
+
+		if (
+			wets > 0 ||
+			// see if node bordered by granite
+			(object2[nodes.left] & ObjectType.Match) === ObjectType.Granite ||
+			(object2[nodes.right] & ObjectType.Match) === ObjectType.Granite ||
+			(object2[nodes.topLeft] & ObjectType.Match) === ObjectType.Granite ||
+			(object2[nodes.topRight] & ObjectType.Match) === ObjectType.Granite ||
+			(object2[nodes.bottomLeft] & ObjectType.Match) === ObjectType.Granite ||
+			(object2[nodes.bottomRight] & ObjectType.Match) === ObjectType.Granite ||
+			// arid textures only allow building flag poles
+			(tex1Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
+			(tex2Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
+			(tex3Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
+			(tex4Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
+			(tex5Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
+			(tex6Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid
+		) {
+			buildSite[i] = ConstructionSite.OccupiedFlag
+			continue
+		}
+
+		const mountains =
+			((tex1Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
+			((tex2Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
+			((tex3Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
+			((tex4Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
+			((tex5Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
+			((tex6Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0)
+
+		const nodeHeight = heightMap[i]
+
+		if (mountains) {
+			if (
+				mountains < 6 ||
+				// too big height difference
+				nodeHeight - heightMap[nodes.bottomRight] >= -3 ||
+				// snow or lava
+				(tex7Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+				(tex8Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+				(tex9Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+				(texAFlags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+				// tree
+				(object2[nodes.bottomRight] & ObjectType.Match) === ObjectType.Tree
+			) {
+				buildSite[i] = ConstructionSite.OccupiedFlag
+			} else {
+				buildSite[i] = ConstructionSite.OccupiedMine
+			}
+
+			continue
+		}
+
+		const isMountainMeadow =
+			tex1 === 0x12 || tex2 === 0x12 || tex3 === 0x12 || tex4 === 0x12 || tex5 === 0x12 || tex6 === 0x12
+
+		if (
+			(object2[nodes.bottomRight] & ObjectType.Match) === ObjectType.Tree ||
+			// height differences
+			nodeHeight - heightMap[nodes.bottomRight] > 3 ||
+			heightMap[nodes.bottomRight] - nodeHeight > 1 ||
+			Math.abs(nodeHeight - heightMap[nodes.topLeft]) > 3 ||
+			Math.abs(nodeHeight - heightMap[nodes.topRight]) > 3 ||
+			Math.abs(nodeHeight - heightMap[nodes.left]) > 3 ||
+			Math.abs(nodeHeight - heightMap[nodes.right]) > 3 ||
+			Math.abs(nodeHeight - heightMap[nodes.bottomLeft]) > 3
+		) {
+			buildSite[i] = isMountainMeadow ? ConstructionSite.OccupiedFlag : ConstructionSite.Flag
+			continue
+		}
+
+		if (
+			// snow or lava
+			(tex7Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex8Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(tex9Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+			(texAFlags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme
+		) {
+			buildSite[i] = ConstructionSite.OccupiedFlag
+			continue
+		}
+
+		if (
+			(object2[nodes.topLeft] & ObjectType.Match) === ObjectType.Tree ||
+			(object2[nodes.topRight] & ObjectType.Match) === ObjectType.Tree ||
+			(object2[nodes.left] & ObjectType.Match) === ObjectType.Tree ||
+			(object2[nodes.right] & ObjectType.Match) === ObjectType.Tree ||
+			(object2[nodes.bottomLeft] & ObjectType.Match) === ObjectType.Tree
+		) {
+			buildSite[i] = isMountainMeadow ? ConstructionSite.OccupiedFlag : ConstructionSite.Flag
+			continue
+		}
+
+		const radiusNodes = getNodesAtRadius(i, 2, world.width, world.height)
+		// check height difference on nodes a step further away
+		if (radiusNodes.some((nodeIndex) => Math.abs(nodeHeight - heightMap[nodeIndex]) > 2)) {
+			buildSite[i] = isMountainMeadow ? ConstructionSite.OccupiedHut : ConstructionSite.Hut
+			continue
+		}
+
+		// nothing prevents building a castle size building!
+		buildSite[i] = isMountainMeadow ? ConstructionSite.OccupiedCastle : ConstructionSite.Castle
+	}
+
+	world.blocks[BlockType.Resource].forEach((value, index) => {
+		// water
+		if (value >= 0x20 && value <= 0x27) resource[index] = value
+		// minerals
+		else if (value >= 0x40 && value <= 0x5f) resource[index] = value
+		// fish
+		else if (value >= 0x80 && value <= 0x87) resource[index] = value
+		// anything else
+		else resource[index] = 0
+	})
+
+	heightMap.forEach((height, index) => {
+		let shade = 0
+		const around = getNodesByIndex(index, world.width, world.height)
+		const aroundLeft = getNodesByIndex(around.left, world.width, world.height)
+		shade += 9 * (heightMap[around.topRight] - height)
+		shade -= 6 * (heightMap[around.left] - height)
+		shade -= 3 * (heightMap[aroundLeft.left] - height)
+		shade -= 9 * (heightMap[aroundLeft.bottomLeft] - height)
+		lightMap[index] = Math.max(0, Math.min(shade, 0x80))
+	})
+
+	world.blocks[BlockType.RegionMap].forEach((value, index) => {
+		regionMap[index] = value === 0xff ? 0xfe : value
+	})
+
+	return {
+		[BlockType.HeightMap]: heightMap,
+		[BlockType.Texture1]: texture1,
+		[BlockType.Texture2]: texture2,
+		[BlockType.Roads]: new Uint8Array(size),
+		[BlockType.Object1]: object1,
+		[BlockType.Object2]: object2,
+		[BlockType.Animal]: animal,
+		[BlockType.Unknown]: new Uint8Array(size),
+		[BlockType.BuildSite]: buildSite,
+		[BlockType.FogOfWar]: new Uint8Array(size).fill(7),
+		[BlockType.Icon]: new Uint8Array(size),
+		[BlockType.Resource]: resource,
+		[BlockType.LightMap]: lightMap,
+		[BlockType.RegionMap]: regionMap,
+	}
+}
+
 const BLOCKS = 14
 
 export function getNodesByIndex(index: number, width: number, height: number) {
@@ -172,7 +454,7 @@ type Animals = [number, number, number][]
 export class NotMapError extends Error {}
 
 export class MapClass {
-	blocks: Record<BlockType, Uint8Array | null> = {
+	blocks: MapClassBlocks = {
 		[BlockType.HeightMap]: null,
 		[BlockType.Texture1]: null,
 		[BlockType.Texture2]: null,
@@ -927,7 +1209,13 @@ export class MapClass {
 		this.regions = regions
 	}
 
-	getFileBuffer = ({ format = 'SWD' }: { format: 'WLD' | 'SWD' | 'CONTI.DAT' | 'WORLD.DAT' }): ArrayBuffer => {
+	getFileBuffer = ({
+		cleanup = false,
+		format = 'SWD',
+	}: {
+		cleanup?: boolean
+		format: 'WLD' | 'SWD' | 'CONTI.DAT' | 'WORLD.DAT'
+	}): ArrayBuffer => {
 		const size = this.width * this.height
 
 		if (format === 'CONTI.DAT') {
@@ -1013,6 +1301,8 @@ export class MapClass {
 		const blocksSize = (16 + size) * 14
 		const blocks = new Uint8Array(buffer, 0x930, blocksSize)
 
+		const sourceBlocks = cleanup ? sanitizeSwdBlocks({ world: this }) : this.blocks
+
 		for (let blockIndex: BlockType = 0; blockIndex < 14; blockIndex++) {
 			const offset = blockIndex * (16 + size)
 			// block header
@@ -1023,7 +1313,7 @@ export class MapClass {
 			view.setUint16(0x93a + offset, 1, true)
 			view.setUint32(0x93c + offset, size, true)
 			// block data
-			const source = this.blocks[blockIndex]
+			const source = sourceBlocks[blockIndex]
 			blocks.set(source, offset + 16)
 		}
 

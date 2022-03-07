@@ -186,8 +186,8 @@ export function WorldEditor() {
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
 			const { filename, world } = worlds[~~event.target.value]
-			//const cleanup = document.querySelector<HTMLInputElement>('input[name="cleanup"]').checked
-			const buffer = world.getFileBuffer({ format: 'WLD' })
+			const cleanup = document.querySelector<HTMLInputElement>('input[name="cleanup"]')?.checked
+			const buffer = world.getFileBuffer({ cleanup, format: 'WLD' })
 			const name = filename.replace(/\.(SWD|DAT)$/i, '.WLD')
 			download(name, buffer)
 		},
@@ -198,8 +198,8 @@ export function WorldEditor() {
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
 			const { filename, world } = worlds[~~event.target.value]
-			//const cleanup = document.querySelector<HTMLInputElement>('input[name="cleanup"]').checked
-			const buffer = world.getFileBuffer({ format: 'SWD' })
+			const cleanup = document.querySelector<HTMLInputElement>('input[name="cleanup"]')?.checked
+			const buffer = world.getFileBuffer({ cleanup, format: 'SWD' })
 			const name = filename.replace(/\.(WLD|DAT)$/i, '.SWD')
 			download(name, buffer)
 		},
@@ -589,13 +589,16 @@ export function WorldEditor() {
 							<pre>{validation.join('\n')}</pre>
 						</div>
 					)}
-					<div>
-						<p style={{ display: 'none' }}>
+					<div className={styles.downloadSwdWld}>
+						<p>
 							<label>
-								<input type="checkbox" name="cleanup" value={index} /> Ensure map is playable
+								<input type="checkbox" name="cleanup" value={index} /> Keep only SWD/WLD compatible data
 							</label>
 							<br />
-							<small>When enabled the map data is cleaned up of any invalid / unknown data.</small>
+							<small>
+								When enabled the map data is cleaned up of any invalid / unknown data. Buildings and
+								roads are removed.
+							</small>
 						</p>
 						<p>Choose a map format:</p>
 						<button type="button" onClick={downloadSwd} value={index}>
