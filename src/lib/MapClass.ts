@@ -8,6 +8,7 @@ import {
 	Textures,
 	ObjectType,
 	ConstructionSite,
+	AnimalType,
 } from './types'
 
 type MapClassBlocks = Record<BlockType, Uint8Array | null>
@@ -1255,7 +1256,31 @@ export class MapClass {
 			return buffer
 		}
 
-		const footerSize = this.animals.length * 5
+		const sourceBlocks = cleanup ? sanitizeSwdBlocks({ world: this }) : this.blocks
+
+		const animalSet = this.animals.reduce((animals, [_type, x, y]) => {
+			const index = x + y * this.width
+			animals.add(index)
+			return animals
+		}, new Set())
+
+		const animals: Animals = sourceBlocks[BlockType.Animal]
+			.reduce(
+				(animals, type, index) => {
+					if (type > 0 && type < 10) {
+						if (!animalSet.has(index)) {
+							const x = index % this.width
+							const y = (index - x) / this.width
+							animals.push([type, x, y])
+						}
+					}
+					return animals
+				},
+				[...this.animals]
+			)
+			.sort((a, b) => a[2] - b[2] || a[1] - b[1] || a[0] - b[0])
+
+		const footerSize = animals.length * 5
 		const filesize = 0x930 + (size + 16) * 14 + footerSize + 1
 		const buffer = new ArrayBuffer(filesize)
 		const view = new DataView(buffer)
@@ -1301,8 +1326,6 @@ export class MapClass {
 		const blocksSize = (16 + size) * 14
 		const blocks = new Uint8Array(buffer, 0x930, blocksSize)
 
-		const sourceBlocks = cleanup ? sanitizeSwdBlocks({ world: this }) : this.blocks
-
 		for (let blockIndex: BlockType = 0; blockIndex < 14; blockIndex++) {
 			const offset = blockIndex * (16 + size)
 			// block header
@@ -1319,11 +1342,11 @@ export class MapClass {
 
 		const footerIndex = 0x930 + blocksSize
 
-		this.animals.forEach(([animalType, animalX, animalY], index) => {
+		animals.forEach(([animalType, animalX, animalY], index) => {
 			const offset = footerIndex + 5 * index
 			view.setUint8(offset, animalType)
-			view.setUint16(offset + 1, animalX, true)
-			view.setUint16(offset + 3, animalY, true)
+			view.setUint16(offset + 1, animalY, true)
+			view.setUint16(offset + 3, animalX, true)
 		})
 
 		// mark end of file
