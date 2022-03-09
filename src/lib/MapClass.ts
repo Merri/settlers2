@@ -687,8 +687,8 @@ export class MapClass {
 				this.log.push(`Invalid animal data encountered in footer at file index ${readIndex}`)
 				return
 			}
-			const animalY = view.getUint16(readIndex + 1, true)
-			const animalX = view.getUint16(readIndex + 3, true)
+			const animalX = view.getUint16(readIndex + 1, true)
+			const animalY = view.getUint16(readIndex + 3, true)
 			if (animalX >= width || animalY >= height) {
 				this.log.push(
 					`Invalid animal location encountered in footer at file index ${
@@ -1345,8 +1345,8 @@ export class MapClass {
 		animals.forEach(([animalType, animalX, animalY], index) => {
 			const offset = footerIndex + 5 * index
 			view.setUint8(offset, animalType)
-			view.setUint16(offset + 1, animalY, true)
-			view.setUint16(offset + 3, animalX, true)
+			view.setUint16(offset + 1, animalX, true)
+			view.setUint16(offset + 3, animalY, true)
 		})
 
 		// mark end of file
