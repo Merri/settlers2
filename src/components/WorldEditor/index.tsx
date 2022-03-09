@@ -7,6 +7,7 @@ import styles from './index.module.css'
 import { MapCanvas } from './Map'
 import { asHex } from '$/lib/hex'
 import { validateMapClass } from '$/lib/MapValidation'
+import { flipX } from '$/lib/swdUtils/flipX'
 
 interface WorldFile {
 	filename: string
@@ -260,6 +261,16 @@ export function WorldEditor() {
 		setSelected(~~event.target.value)
 	}, [])
 
+	const flipHorizontally = useCallback(function flipHorizontally(event: Event) {
+		if (!(event.target instanceof HTMLButtonElement)) return
+		const targetIndex = ~~event.target.value
+		setWorlds((worlds) => {
+			return worlds.map((worldFile, index) => {
+				return index === targetIndex ? { ...worldFile, world: flipX(worldFile.world) } : worldFile
+			})
+		})
+	}, [])
+
 	const { filename, originalFilepath, ticks = 0, world } = worlds[selected] ?? {}
 	const index = selected
 
@@ -315,6 +326,13 @@ export function WorldEditor() {
 			</div>
 			{world != null && (
 				<>
+					<div>
+						<p>
+							<button type="button" onClick={flipHorizontally} value={index}>
+								Flip horizontally
+							</button>
+						</p>
+					</div>
 					<table>
 						<thead>
 							<tr>
