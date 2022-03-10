@@ -8,6 +8,7 @@ import { MapCanvas } from './Map'
 import { asHex } from '$/lib/hex'
 import { validateMapClass } from '$/lib/MapValidation'
 import { flipX } from '$/lib/swdUtils/flipX'
+import { hexRotate } from '$/lib/swdUtils/hexRotate'
 
 interface WorldFile {
 	filename: string
@@ -271,6 +272,16 @@ export function WorldEditor() {
 		})
 	}, [])
 
+	const hexRotation = useCallback(function hexRotation(event: Event) {
+		if (!(event.target instanceof HTMLButtonElement)) return
+		const targetIndex = ~~event.target.value
+		setWorlds((worlds) => {
+			return worlds.map((worldFile, index) => {
+				return index === targetIndex ? { ...worldFile, world: hexRotate(worldFile.world) } : worldFile
+			})
+		})
+	}, [])
+
 	const { filename, originalFilepath, ticks = 0, world } = worlds[selected] ?? {}
 	const index = selected
 
@@ -330,6 +341,14 @@ export function WorldEditor() {
 						<p>
 							<button type="button" onClick={flipHorizontally} value={index}>
 								Flip horizontally
+							</button>{' '}
+							<button
+								type="button"
+								onClick={hexRotation}
+								value={index}
+								disabled={world.width !== world.height}
+							>
+								Square map rotate
 							</button>
 						</p>
 					</div>
