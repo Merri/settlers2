@@ -116,7 +116,7 @@ export enum TextureFlag {
 	Unknown = 0x80,
 }
 
-interface TextureData {
+export interface TextureData {
 	featureFlags: number
 	name: [string, string, string]
 	x: number
@@ -125,8 +125,50 @@ interface TextureData {
 	height: number
 }
 
+/**
+ * ### Vocabulary
+ *
+ * - `Farmland`: allows roads, buildings, fresh water, farms
+ * - `Mining`: allows roads, mines, underground resources
+ * - `Inaccessible`: nothing can be built in a node touching this texture
+ * - `Unbuildable`: nothing can be built in a node fully surrounded by this texture
+ * - `Roadland`: allows roads
+ * - `Buildable`: allows roads, buildings
+ * - `Water`: has palette rotation
+ * - `Lava`: has palette rotation
+ * - `LowRes`: uses tiny texture
+ * - `SingleColor`: uses single pixel, has palette rotation
+ *
+ * "Has palette rotation" means that the texture never has shading / lighting.
+ */
 export enum Texture {
-	Water = 0x05,
+	Farmland1 = 0x00,
+	Mining1 = 0x01,
+	Inaccessible = 0x02,
+	UnbuildableLand = 0x03,
+	Roadland = 0x04,
+	/** Allows ship traffic, coastal flag poles, boat routes, on coast contains fish */
+	UnbuildableWater = 0x05,
+	BuildableWater = 0x06,
+	/** Clone of `Roadland` texture */
+	RoadlandAlt = 0x07,
+	Farmland2 = 0x08,
+	Farmland3 = 0x09,
+	Farmland4 = 0x0A,
+	Mining2 = 0x0B,
+	Mining3 = 0x0C,
+	Mining4 = 0x0D,
+	Farmland5 = 0x0E,
+	Farmland6 = 0x0F,
+	InaccessibleLava = 0x10,
+	RoadlandSingleColor = 0x11,
+	Buildable = 0x12,
+	InaccessibleWater = 0x13,
+	InaccessibleLavaLowRes1 = 0x14,
+	InaccessibleLavaLowRes2 = 0x15,
+	InaccessibleLavaLowRes3 = 0x16,
+	/** Clone of `Mining2` texture but behaves like farmland */
+	MiningFarmland = 0x22,
 }
 
 export const Textures = new Map<number, TextureData>([
@@ -299,7 +341,7 @@ export const Textures = new Map<number, TextureData>([
 		15,
 		{
 			featureFlags: TextureFeatureFlag.Arable | TextureFeatureFlag.Habitable | TextureFeatureFlag.IsMeadow,
-			name: ['Steppe', 'Light Steppe', 'Tundra #3'],
+			name: ['Flower Meadow', ' Flower Pasture', 'Tundra #4'],
 			x: 144,
 			y: 0,
 			width: 37,

@@ -971,7 +971,7 @@ export class MapClass {
 		for (let i = 0; i < size; i++) {
 			if (indexProcessed.has(i)) continue
 
-			if (this.isEachTextureSame(i, Texture.Water)) {
+			if (this.isEachTextureSame(i, Texture.UnbuildableWater)) {
 				if (waterX == null) {
 					waterX = i % this.width
 					waterY = Math.round((i - waterX) / this.width) || 0
@@ -989,7 +989,7 @@ export class MapClass {
 					if (
 						(item.nodeFlags & 0x01) === 0x01 &&
 						!indexProcessed.has(nodes.left) &&
-						this.isEachTextureSame(nodes.left, Texture.Water)
+						this.isEachTextureSame(nodes.left, Texture.UnbuildableWater)
 					) {
 						indexProcessed.add(nodes.left)
 						regionMap[nodes.left] = waterIndex
@@ -1001,7 +1001,7 @@ export class MapClass {
 					if (
 						(item.nodeFlags & 0x02) === 0x02 &&
 						!indexProcessed.has(nodes.topLeft) &&
-						this.isEachTextureSame(nodes.topLeft, Texture.Water)
+						this.isEachTextureSame(nodes.topLeft, Texture.UnbuildableWater)
 					) {
 						indexProcessed.add(nodes.topLeft)
 						regionMap[nodes.topLeft] = waterIndex
@@ -1013,7 +1013,7 @@ export class MapClass {
 					if (
 						(item.nodeFlags & 0x04) === 0x04 &&
 						!indexProcessed.has(nodes.topRight) &&
-						this.isEachTextureSame(nodes.topRight, Texture.Water)
+						this.isEachTextureSame(nodes.topRight, Texture.UnbuildableWater)
 					) {
 						indexProcessed.add(nodes.topRight)
 						regionMap[nodes.topRight] = waterIndex
@@ -1025,7 +1025,7 @@ export class MapClass {
 					if (
 						(item.nodeFlags & 0x08) === 0x08 &&
 						!indexProcessed.has(nodes.right) &&
-						this.isEachTextureSame(nodes.right, Texture.Water)
+						this.isEachTextureSame(nodes.right, Texture.UnbuildableWater)
 					) {
 						indexProcessed.add(nodes.right)
 						regionMap[nodes.right] = waterIndex
@@ -1037,7 +1037,7 @@ export class MapClass {
 					if (
 						(item.nodeFlags & 0x10) === 0x10 &&
 						!indexProcessed.has(nodes.bottomRight) &&
-						this.isEachTextureSame(nodes.bottomRight, Texture.Water)
+						this.isEachTextureSame(nodes.bottomRight, Texture.UnbuildableWater)
 					) {
 						indexProcessed.add(nodes.bottomRight)
 						regionMap[nodes.bottomRight] = waterIndex
@@ -1049,7 +1049,7 @@ export class MapClass {
 					if (
 						(item.nodeFlags & 0x20) === 0x20 &&
 						!indexProcessed.has(nodes.bottomLeft) &&
-						this.isEachTextureSame(nodes.bottomLeft, Texture.Water)
+						this.isEachTextureSame(nodes.bottomLeft, Texture.UnbuildableWater)
 					) {
 						indexProcessed.add(nodes.bottomLeft)
 						regionMap[nodes.bottomLeft] = waterIndex

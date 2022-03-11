@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'preact/compat'
 import { MapClass } from '$/lib/MapClass'
-import { AnimalType, BlockType } from '$/lib/types'
+import { AnimalType, BlockType, Texture, Textures } from '$/lib/types'
 import { cp437ToString, sanitizeAsCp437 } from '$/lib/cp437'
 
 import styles from './index.module.css'
@@ -9,6 +9,7 @@ import { asHex } from '$/lib/hex'
 import { validateMapClass } from '$/lib/MapValidation'
 import { flipX } from '$/lib/swdUtils/flipX'
 import { hexRotate } from '$/lib/swdUtils/hexRotate'
+import { setMapSize } from '$/lib/swdUtils/setMapSize'
 
 interface WorldFile {
 	filename: string
@@ -79,6 +80,12 @@ function download(filename: string, contents: BlobPart, mimeType = 'application/
 	link.dispatchEvent(new MouseEvent('click'))
 	//requestAnimationFrame(() => URL.revokeObjectURL(url))
 }
+
+const textureArray: { id: number; names: string[] }[] = []
+
+Textures.forEach((value, id) => {
+	textureArray.push({ id, names: value.name })
+})
 
 export function WorldEditor() {
 	const [errors, setErrors] = useState<string[]>([])
@@ -282,6 +289,27 @@ export function WorldEditor() {
 		})
 	}, [])
 
+	const handleMapSize = useCallback(function handleMapSize(event: Event) {
+		const form = event.target
+		if (!(form instanceof HTMLFormElement)) return
+		event.preventDefault()
+		const button: HTMLButtonElement = form.elements['mapSize']
+		const targetIndex = ~~button.value
+		const widthElement: HTMLInputElement = form.elements['width']
+		const heightElement: HTMLInputElement = form.elements['height']
+		const textureElement: HTMLInputElement = form.elements['texture']
+		setWorlds((worlds) => {
+			return worlds.map((worldFile, index) => {
+				const options = {
+					width: ~~widthElement.value,
+					height: ~~heightElement.value,
+					texture: ~~textureElement.value,
+				}
+				return index === targetIndex ? { ...worldFile, world: setMapSize(worldFile.world, options) } : worldFile
+			})
+		})
+	}, [])
+
 	const { filename, originalFilepath, ticks = 0, world } = worlds[selected] ?? {}
 	const index = selected
 
@@ -350,6 +378,24 @@ export function WorldEditor() {
 							>
 								Square map rotate
 							</button>
+							<form onSubmit={handleMapSize}>
+								<input type="number" name="width" min={32} max={768} step={16} value={world.width} />{' '}
+								&times;{' '}
+								<input type="number" name="height" min={32} max={768} step={16} value={world.height} />{' '}
+								<label>
+									Default texture:{' '}
+									<select name="texture">
+										{textureArray.map(({ id, names }) => (
+											<option key={id} value={id}>
+												0x{asHex(id)}: {names[world.terrain]}
+											</option>
+										))}
+									</select>
+								</label>{' '}
+								<button type="submit" name="mapSize" value={index}>
+									Set map size
+								</button>
+							</form>
 						</p>
 					</div>
 					<table>
