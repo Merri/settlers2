@@ -298,12 +298,16 @@ export function WorldEditor() {
 		const widthElement: HTMLInputElement = form.elements['width']
 		const heightElement: HTMLInputElement = form.elements['height']
 		const textureElement: HTMLInputElement = form.elements['texture']
+		const alignElement: HTMLInputElement = form.elements['align']
+		const [yAlign, xAlign] = alignElement.value.split('-', 2)
 		setWorlds((worlds) => {
 			return worlds.map((worldFile, index) => {
 				const options = {
 					width: ~~widthElement.value,
 					height: ~~heightElement.value,
 					texture: ~~textureElement.value,
+					xAlign: xAlign as 'left' | 'center' | 'right',
+					yAlign: yAlign as 'top' | 'center' | 'bottom',
 				}
 				return index === targetIndex ? { ...worldFile, world: setMapSize(worldFile.world, options) } : worldFile
 			})
@@ -382,6 +386,20 @@ export function WorldEditor() {
 								<input type="number" name="width" min={32} max={768} step={16} value={world.width} />{' '}
 								&times;{' '}
 								<input type="number" name="height" min={32} max={768} step={16} value={world.height} />{' '}
+								<label>
+									Align:{' '}
+									<select name="align">
+										<option value="center-center">Center</option>
+										<option value="top-left">Top left</option>
+										<option value="top-center">Top center</option>
+										<option value="top-right">Top right</option>
+										<option value="center-left">Center left</option>
+										<option value="center-right">Center right</option>
+										<option value="bottom-left">Bottom left</option>
+										<option value="bottom-center">Bottom center</option>
+										<option value="bottom-right">Bottom right</option>
+									</select>
+								</label>
 								<label>
 									Default texture:{' '}
 									<select name="texture">

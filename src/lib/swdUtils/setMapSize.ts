@@ -5,9 +5,14 @@ interface Options {
 	width: number
 	height: number
 	texture?: Texture
+	xAlign?: 'left' | 'center' | 'right'
+	yAlign?: 'top' | 'center' | 'bottom'
 }
 
-export function setMapSize(world: MapClass, { width, height, texture = Texture.InaccessibleWater }: Options): MapClass {
+export function setMapSize(
+	world: MapClass,
+	{ width, height, texture = Texture.InaccessibleWater, xAlign = 'center', yAlign = 'center' }: Options
+): MapClass {
 	const worldSize = world.width * world.height
 	const newWorld = new MapClass({ width, height })
 	const newBlocks = newWorld.blocks
@@ -25,18 +30,21 @@ export function setMapSize(world: MapClass, { width, height, texture = Texture.I
 	newBlocks[BlockType.Texture2].fill(texture)
 	newBlocks[BlockType.FogOfWar].fill(7)
 
-	const xDiff = (width - world.width) / 2
-	const yDiff = (height - world.height) / 2
+	const xDiv = (xAlign === 'center' && 2) || (xAlign === 'right' && 1) || 0
+	const yDiv = (yAlign === 'center' && 2) || (yAlign === 'bottom' && 1) || 0
+	const xDiff = xDiv && (width - world.width) / xDiv
+	const yDiff = yDiv && (height - world.height) / yDiv
 
 	const sourceXOffset = xDiff < 0 ? -xDiff : 0
 	const targetXOffset = xDiff < 0 ? 0 : xDiff
 	const sourceYOffset = yDiff < 0 ? -yDiff : 0
 	const targetYOffset = yDiff < 0 ? 0 : yDiff
-	const sourceWidth = world.width - sourceXOffset * 2
+	const sourceWidth = Math.min(world.width, width)
+	const sourceHeight = Math.min(world.height, height)
 
 	for (
 		let sY = sourceYOffset, sIndex = sY * world.width, tY = targetYOffset, tIndex = tY * width;
-		sY < world.height - sourceYOffset;
+		sY < sourceHeight + sourceYOffset;
 		sY++, sIndex += world.width, tY++, tIndex += width
 	) {
 		const start = sIndex + sourceXOffset
