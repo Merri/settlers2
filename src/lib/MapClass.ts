@@ -73,7 +73,7 @@ function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 	world.hqX.forEach((x, player) => {
 		const y = world.hqY[player]
 		const index = x + y * world.width
-		world.blocks[BlockType.Object1][index] = player + 1
+		world.blocks[BlockType.Object1][index] = player
 		world.blocks[BlockType.Object2][index] = 0x80
 	})
 
@@ -181,7 +181,7 @@ function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 			if (
 				mountains < 6 ||
 				// too big height difference
-				nodeHeight - heightMap[nodes.bottomRight] >= -3 ||
+				nodeHeight - heightMap[nodes.bottomRight] < -3 ||
 				// snow or lava
 				(tex7Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
 				(tex8Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
@@ -872,7 +872,7 @@ export class MapClass {
 				if (
 					mountains < 6 ||
 					// too big height difference
-					nodeHeight - heightMap[nodes.bottomRight] >= -3 ||
+					nodeHeight - heightMap[nodes.bottomRight] < -3 ||
 					// snow or lava
 					(tex7Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
 					(tex8Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
