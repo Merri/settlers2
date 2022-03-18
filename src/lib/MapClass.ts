@@ -261,7 +261,7 @@ function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 	})
 
 	heightMap.forEach((height, index) => {
-		let shade = 0
+		let shade = 0x40
 		const around = getNodesByIndex(index, world.width, world.height)
 		const aroundLeft = getNodesByIndex(around.left, world.width, world.height)
 		shade += 9 * (heightMap[around.topRight] - height)
@@ -1170,7 +1170,7 @@ export class MapClass {
 		const heightMap = this.blocks[BlockType.HeightMap]
 		const lightMap = this.blocks[BlockType.LightMap]
 		heightMap.forEach((height, index) => {
-			let shade = 0
+			let shade = 0x40
 			const around = getNodesByIndex(index, this.width, this.height)
 			const aroundLeft = getNodesByIndex(around.left, this.width, this.height)
 			shade += 9 * (heightMap[around.topRight] - height)
