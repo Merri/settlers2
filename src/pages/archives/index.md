@@ -11,6 +11,7 @@ Welcome to the Archives! Here you can find all sorts of preserved content you ca
 - [Downloads](/archives/downloads) for some original game downloads: demos and updates.
 - [Language packs](/archives/language-packs) to change the language of the game.
 - [Map generators](/archives/map-generators) to automate creation of new game worlds.
+- **NEW!** March 26th 2022: [Rusty Polar texture pack](/archives/texture-pack-rusty-polar) to swap Wasteland and Winter World.
 - [Merri's New Greenland](/archives/texture-set-new-greenland) to add new textures and for an alternate look.
 
 Maps Database is hopefully coming in the nearish future (this written on September 6th 2021). You can come through online channels and remind me I've "promised" this for the last 10 years.
