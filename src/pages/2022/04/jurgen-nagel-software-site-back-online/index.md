@@ -4,7 +4,7 @@ publishDate: '2022-04-09'
 layout: '$layouts/BlogPost.astro'
 ---
 
-Thanks to community member The Archivist's efforts Jürgen Nagel has brought back their German site, [Software vur Siedler2-MissionCD](http://www.jnsoftware.de/Siedler2/home.htm). The site contains a lot of Settlers II related utilities, graphic changes and maps to play, some which have notable customizations such as the Great Wall of China (see `g_mauer.zip`).
+Thanks to community member The Archivist's efforts Jürgen Nagel has brought back their German site, [Software zur Siedler2-MissionCD](http://www.jnsoftware.de/Siedler2/home.htm). The site contains a lot of Settlers II related utilities, graphic changes and maps to play, some which have notable customizations such as the Great Wall of China (see `g_mauer.zip`).
 
 <img alt="The Great Wall" src="/assets/2022-04-09_The_Great_Wall.png" width="1024" height="768" />
 
