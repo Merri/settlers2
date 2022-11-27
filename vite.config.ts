@@ -6,7 +6,7 @@ const defaultConfig: ReturnType<typeof defineConfig> = {
 }
 
 export default defineConfig(({ mode }: ConfigEnv) => {
-	if (!process.argv.includes('--local-development')) {
+	/*if (!process.argv.includes('--local-development')) {
 		return {
 			...defaultConfig,
 			server: {
@@ -15,6 +15,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 				},
 			},
 		}
-	}
+	}*/
 	return defaultConfig
 })

@@ -162,7 +162,7 @@ export class MapGenerator extends Component<{}, State> {
 			(seedOptions.width + (seedOptions.height & seed)) * 0.0001 + 0.0625,
 		]
 
-		if (hasLocalStorage) {
+		if (hasLocalStorage && seedOptions.width && seedOptions.height) {
 			localStorage.width = seedOptions.width
 			localStorage.height = seedOptions.height
 		}
