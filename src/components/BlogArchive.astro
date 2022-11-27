@@ -1,63 +1,62 @@
 ---
-import format from 'date-fns/format';
+import format from 'date-fns/format'
 
-interface AstroPost {
-	title: string;
-	tag?: string;
-	publishDate: string;
-	image?: string;
-	author?: string;
-	description?: string;
-	astro: {
-		headers: string[];
-		source: string;
-		html: string;
-	};
-	url: string;
-}
+import { Props as Post } from '$/components/BlogPost.astro'
+import { MarkdownInstance } from 'astro'
 
 export interface Props {
-	posts: AstroPost[]
+	posts: MarkdownInstance<Post>[]
 }
 
-const postsByYear = new Map();
+interface ExtendedPost extends MarkdownInstance<Post> {
+	date: Date
+	published: string
+	publishDate: string
+	url: string
+}
 
-Astro.props.posts.forEach(post => {
-	const url = post.url.replace(/\/index$/, '');
-	const date = new Date(post.publishDate);
-	const published = format(date, 'MMM dd');
-	const publishDate = format(date, 'yyyy-MM-dd');
-	const year = format(date, 'yyyy');
+const postsByYear = new Map<string, ExtendedPost[]>()
 
-	if (!postsByYear.has(year)) postsByYear.set(year, []);
-	postsByYear.get(year).push({ ...post, date, publishDate, published, url });
-});
+Astro.props.posts.forEach((post) => {
+	const url = (post.url || '').replace(/\/index$/, '')
+	const date = new Date(post.frontmatter.publishDate)
+	const published = format(date, 'MMM dd')
+	const publishDate = format(date, 'yyyy-MM-dd')
+	const year = format(date, 'yyyy')
 
-// Hack of the Year award
-const render = [];
-
+	const item = { ...post, date, publishDate, published, url }
+	const yearGroup = postsByYear.get(year)?.push(item)
+	if (yearGroup == null) postsByYear.set(year, [item])
+})
 ---
 
 <h2>Post Archive</h2>
 
-{postsByYear.forEach((posts, year) => render.push(
-	<details>
-		<summary>Year {year}</summary>
-		<div class="accordion">
-			<div>
-				<ul>
-					{posts.map((post) => <li>
-						<time datetime={post.publishDate}>{post.published}</time>: <a href={post.url}>{post.title}</a>
-					</li>)}
-				</ul>
+{
+	Array.from(postsByYear).map(([year, posts]) => (
+		<details>
+			<summary>Year {year}</summary>
+			<div class="accordion">
+				<div>
+					<ul>
+						{posts.map((post) => (
+							<li>
+								<time datetime={post.frontmatter.publishDate}>{post.published}</time>:{' '}
+								<a href={post.url}>{post.frontmatter.title}</a>
+							</li>
+						))}
+					</ul>
+				</div>
 			</div>
-		</div>
-	</details>
-))}
-
-{render}
+		</details>
+	))
+}
 
 <style>
-details { max-width: unset; }
-time { font-family: var(--font-mono) }
+	details {
+		max-width: unset;
+	}
+	time {
+		font-family: var(--font-mono);
+	}
 </style>

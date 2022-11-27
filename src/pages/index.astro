@@ -1,105 +1,126 @@
 ---
 // Component Imports
-import BaseHead from '$/components/BaseHead.astro';
-import BlogHeader from '$/components/BlogHeader.astro';
-import BlogArchive from '$/components/BlogArchive.astro';
-import BlogPostPreview from '$/components/BlogPostPreview.astro';
-import Logo from '$/components/Logo.astro';
+import BaseHead from '$/components/BaseHead.astro'
+import BlogHeader from '$/components/BlogHeader.astro'
+import BlogArchive from '$/components/BlogArchive.astro'
+import BlogPostPreview from '$/components/BlogPostPreview.astro'
+import Logo from '$/components/Logo.astro'
 
-import { Props as Post } from '../components/BlogPost.astro';
+import { Props as Post } from '../components/BlogPost.astro'
 
-const title = 'Settlers II.net';
-const description = 'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community';
-const permalink = 'https://settlers2.net/';
+const title = 'Settlers II.net'
+const description =
+	'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community'
+const permalink = 'https://settlers2.net/'
 
-const allPosts: Post[] = Astro.fetchContent('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md');
-allPosts.sort((a, b) => +new Date(b.publishDate) - +new Date(a.publishDate));
+const allPosts = await Astro.glob<Post>('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md')
+
+allPosts.sort((a, b) => +new Date(b.frontmatter.publishDate) - +new Date(a.frontmatter.publishDate))
 ---
+
 <html lang="en">
-  <head>
-    <BaseHead title={title} description={description} permalink={permalink} />
-    <link rel="stylesheet" href="/blog.css" />
+	<head>
+		<BaseHead title={title} description={description} permalink={permalink} />
+		<link rel="stylesheet" href="/blog.css" />
 
-    <style>
-      body {
-        --gutter: 0.5rem;
-        --doc-padding: 2rem;
-      }
+		<style>
+			body {
+				--gutter: 0.5rem;
+				--doc-padding: 2rem;
+			}
 
-      .content {
-        margin-top: 1rem;
-        margin-bottom: 8rem;
-      }
+			.content {
+				margin-top: 1rem;
+				margin-bottom: 8rem;
+			}
 
-      .content :global(main > * + *) {
-        margin-top: 1rem;
-      }
+			.content :global(main > * + *) {
+				margin-top: 1rem;
+			}
 
-      .intro {
-        font-size: 1.125em;
-        margin-left: 1.25rem;
-        margin-right: 1.25rem;
-        padding-bottom: 4rem;
-        margin-bottom: 2rem;
-        border-bottom: 4px solid var(--theme-divider);
-      }
+			.intro {
+				font-size: 1.125em;
+				margin-left: 1.25rem;
+				margin-right: 1.25rem;
+				padding-bottom: 4rem;
+				margin-bottom: 2rem;
+				border-bottom: 4px solid var(--theme-divider);
+			}
 
-      .intro > * {
-        margin: 0;
-      }
+			.intro > * {
+				margin: 0;
+			}
 
-      footer a { font-weight: inherit; }
+			footer a {
+				font-weight: inherit;
+			}
 
-      footer {
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        line-height: 1.25;
-        padding: 0 3rem 1.5rem;
-        text-align: center;
-      }
+			footer {
+				align-items: center;
+				display: flex;
+				justify-content: center;
+				line-height: 1.25;
+				padding: 0 3rem 1.5rem;
+				text-align: center;
+			}
 
-      footer small,
-      footer a { display: inline-block; }
+			footer small,
+			footer a {
+				display: inline-block;
+			}
 
-      footer small { margin-top: 0.5rem; }
+			footer small {
+				margin-top: 0.5rem;
+			}
 
-      footer dd a { color: inherit; }
+			footer dd a {
+				color: inherit;
+			}
 
-      footer dl,
-      footer dd { margin: 0; }
+			footer dl,
+			footer dd {
+				margin: 0;
+			}
 
-      footer dt { font-size: 1.25rem; font-weight: 600; }
-      footer dd { display: inline-block; padding: 0.5rem; }
-    </style>
-  </head>
+			footer dt {
+				font-size: 1.25rem;
+				font-weight: 600;
+			}
+			footer dd {
+				display: inline-block;
+				padding: 0.5rem;
+			}
+		</style>
+	</head>
 
-  <body>
-    <BlogHeader />
-    <main class="layout" id="main">
-      <article class="content">
-        <header class="intro">
-          <p>{description}</p>
-        </header>
-        {allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} />)}
-		<BlogArchive posts={allPosts} />
-      </article>
-    </main>
-    <footer>
-      <dl>
-        <dt>
-          Settlers II.net by <a href="https://twitter.com/merrinen">Vesa Piittinen</a> 2009 &ndash; {new Date().getFullYear()}<br />
-          <small>The Settlers II: Veni Vidi Vici, Mission CD, and Gold Edition by BlueByte 1996</small>
-        </dt>
-        <dd>
-          <a href="https://astro.build">Built with <span class="visually-hidden">Astro</span><Logo /></a>
-        </dd>
-        <dd>
-          <a href="https://github.com/Merri/settlers2">Site sources at GitHub</a>
-        </dd>
-      </dl>
-    </footer>
-	<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-	<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""/></noscript>
-  </body>
+	<body>
+		<BlogHeader />
+		<main class="layout" id="main">
+			<article class="content">
+				<header class="intro">
+					<p>{description}</p>
+				</header>
+				{allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} />)}
+				<BlogArchive posts={allPosts} />
+			</article>
+		</main>
+		<footer>
+			<dl>
+				<dt>
+					Settlers II.net by <a href="https://twitter.com/merrinen">Vesa Piittinen</a> 2009 &ndash; {
+						new Date().getFullYear()
+					}<br />
+					<small>The Settlers II: Veni Vidi Vici, Mission CD, and Gold Edition by BlueByte 1996</small>
+				</dt>
+				<dd>
+					<a href="https://astro.build">Built with <span class="visually-hidden">Astro</span><Logo /></a>
+				</dd>
+				<dd>
+					<a href="https://github.com/Merri/settlers2">Site sources at GitHub</a>
+				</dd>
+			</dl>
+		</footer>
+		<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+		<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" /></noscript>
+	</body>
 </html>

@@ -1,4 +1,4 @@
-import { Component } from 'preact/compat'
+import { ChangeEventHandler, Component } from 'preact/compat'
 
 interface Props {
 	onChange: (value: string) => void;
@@ -6,8 +6,8 @@ interface Props {
 }
 
 export class Compatibility extends Component<Props> {
-    handleChange = (event) => {
-        this.props.onChange(event.target.value);
+    handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+        this.props.onChange(event.currentTarget.value);
     }
 
     render() {

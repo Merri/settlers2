@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'preact/compat'
+import { ChangeEvent, useCallback, useState } from 'preact/compat'
 import { MapClass } from '$/lib/MapClass'
 import { AnimalType, BlockType, Texture, Textures } from '$/lib/types'
 import { cp437ToString, sanitizeAsCp437 } from '$/lib/cp437'
@@ -92,7 +92,7 @@ export function WorldEditor() {
 	const [worlds, setWorlds] = useState<WorldFile[]>([])
 	const [selected, setSelected] = useState(0)
 
-	async function onChange(event: Event) {
+	async function onChange(event: ChangeEvent<HTMLInputElement>) {
 		if (!(event.target instanceof HTMLInputElement)) return
 
 		const saveGameMeta = new Map<
@@ -113,7 +113,7 @@ export function WorldEditor() {
 		const errors: string[] = []
 		const worldFiles: WorldFile[] = []
 
-		for (const file of Array.from(event.target.files)) {
+		for (const file of Array.from(event.target.files || [])) {
 			const arrayBuffer = await file.arrayBuffer()
 			const control = /^CNTRL(\d\d\d)\.DAT$/i.exec(file.name)
 			const region = /^CONTI(\d\d\d)\.DAT$/i.exec(file.name)
@@ -166,10 +166,10 @@ export function WorldEditor() {
 			const worldNumber = /^WORLD(\d\d\d)\.DAT$/i.exec(worldFile.filename)
 			if (worldNumber) {
 				if (regions.has(worldNumber[1])) {
-					world.setRegions(new DataView(regions.get(worldNumber[1])))
+					world.setRegions(new DataView(regions.get(worldNumber[1])!))
 				}
 				if (saveGameMeta.has(worldNumber[1])) {
-					const save = saveGameMeta.get(worldNumber[1])
+					const save = saveGameMeta.get(worldNumber[1])!
 					// loose check that at least the world size matches!
 					if (world.width === save.width && world.height === save.height) {
 						world.terrain = save.terrain
@@ -238,9 +238,9 @@ export function WorldEditor() {
 	)
 
 	const handleTextInput = useCallback(
-		function handleTextInput(event: Event) {
+		function handleTextInput(event: ChangeEvent<HTMLInputElement>) {
 			if (!(event.target instanceof HTMLInputElement)) return
-			const { world } = worlds[~~event.target.dataset.index]
+			const { world } = worlds[~~event.target.dataset.index!]!
 			world[event.target.name] = sanitizeAsCp437(event.target.value)
 			setWorlds((worlds) => worlds.slice(0))
 		},
@@ -251,12 +251,12 @@ export function WorldEditor() {
 		function handleNumberInput(event: Event) {
 			if (!(event.target instanceof HTMLInputElement) && !(event.target instanceof HTMLSelectElement)) return
 			const indices = event.target.dataset.index
-			if (indices.includes('-')) {
+			if (indices?.includes('-')) {
 				const [index, itemIndex] = indices.split('-').map((x) => ~~x)
 				const { world } = worlds[index]
 				world[event.target.name][itemIndex] = ~~event.target.value
 			} else {
-				const { world } = worlds[~~indices]
+				const { world } = worlds[~~(indices || 0)]
 				world[event.target.name] = ~~event.target.value
 			}
 			setWorlds((worlds) => worlds.slice(0))
@@ -289,7 +289,7 @@ export function WorldEditor() {
 		})
 	}, [])
 
-	const handleMapSize = useCallback(function handleMapSize(event: Event) {
+	const handleMapSize = useCallback(function handleMapSize(event: SubmitEvent) {
 		const form = event.target
 		if (!(form instanceof HTMLFormElement)) return
 		event.preventDefault()

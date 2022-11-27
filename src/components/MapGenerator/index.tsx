@@ -4,7 +4,7 @@ import { XORShift } from 'random-seedable'
 
 const random = new XORShift()
 
-import { Component, createRef } from 'preact/compat'
+import { ChangeEventHandler, Component, createRef } from 'preact/compat'
 
 import Generator from '$/lib/generator'
 
@@ -72,8 +72,8 @@ export class MapGenerator extends Component<{}, State> {
 	constructor(props: {}) {
 		super(props)
 
-		const width = hasLocalStorage ? ~~localStorage.width : 160
-		const height = hasLocalStorage ? ~~localStorage.height : 160
+		const width = (hasLocalStorage && ~~localStorage.width) || 160
+		const height = (hasLocalStorage && ~~localStorage.height) || 160
 
 		this.state = {
 			compatibility: 'return-to-the-roots',
@@ -142,7 +142,7 @@ export class MapGenerator extends Component<{}, State> {
 		console.timeEnd('Draw')
 	}
 
-	handleSeed = (event: MouseEvent | 'random' | 'given' = undefined) => {
+	handleSeed = (event: MouseEvent | 'random' | 'given' | undefined = undefined) => {
 		const mode = event instanceof Event ? (event.target as HTMLButtonElement).value : event || 'random'
 		const randomSeed = mode === 'random'
 		console.time('New Seed, Height Map, Textures and Resources')
@@ -237,22 +237,22 @@ export class MapGenerator extends Component<{}, State> {
 		URL.revokeObjectURL(blobUrl)
 	}
 
-	handleCompatibility = (compatibility) => {
+	handleCompatibility = (compatibility: string) => {
 		this.setState({ compatibility })
 	}
 
-	handleSetWidth = (event) => {
-		const seedOptions = { ...this.state.seedOptions, width: ~~(event.target as HTMLSelectElement).value }
+	handleSetWidth: ChangeEventHandler<HTMLSelectElement> = (event) => {
+		const seedOptions = { ...this.state.seedOptions, width: ~~event.currentTarget.value }
 		this.setState({ seedOptions })
 	}
 
-	handleSetHeight = (event: Event) => {
-		const seedOptions = { ...this.state.seedOptions, height: ~~(event.target as HTMLSelectElement).value }
+	handleSetHeight: ChangeEventHandler<HTMLSelectElement> = (event) => {
+		const seedOptions = { ...this.state.seedOptions, height: ~~event.currentTarget.value }
 		this.setState({ seedOptions })
 	}
 
-	handleTerrain = (event) => {
-		this.state.textureOptions.terrain = ~~event.target.value
+	handleTerrain: ChangeEventHandler<HTMLSelectElement> = (event) => {
+		this.state.textureOptions.terrain = ~~event.currentTarget.value
 		this.generateTextures()
 		this.setState({
 			players: [],
@@ -266,7 +266,7 @@ export class MapGenerator extends Component<{}, State> {
 		this.setState({ seedOptions }, () => this.handleSeed('given'))
 	}
 
-	handleBaseLevel = (value) => {
+	handleBaseLevel = (value: string | number) => {
 		value = ~~value
 		if (this.state.heightOptions.baseLevel !== value) {
 			this.state.heightOptions.baseLevel = value
@@ -274,7 +274,7 @@ export class MapGenerator extends Component<{}, State> {
 		}
 	}
 
-	handleGroundLevel = (value) => {
+	handleGroundLevel = (value: string | number) => {
 		value = ~~value
 		if (this.state.heightOptions.groundLevel !== value) {
 			this.state.heightOptions.groundLevel = value
@@ -282,7 +282,7 @@ export class MapGenerator extends Component<{}, State> {
 		}
 	}
 
-	handleFlatten = (value) => {
+	handleFlatten = (value: string | number) => {
 		value = ~~value
 		if (this.state.heightOptions.flatten !== value) {
 			this.state.heightOptions.flatten = value
@@ -290,7 +290,7 @@ export class MapGenerator extends Component<{}, State> {
 		}
 	}
 
-	handleNoise = (value) => {
+	handleNoise = (value: string | number) => {
 		value = ~~value ? ~~value / 10 : 0
 		if (this.state.heightOptions.randomize !== value) {
 			this.state.heightOptions.randomize = value
@@ -298,52 +298,52 @@ export class MapGenerator extends Component<{}, State> {
 		}
 	}
 
-	handlePlayerMinDistance = (value) => {
+	handlePlayerMinDistance = (value: string | number) => {
 		this.setState({
 			playerMinDistance: ~~value,
 		})
 	}
 
-	handleNoiseOnWater = (event) => {
-		this.state.heightOptions.noiseOnWater = event.target.checked
+	handleNoiseOnWater: ChangeEventHandler<HTMLInputElement> = (event) => {
+		this.state.heightOptions.noiseOnWater = event.currentTarget.checked
 		this.handleLandscape()
 	}
 
-	handleViewTypeChange = (event) => {
-		var value = event.target.value
+	handleViewTypeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+		var value: string | number = event.currentTarget.value
 
 		if (value === '' + ~~value) value = ~~value
 
 		this.setState(
 			{
-				viewType: value,
+				viewType: value as number | 'seed' | 'fast' | 'pretty',
 			},
 			this.handleDraw
 		)
 	}
 
-	handleTitleChange = (event) => {
+	handleTitleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
 		this.setState({
-			title: generator.sanitizeStringAsCP437(event.target.value),
+			title: generator.sanitizeStringAsCP437(event.currentTarget.value),
 		})
 	}
 
-	isRttROnly = (areas) => {
+	isRttROnly = (areas: any[]) => {
 		return this.state.width > 256 || this.state.height > 256 || areas.length > 250
 	}
 
-	handleMaxPlayerChange = (event) => {
+	handleMaxPlayerChange: ChangeEventHandler<HTMLInputElement> = (event) => {
 		this.setState({
-			maxPlayers: ~~event.target.value,
+			maxPlayers: ~~event.currentTarget.value,
 		})
 	}
 
-	handlePlayableTexture = (value) => {
+	handlePlayableTexture = (value: number) => {
 		this.state.textureOptions.texture = value
 		this.handleLandscape()
 	}
 
-	handleUnPlayableTexture = (value) => {
+	handleUnPlayableTexture = (value: number) => {
 		this.state.textureOptions.waterTexture = value
 		this.handleLandscape()
 	}
@@ -369,10 +369,10 @@ export class MapGenerator extends Component<{}, State> {
 			return <i className={className} id={'player' + index} style={style}></i>
 		})
 
-		const totalAreas = generator.getAreas() || []
+		const totalAreas: { mass: number; type: number }[] = generator.getAreas() || []
 
-		const areas = totalAreas.reduce(
-			function (prevValue, curValue, index, array) {
+		const areas = totalAreas.reduce<{ land: number; landTotalMass: number; water: number; waterTotalMass: number }>(
+			(prevValue, curValue) => {
 				if (curValue.type === 1) {
 					prevValue.land++
 					prevValue.landTotalMass += curValue.mass

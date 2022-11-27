@@ -7,9 +7,9 @@
  */
 
 html {
-  font-family: sans-serif; /* 1 */
-  -ms-text-size-adjust: 100%; /* 2 */
-  -webkit-text-size-adjust: 100%; /* 2 */
+	font-family: sans-serif; /* 1 */
+	-ms-text-size-adjust: 100%; /* 2 */
+	-webkit-text-size-adjust: 100%; /* 2 */
 }
 
 /**
@@ -17,7 +17,7 @@ html {
  */
 
 body {
-  margin: 0;
+	margin: 0;
 }
 
 /* HTML5 display definitions
@@ -41,7 +41,7 @@ main,
 nav,
 section,
 summary {
-  display: block;
+	display: block;
 }
 
 /**
@@ -53,8 +53,8 @@ audio,
 canvas,
 progress,
 video {
-  display: inline-block; /* 1 */
-  vertical-align: baseline; /* 2 */
+	display: inline-block; /* 1 */
+	vertical-align: baseline; /* 2 */
 }
 
 /**
@@ -63,8 +63,8 @@ video {
  */
 
 audio:not([controls]) {
-  display: none;
-  height: 0;
+	display: none;
+	height: 0;
 }
 
 /**
@@ -74,7 +74,7 @@ audio:not([controls]) {
 
 [hidden],
 template {
-  display: none;
+	display: none;
 }
 
 /* Links
@@ -85,7 +85,7 @@ template {
  */
 
 a {
-  background: transparent;
+	background: transparent;
 }
 
 /**
@@ -94,7 +94,7 @@ a {
 
 a:active,
 a:hover {
-  outline: 0;
+	outline: 0;
 }
 
 /* Text-level semantics
@@ -105,7 +105,7 @@ a:hover {
  */
 
 abbr[title] {
-  border-bottom: 1px dotted;
+	border-bottom: 1px dotted;
 }
 
 /**
@@ -114,7 +114,7 @@ abbr[title] {
 
 b,
 strong {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 /**
@@ -122,7 +122,7 @@ strong {
  */
 
 dfn {
-  font-style: italic;
+	font-style: italic;
 }
 
 /**
@@ -131,8 +131,8 @@ dfn {
  */
 
 h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
+	font-size: 2em;
+	margin: 0.67em 0;
 }
 
 /**
@@ -140,8 +140,8 @@ h1 {
  */
 
 mark {
-  background: #ff0;
-  color: #000;
+	background: #ff0;
+	color: #000;
 }
 
 /**
@@ -149,7 +149,7 @@ mark {
  */
 
 small {
-  font-size: 80%;
+	font-size: 80%;
 }
 
 /**
@@ -158,18 +158,18 @@ small {
 
 sub,
 sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
 }
 
 sup {
-  top: -0.5em;
+	top: -0.5em;
 }
 
 sub {
-  bottom: -0.25em;
+	bottom: -0.25em;
 }
 
 /* Embedded content
@@ -180,7 +180,7 @@ sub {
  */
 
 img {
-  border: 0;
+	border: 0;
 }
 
 /**
@@ -188,7 +188,7 @@ img {
  */
 
 svg:not(:root) {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 /* Grouping content
@@ -199,7 +199,7 @@ svg:not(:root) {
  */
 
 figure {
-  margin: 1em 40px;
+	margin: 1em 40px;
 }
 
 /**
@@ -207,9 +207,9 @@ figure {
  */
 
 hr {
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  height: 0;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	height: 0;
 }
 
 /**
@@ -217,7 +217,7 @@ hr {
  */
 
 pre {
-  overflow: auto;
+	overflow: auto;
 }
 
 /**
@@ -228,8 +228,8 @@ code,
 kbd,
 pre,
 samp {
-  font-family: monospace, monospace;
-  font-size: 1em;
+	font-family: monospace, monospace;
+	font-size: 1em;
 }
 
 /* Forms
@@ -252,11 +252,11 @@ input,
 optgroup,
 select,
 textarea {
-  color: inherit; /* 1 */
-  font: inherit; /* 2 */
-  margin: 0; /* 3 */
-  font-size: 13px; /* Map Generator: restore default size */
-  font-size: 0.8125rem; /* Map Generator: restore default size */
+	color: inherit; /* 1 */
+	font: inherit; /* 2 */
+	margin: 0; /* 3 */
+	font-size: 13px; /* Map Generator: restore default size */
+	font-size: 0.8125rem; /* Map Generator: restore default size */
 }
 
 /**
@@ -264,7 +264,7 @@ textarea {
  */
 
 button {
-  overflow: visible;
+	overflow: visible;
 }
 
 /**
@@ -276,7 +276,7 @@ button {
 
 button,
 select {
-  text-transform: none;
+	text-transform: none;
 }
 
 /**
@@ -291,8 +291,8 @@ button,
 html input[type="button"], /* 1 */
 input[type="reset"],
 input[type="submit"] {
-  -webkit-appearance: button; /* 2 */
-  cursor: pointer; /* 3 */
+	-webkit-appearance: button; /* 2 */
+	cursor: pointer; /* 3 */
 }
 
 /**
@@ -301,7 +301,7 @@ input[type="submit"] {
 
 button[disabled],
 html input[disabled] {
-  cursor: default;
+	cursor: default;
 }
 
 /**
@@ -310,8 +310,8 @@ html input[disabled] {
 
 button::-moz-focus-inner,
 input::-moz-focus-inner {
-  border: 0;
-  padding: 0;
+	border: 0;
+	padding: 0;
 }
 
 /**
@@ -320,7 +320,7 @@ input::-moz-focus-inner {
  */
 
 input {
-  line-height: normal;
+	line-height: normal;
 }
 
 /**
@@ -331,10 +331,10 @@ input {
  * 2. Remove excess padding in IE 8/9/10.
  */
 
-input[type="checkbox"],
-input[type="radio"] {
-  box-sizing: border-box; /* 1 */
-  padding: 0; /* 2 */
+input[type='checkbox'],
+input[type='radio'] {
+	box-sizing: border-box; /* 1 */
+	padding: 0; /* 2 */
 }
 
 /**
@@ -343,9 +343,9 @@ input[type="radio"] {
  * decrement button to change from `default` to `text`.
  */
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  height: auto;
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+	height: auto;
 }
 
 /**
@@ -354,11 +354,11 @@ input[type="number"]::-webkit-outer-spin-button {
  *    (include `-moz` to future-proof).
  */
 
-input[type="search"] {
-  -webkit-appearance: textfield; /* 1 */
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box; /* 2 */
-  box-sizing: content-box;
+input[type='search'] {
+	-webkit-appearance: textfield; /* 1 */
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box; /* 2 */
+	box-sizing: content-box;
 }
 
 /**
@@ -367,9 +367,9 @@ input[type="search"] {
  * padding (and `textfield` appearance).
  */
 
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none;
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-decoration {
+	-webkit-appearance: none;
 }
 
 /**
@@ -377,9 +377,9 @@ input[type="search"]::-webkit-search-decoration {
  */
 
 fieldset {
-  border: 1px solid #c0c0c0;
-  margin: 0 2px;
-  padding: 0.35em 0.625em 0.75em;
+	border: 1px solid #c0c0c0;
+	margin: 0 2px;
+	padding: 0.35em 0.625em 0.75em;
 }
 
 /**
@@ -388,8 +388,8 @@ fieldset {
  */
 
 legend {
-  border: 0; /* 1 */
-  padding: 0; /* 2 */
+	border: 0; /* 1 */
+	padding: 0; /* 2 */
 }
 
 /**
@@ -397,7 +397,7 @@ legend {
  */
 
 textarea {
-  overflow: auto;
+	overflow: auto;
 }
 
 /**
@@ -406,7 +406,7 @@ textarea {
  */
 
 optgroup {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 /* Tables
@@ -417,445 +417,431 @@ optgroup {
  */
 
 table {
-  border-collapse: collapse;
-  border-spacing: 0;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
 td,
 th {
-  padding: 0;
+	padding: 0;
 }
-
 
 /* Map Generator
    ========================================================================== */
 html {
-    background: #444;
-    font-family: 'Segoe UI', 'Verdana', 'Tahoma', 'Arial', 'Helvetica', sans-serif;
+	background: #444;
+	font-family: 'Segoe UI', 'Verdana', 'Tahoma', 'Arial', 'Helvetica', sans-serif;
 }
 
 body {
-    background: #F9F6EE;
-    margin: 0 auto;
-    max-width: 1000px;
+	background: #f9f6ee;
+	margin: 0 auto;
+	max-width: 1000px;
 }
 
 a:focus {
-    outline: none;
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 hr {
-    background: #444;
-    border-top: solid #666;
-    border-width: 1px 0 0;
-    height: 0;
+	background: #444;
+	border-top: solid #666;
+	border-width: 1px 0 0;
+	height: 0;
 }
 
 .generator-header h1 {
-    background: url('http://settlers2.net/wp-content/uploads/2011/09/header_s2.jpg') repeat-x 50% 0%;
-    box-shadow: inset 0 0 8px black;
-    margin: 0;
+	background: url('http://settlers2.net/wp-content/uploads/2011/09/header_s2.jpg') repeat-x 50% 0%;
+	box-shadow: inset 0 0 8px black;
+	margin: 0;
 }
 
 .generator-header h1 span {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    display: block;
-    margin: 0 auto;
-    max-width: 1000px;
-    padding: 16px;
-    padding: 1rem;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	display: block;
+	margin: 0 auto;
+	max-width: 1000px;
+	padding: 16px;
+	padding: 1rem;
 }
 
 .generator-header h1 em {
-    color: #D99E00;
-    display: block;
-    font-family: 'UnifrakturCook', sans-serif;
-    font-style: normal;
-    line-height: 1;
-    padding: 0.25em 0 0 1.75em;
-    text-shadow: -3px 1px 0 black,
-        0 0 .5em black,
-        -1px 0 #730,
-        0 -1px #730,
-        1px 0 #730,
-        0 1px #730;
+	color: #d99e00;
+	display: block;
+	font-family: 'UnifrakturCook', sans-serif;
+	font-style: normal;
+	line-height: 1;
+	padding: 0.25em 0 0 1.75em;
+	text-shadow: -3px 1px 0 black, 0 0 0.5em black, -1px 0 #730, 0 -1px #730, 1px 0 #730, 0 1px #730;
 }
 
 .generator-header h1 em:before {
-    color: transparent;
-    content: 'Map Generator';
-    background: -webkit-linear-gradient(top, #C06800 0%, #F2D300 44%, #FFF 50%, #FFFF40 51%, #F2D300 57%, #C06800 100%);
-    -webkit-background-clip: text;
-    -webkit-pointer-events: none;
-    -moz-pointer-events: none;
-    -ms-pointer-events: none;
-    pointer-events: none;
-    position: absolute;
-    text-shadow: none;
-    -webkit-text-stroke: 1px #730;
+	color: transparent;
+	content: 'Map Generator';
+	background: -webkit-linear-gradient(top, #c06800 0%, #f2d300 44%, #fff 50%, #ffff40 51%, #f2d300 57%, #c06800 100%);
+	-webkit-background-clip: text;
+	-webkit-pointer-events: none;
+	-moz-pointer-events: none;
+	-ms-pointer-events: none;
+	pointer-events: none;
+	position: absolute;
+	text-shadow: none;
+	-webkit-text-stroke: 1px #730;
 }
 
 .generator-header h1 em:hover:before {
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+	text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 .generator-facebook {
-    float: right;
-    padding: 1em;
+	float: right;
+	padding: 1em;
 }
 
 .generator-footer p,
 .generator-header p {
-    background: #222;
-    margin: 0;
-    padding: 1em;
+	background: #222;
+	margin: 0;
+	padding: 1em;
 }
 
 .generator-dark {
-    color: #f9f9f9;
+	color: #f9f9f9;
 }
 
 .generator-footer a:link,
 .generator-footer a:visited,
 .generator-header a:link,
 .generator-header a:visited {
-    color: inherit;
-    font-style: italic;
-    text-decoration: none;
+	color: inherit;
+	font-style: italic;
+	text-decoration: none;
 }
 
 .generator-footer a:hover,
 .generator-header a:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 .generator-header__old-version {
-    float: right;
-    padding: 1em 1em 0 0;
+	float: right;
+	padding: 1em 1em 0 0;
 }
 
 .generator-main {
-    padding: 1em;
+	padding: 1em;
 }
 
 label {
-    cursor: pointer;
-    display: inline-block;
+	cursor: pointer;
+	display: inline-block;
 }
 
 .settlers2-map {
-    background: #fff url('./water-0.png');
-    -ms-interpolation-mode: nearest-neighbor;
-    image-rendering: optimizeSpeed;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: optimize-contrast;
-    vertical-align: top;
+	background: #fff url('./water-0.png');
+	-ms-interpolation-mode: nearest-neighbor;
+	image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: optimize-contrast;
+	vertical-align: top;
 }
 
 .settlers2-map--wasteland {
-    background-image: url('./water-1.png');
+	background-image: url('./water-1.png');
 }
 
 .settlers2-map--winter-world {
-    background-image: url('./water-2.png');
+	background-image: url('./water-2.png');
 }
 
 .map-view-container,
 .tab section {
-    background: #eee;
-    display: inline-block;
-    margin: 0.25em 0;
-    padding: 0.5em 1em;
-    position: relative;
-    vertical-align: top;
-    z-index: 0;
+	background: #eee;
+	display: inline-block;
+	margin: 0.25em 0;
+	padding: 0.5em 1em;
+	position: relative;
+	vertical-align: top;
+	z-index: 0;
 }
 
 #app header {
-    margin: 0.25em 0;
-    font-size: 1.5em;
-    font-weight: bold;
+	margin: 0.25em 0;
+	font-size: 1.5em;
+	font-weight: bold;
 }
 
 .map-view-container ul,
 .tab ul {
-    list-style: none;
-    margin: 1em 0;
-    padding: 0;
+	list-style: none;
+	margin: 1em 0;
+	padding: 0;
 }
 
 dl {
-    margin: 0;
+	margin: 0;
 }
 
 .tab li {
-    background: #f6f6f6;
-    border: 1px solid #ddd;
-    margin: 0.25em;
-    padding: 0.75em;
+	background: #f6f6f6;
+	border: 1px solid #ddd;
+	margin: 0.25em;
+	padding: 0.75em;
 }
 
 li > small {
-    display: block;
-    padding: 0.5em 0;
+	display: block;
+	padding: 0.5em 0;
 }
 
-input[type="number"] {
-    width: 5em;
+input[type='number'] {
+	width: 5em;
 }
 
 button {
-    cursor: pointer;
-    margin: 0.5em;
-    padding: 0.5em;
+	cursor: pointer;
+	margin: 0.5em;
+	padding: 0.5em;
 }
 
 .player-positions {
-    border: 1px solid #000;
-    display: inline-block;
-    margin: -1px;
-    overflow: hidden;
-    position: relative;
+	border: 1px solid #000;
+	display: inline-block;
+	margin: -1px;
+	overflow: hidden;
+	position: relative;
 }
 
 .player-position {
-    background: rgba(96, 128, 160, 0.5);
-    border: 2px solid black;
-    border-radius: 50%;
-    box-shadow: 0 0 10px white,
-        0 0 5px white;
-    height: 16px;
-    left: -100%;
-    margin: -9px 0 0 -9px;
-    position: absolute;
-    width: 16px;
-    top: -100%;
+	background: rgba(96, 128, 160, 0.5);
+	border: 2px solid black;
+	border-radius: 50%;
+	box-shadow: 0 0 10px white, 0 0 5px white;
+	height: 16px;
+	left: -100%;
+	margin: -9px 0 0 -9px;
+	position: absolute;
+	width: 16px;
+	top: -100%;
 }
 
 .player-position-rttr {
-    background: rgb(192, 180, 96);
-    opacity: 0.5;
+	background: rgb(192, 180, 96);
+	opacity: 0.5;
 }
 
-
-
 .generator-compatibility {
-
 }
 
 .generator-compatibility__title {
-    font-size: 1.125em;
-    font-weight: bold;
-    margin: 0.25em;
+	font-size: 1.125em;
+	font-weight: bold;
+	margin: 0.25em;
 }
 
 .generator-compatibility__description {
-    background: #fff;
-    border: 1px solid #222;
-    font-size: smaller;
-    opacity: 0;
-    margin: 0;
-    padding: 1px 1em;
-    -webkit-pointer-events: none;
-    -moz-pointer-events: none;
-    pointer-events: none;
-    position: absolute;
-    -webkit-transition: z-index 0s linear 0.5s,
-        opacity 0.125s ease-in-out 0.01s;
-    transition: z-index 0s linear 0.5s,
-        opacity 0.125s ease-in-out 0.01s;
-    width: 25em;
-    z-index: -1;
+	background: #fff;
+	border: 1px solid #222;
+	font-size: smaller;
+	opacity: 0;
+	margin: 0;
+	padding: 1px 1em;
+	-webkit-pointer-events: none;
+	-moz-pointer-events: none;
+	pointer-events: none;
+	position: absolute;
+	-webkit-transition: z-index 0s linear 0.5s, opacity 0.125s ease-in-out 0.01s;
+	transition: z-index 0s linear 0.5s, opacity 0.125s ease-in-out 0.01s;
+	width: 25em;
+	z-index: -1;
 }
 
 .generator-compatibility__title:hover + .generator-compatibility__description {
-    opacity: 1;
-    -webkit-transition: z-index 0s linear 0s,
-        opacity 0.25s ease-in-out 0.01s;
-    transition: z-index 0s linear 0s,
-        opacity 0.25s ease-in-out 0.01s;
-    z-index: 1;
+	opacity: 1;
+	-webkit-transition: z-index 0s linear 0s, opacity 0.25s ease-in-out 0.01s;
+	transition: z-index 0s linear 0s, opacity 0.25s ease-in-out 0.01s;
+	z-index: 1;
 }
 
 .generator-statistics {
-    background: #fffcf6;
-    border: 1px solid #464;
-    padding: 0.5em;
-    width: 12em;
+	background: #fffcf6;
+	border: 1px solid #464;
+	padding: 0.5em;
+	width: 12em;
 }
 
 .generator-statistics dt {
-    clear: left;
-    float: left;
-    width: 8em;
+	clear: left;
+	float: left;
+	width: 8em;
 }
 
 .generator-statistics dd {
-    margin: 0;
-    vertical-align: top;
+	margin: 0;
+	vertical-align: top;
 }
 
 .inc-dec {
-    border: 1px solid #464;
-    display: inline-block;
-    line-height: 0.1;
+	border: 1px solid #464;
+	display: inline-block;
+	line-height: 0.1;
 }
 
 .inc-dec__decrease,
 .inc-dec__increase {
-    background: #464;
-    border: 0;
-    color: #EEE;
-    line-height: 1.5;
-    margin: 0;
-    padding: 0;
-    vertical-align: center;
-    width: 2em;
+	background: #464;
+	border: 0;
+	color: #eee;
+	line-height: 1.5;
+	margin: 0;
+	padding: 0;
+	vertical-align: center;
+	width: 2em;
 }
 
 .inc-dec__input {
-    border: 0;
-    line-height: 1.5;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    vertical-align: center;
-    width: 3em;
+	border: 0;
+	line-height: 1.5;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	vertical-align: center;
+	width: 3em;
 }
 
 .settlers2-map-title {
-    background: transparent;
-    border: 1px dotted transparent;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    font-family: UnifrakturMaguntia, sans-serif;
-    font-size: 2em;
-    font-weight: bold;
-    outline: none;
-    width: 100%;
+	background: transparent;
+	border: 1px dotted transparent;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	font-family: UnifrakturMaguntia, sans-serif;
+	font-size: 2em;
+	font-weight: bold;
+	outline: none;
+	width: 100%;
 }
 
 .settlers2-map-title:hover {
-    background-color: rgba(255, 255, 255, 0.75);
+	background-color: rgba(255, 255, 255, 0.75);
 }
 
 .settlers2-map-title:focus {
-    background-color: #fffcf6;
-    border-color: #464;
+	background-color: #fffcf6;
+	border-color: #464;
 }
 
 .seed-options {
-    border: 1px solid #464;
-    float: left;
-    list-style: none;
-    margin: 0 1em;
-    padding: 0;
+	border: 1px solid #464;
+	float: left;
+	list-style: none;
+	margin: 0 1em;
+	padding: 0;
 }
 
 .seed-options > li {
-    background: #fffcf6;
-    margin: 2px;
-    padding: 2px;
+	background: #fffcf6;
+	margin: 2px;
+	padding: 2px;
 }
 
 .input-container {
-    display: block;
-    position: relative;
+	display: block;
+	position: relative;
 }
 
 .input-container:before {
-    border: 0.25em solid transparent;
-    border-bottom-color: #464;
-    border-top: 0;
-    content: '';
-    left: 0.25em;
-    height: 0;
-    margin-top: -0.25em;
-    position: absolute;
-    top: 100%;
-    width: 0;
+	border: 0.25em solid transparent;
+	border-bottom-color: #464;
+	border-top: 0;
+	content: '';
+	left: 0.25em;
+	height: 0;
+	margin-top: -0.25em;
+	position: absolute;
+	top: 100%;
+	width: 0;
 }
 
 .input-container:after {
-    background: #464;
-    border-radius: 0.5em;
-    color: #eee;
-    content: attr(data-chars-remaining) ' characters remaining; you can use any character that exists in CP-437 character set';
-    font-size: 0.75em;
-    left: 0;
-    padding: 0.25em 0.5em;
-    position: absolute;
-    top: 100%;
+	background: #464;
+	border-radius: 0.5em;
+	color: #eee;
+	content: attr(data-chars-remaining)
+		' characters remaining; you can use any character that exists in CP-437 character set';
+	font-size: 0.75em;
+	left: 0;
+	padding: 0.25em 0.5em;
+	position: absolute;
+	top: 100%;
 }
 
 .texture-option-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
 .texture-option {
-    background-color: white;
-    border: 1px solid rgba(255, 219, 23, 0);
-    border-radius: 50%;
-    display: inline-block;
-    height: 50px;
-    margin: 0;
-    overflow: hidden;
-    position: relative;
-    vertical-align: top;
-    -webkit-transform: scale(1.01);
-    transform: scale(1.01);
-    -webkit-transition: border-color 0.25s ease-in-out;
-    transition: border-color 0.25s ease-in-out;
-    width: 50px;
+	background-color: white;
+	border: 1px solid rgba(255, 219, 23, 0);
+	border-radius: 50%;
+	display: inline-block;
+	height: 50px;
+	margin: 0;
+	overflow: hidden;
+	position: relative;
+	vertical-align: top;
+	-webkit-transform: scale(1.01);
+	transform: scale(1.01);
+	-webkit-transition: border-color 0.25s ease-in-out;
+	transition: border-color 0.25s ease-in-out;
+	width: 50px;
 }
 
 .texture-option:hover {
-    opacity: 0.75;
-    -webkit-filter: brightness(92%) contrast(200%);
-    filter: brightness(92%) contrast(200%);
+	opacity: 0.75;
+	-webkit-filter: brightness(92%) contrast(200%);
+	filter: brightness(92%) contrast(200%);
 }
 
 .texture-option--selected {
-    border: 4px solid #DB7F2B; /*#C32323;*/
-    box-shadow: 0 0 1px 1px black;
-    margin: -3px;
-    z-index: 1;
+	border: 4px solid #db7f2b; /*#C32323;*/
+	box-shadow: 0 0 1px 1px black;
+	margin: -3px;
+	z-index: 1;
 }
 
 .texture-option__label {
-    background: url('./texture_0-greenland.png') no-repeat 0 0;
-    display: block;
-    height: 50px;
-    position: relative;
-    width: 50px;
+	background: url('./texture_0-greenland.png') no-repeat 0 0;
+	display: block;
+	height: 50px;
+	position: relative;
+	width: 50px;
 }
 
 .texture-option--terrain1 .texture-option__label {
-    background-image: url('./texture_1-wasteland.png');
+	background-image: url('./texture_1-wasteland.png');
 }
 
 .texture-option--terrain2 .texture-option__label {
-    background-image: url('./texture_2-winter-world.png');
+	background-image: url('./texture_2-winter-world.png');
 }
 
 .texture-option__name,
 .texture-option__input {
-    clip: rect(0 0 0 0);
-    height: 0;
-    opacity: 0;
-    position: absolute;
-    width: 0;
-    z-index: -1;
+	clip: rect(0 0 0 0);
+	height: 0;
+	opacity: 0;
+	position: absolute;
+	width: 0;
+	z-index: -1;
 }
 
 .texture-option__name {
-    -webkit-pointer-events: none;
-    -moz-pointer-events: none;
-    -ms-pointer-events: none;
-    pointer-events: none;
+	-webkit-pointer-events: none;
+	-moz-pointer-events: none;
+	-ms-pointer-events: none;
+	pointer-events: none;
 }

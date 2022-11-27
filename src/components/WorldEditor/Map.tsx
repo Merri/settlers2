@@ -8,6 +8,7 @@ import { palettes, texturePaletteIndex } from '$/lib/palette'
 
 function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, color2 = 255) {
 	const buffer = canvas.getContext('2d')
+	if (!buffer) throw new Error('Could not get canvas')
 	const imageData = buffer.getImageData(0, 0, world.width, world.height)
 	const image = imageData.data
 	const size = world.width * world.height
@@ -80,7 +81,7 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, co
 			case 199: {
 				const treeIndex = ((o2[i] & 2) << 2) | ((o1[i] & 0xc0) >> 6)
 				const treeRnd = ((o1[i] & 7) + 1) / 7
-				const treeColors = Trees.get(treeIndex).color[world.terrain]
+				const treeColors = Trees.get(treeIndex)!.color[world.terrain]
 				const treeAlpha = treeColors[3] * treeRnd + 0.2
 				const colorAlpha = 1 - treeAlpha
 				red = Math.floor(red * colorAlpha + treeColors[0] * treeAlpha)
@@ -109,7 +110,7 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, co
 }
 
 export function MapCanvas({ color1, color2, ...world }: MapClass & { color1: number; color2: number }) {
-	const ref = useRef<HTMLCanvasElement>()
+	const ref = useRef<HTMLCanvasElement>(null)
 
 	useEffect(() => {
 		if (ref.current && world) drawToCanvas(ref.current, world as MapClass, color1, color2)

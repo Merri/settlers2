@@ -1,15 +1,18 @@
 {
-	"moduleResolution": "node",
 	"compilerOptions": {
-		"baseUrl": "src",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"baseUrl": ".",
 		"paths": {
-			"$/*": ["*"],
-			"$layouts/*": ["layouts/*"]
+			"$/*": ["src/*"],
+			"$layouts/*": ["src/layouts/*"]
 		},
-		"jsx": "react-jsx",
-		"jsxImportSource": "preact"
+		"target": "esnext",
+		"jsx": "preserve",
+		"jsxImportSource": "preact",
+		"strict": true,
+		"skipLibCheck": false
 	},
 	"include": ["src/**/*"],
-	"exclude": ["node_modules", "dist", "public"],
-	"skipLibCheck": true
+	"exclude": ["node_modules", "dist", "public"]
 }

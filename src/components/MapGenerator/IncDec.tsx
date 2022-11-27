@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'preact/compat'
+import { ChangeEventHandler, useCallback, useState } from 'preact/compat'
 
 interface Props {
 	delay?: number
@@ -9,13 +9,13 @@ interface Props {
 }
 
 export function IncDec({ delay = 1000, maximumValue, minimumValue, onChange, value }: Props) {
-	const [state] = useState(() => ({ timeout: setTimeout(() => {}) }));
+	const [state] = useState(() => ({ timeout: setTimeout(() => {}) }))
 
-	const change = useCallback(
+	const change: ChangeEventHandler<HTMLInputElement> = useCallback(
 		(event) => {
-			clearTimeout(state.timeout);
+			clearTimeout(state.timeout)
 			state.timeout = setTimeout(() => {
-				onChange(~~event.target.value)
+				onChange(~~event.currentTarget.value)
 			}, delay)
 		},
 		[onChange]

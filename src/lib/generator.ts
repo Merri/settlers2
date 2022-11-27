@@ -11,16 +11,16 @@ export default function Generator(random: XORShift) {
 		colorMap,
 		colors = [],
 		data,
-		deletedNodes,
-		height,
-		mass,
-		nodes,
+		deletedNodes = [],
+		height = 0,
+		mass = 0,
+		nodes = [],
 		players = [],
-		size,
+		size: number,
 		seedMap,
-		width
+		width = 0
 
-	function expandTo(index: number, value: number, current = null) {
+	function expandTo(index: number, value: number, current: number | null = null) {
 		var aroundExpandTo = map.getNodesByIndex(index)
 
 		seedMap[index] = value
@@ -943,11 +943,12 @@ export default function Generator(random: XORShift) {
 	function draw(options) {
 		// if (!options || !options.length) options = {};
 		// draw the stuff so we can see stuff
-		var canvas = options.canvas,
-			buffer = canvas.getContext('2d'),
-			image = buffer.getImageData(0, 0, width, height),
-			view = image.data,
-			lightMapBlock = size * 12
+		if (!width || !height) throw new Error(`Invalid size: ${width} x ${height}`)
+		var canvas = options.canvas
+		var buffer = canvas.getContext('2d')
+		var image = buffer.getImageData(0, 0, width, height)
+		var view = image.data
+		var lightMapBlock = size * 12
 
 		canvas.width = width
 		canvas.height = height

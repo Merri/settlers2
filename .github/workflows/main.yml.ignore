@@ -1,6 +1,6 @@
 on:
   push:
-    branches:    
+    branches:
       - master
 name: Build and Publish Settlers II.net
 jobs:
@@ -11,10 +11,10 @@ jobs:
     - name: Get latest code
       uses: actions/checkout@v2
 
-    - name: Use Node.js 14 LTS
+    - name: Use Node.js 18 LTS
       uses: actions/setup-node@v1
       with:
-        node-version: '14'
+        node-version: '18'
 
     - name: Cache pnpm modules
       uses: actions/cache@v2
