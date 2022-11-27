@@ -1,0 +1,28 @@
+{
+	"build": {
+		"env": {
+			"ENABLE_VC_BUILD": ""
+		}
+	},
+	"cleanUrls": true,
+	"headers": [
+		{
+			"source": "/(favicon.ico|android-chrome-192x192.png|android-chrome-256x256.png|apple-touch-icon.png|browserconfig.xml|favicon-16x16.png|favicon-32x32.png|mstile-150x150.png|robots.txt|safari-pinned-tab.svg|site.webmanifest)",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=3600"
+				}
+			]
+		},
+		{
+			"source": "/(assets|fonts|icons)/(.*)",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=31556952, immutable"
+				}
+			]
+		}
+	]
+}
