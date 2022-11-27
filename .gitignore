@@ -105,6 +105,3 @@ dist
 
 # Astro 0.20 and older
 .snowpack
-
-# Vercel
-.vercel
