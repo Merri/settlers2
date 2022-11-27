@@ -107,4 +107,4 @@ dist
 .snowpack
 
 # Vercel
-.vercel/output/static/
+.vercel
