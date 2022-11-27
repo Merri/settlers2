@@ -6,6 +6,7 @@ specifiers:
   '@astrojs/preact': 1.2.0
   '@astrojs/vercel': 2.3.4
   '@babel/core': 7.20.2
+  '@babel/plugin-transform-react-jsx-source': 7.19.6
   '@types/cookie': 0.5.1
   '@types/jsonwebtoken': 8.5.9
   '@types/marked': 4.0.7
@@ -33,6 +34,7 @@ devDependencies:
   '@astrojs/preact': 1.2.0_preact@10.11.3
   '@astrojs/vercel': 2.3.4
   '@babel/core': 7.20.2
+  '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.20.2
   '@types/cookie': 0.5.1
   '@types/jsonwebtoken': 8.5.9
   '@types/marked': 4.0.7
@@ -380,6 +382,16 @@ packages:
 
   /@babel/plugin-syntax-jsx/7.18.6_@babel+core@7.20.2:
     resolution: {integrity: sha512-6mmljtAedFGTWu2p/8WIORGwy+61PLgOMPOdazc7YoJ9ZCWUyFy3A6CpPkRKLKD1ToAesxX8KGEViAiLo9N+7Q==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.2
+      '@babel/helper-plugin-utils': 7.20.2
+    dev: true
+
+  /@babel/plugin-transform-react-jsx-source/7.19.6_@babel+core@7.20.2:
+    resolution: {integrity: sha512-RpAi004QyMNisst/pvSanoRdJ4q+jMCWyk9zdw/CyLB9j8RXEahodR6l2GyttDRyEVWZtbN+TpLiHJ3t34LbsQ==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
