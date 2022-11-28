@@ -242,23 +242,29 @@ export class MapGenerator extends Component<{}, State> {
 	}
 
 	handleSetWidth: ChangeEventHandler<HTMLSelectElement> = (event) => {
-		const seedOptions = { ...this.state.seedOptions, width: ~~event.currentTarget.value }
-		this.setState({ seedOptions })
+		if (event.target instanceof HTMLSelectElement) {
+			const seedOptions = { ...this.state.seedOptions, width: ~~event.target.value }
+			this.setState({ seedOptions })
+		}
 	}
 
 	handleSetHeight: ChangeEventHandler<HTMLSelectElement> = (event) => {
-		const seedOptions = { ...this.state.seedOptions, height: ~~event.currentTarget.value }
-		this.setState({ seedOptions })
+		if (event.target instanceof HTMLSelectElement) {
+			const seedOptions = { ...this.state.seedOptions, height: ~~event.target.value }
+			this.setState({ seedOptions })
+		}
 	}
 
 	handleTerrain: ChangeEventHandler<HTMLSelectElement> = (event) => {
-		this.state.textureOptions.terrain = ~~event.currentTarget.value
-		this.generateTextures()
-		this.setState({
-			players: [],
-			resources: [],
-		})
-		this.handleDraw()
+		if (event.target instanceof HTMLSelectElement) {
+			this.state.textureOptions.terrain = ~~event.target.value
+			this.generateTextures()
+			this.setState({
+				players: [],
+				resources: [],
+			})
+			this.handleDraw()
+		}
 	}
 
 	handleMassRatio = (massRatio: number) => {
@@ -305,27 +311,33 @@ export class MapGenerator extends Component<{}, State> {
 	}
 
 	handleNoiseOnWater: ChangeEventHandler<HTMLInputElement> = (event) => {
-		this.state.heightOptions.noiseOnWater = event.currentTarget.checked
-		this.handleLandscape()
+		if (event.target instanceof HTMLInputElement) {
+			this.state.heightOptions.noiseOnWater = event.target.checked
+			this.handleLandscape()
+		}
 	}
 
 	handleViewTypeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
-		var value: string | number = event.currentTarget.value
+		if (event.target instanceof HTMLSelectElement) {
+			var value: string | number = event.target.value
 
-		if (value === '' + ~~value) value = ~~value
+			if (value === '' + ~~value) value = ~~value
 
-		this.setState(
-			{
-				viewType: value as number | 'seed' | 'fast' | 'pretty',
-			},
-			this.handleDraw
-		)
+			this.setState(
+				{
+					viewType: value as number | 'seed' | 'fast' | 'pretty',
+				},
+				this.handleDraw
+			)
+		}
 	}
 
 	handleTitleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-		this.setState({
-			title: generator.sanitizeStringAsCP437(event.currentTarget.value),
-		})
+		if (event.target instanceof HTMLInputElement) {
+			this.setState({
+				title: generator.sanitizeStringAsCP437(event.target.value),
+			})
+		}
 	}
 
 	isRttROnly = (areas: any[]) => {
@@ -333,9 +345,9 @@ export class MapGenerator extends Component<{}, State> {
 	}
 
 	handleMaxPlayerChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-		this.setState({
-			maxPlayers: ~~event.currentTarget.value,
-		})
+		if (event.target instanceof HTMLInputElement) {
+			this.setState({ maxPlayers: ~~event.target.value })
+		}
 	}
 
 	handlePlayableTexture = (value: number) => {

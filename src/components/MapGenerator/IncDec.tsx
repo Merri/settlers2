@@ -15,7 +15,9 @@ export function IncDec({ delay = 1000, maximumValue, minimumValue, onChange, val
 		(event) => {
 			clearTimeout(state.timeout)
 			state.timeout = setTimeout(() => {
-				onChange(~~event.currentTarget.value)
+				if (event.target instanceof HTMLInputElement) {
+					onChange(~~event.target.value)
+				}
 			}, delay)
 		},
 		[onChange]

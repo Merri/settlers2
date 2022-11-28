@@ -31,11 +31,11 @@ export class TextureOptions extends Component<Props, State> {
 	}
 
 	handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-		var texture = ~~event.currentTarget.value
-		this.setState({
-			texture: texture,
-		})
-		this.props.onChange(texture)
+		if (event.target instanceof HTMLInputElement) {
+			var texture = ~~event.target.value
+			this.setState({ texture })
+			this.props.onChange(texture)
+		}
 	}
 
 	render() {

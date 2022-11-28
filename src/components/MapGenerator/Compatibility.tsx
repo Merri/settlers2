@@ -7,7 +7,9 @@ interface Props {
 
 export class Compatibility extends Component<Props> {
     handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        this.props.onChange(event.currentTarget.value);
+		if (event.target instanceof HTMLInputElement) {
+			this.props.onChange(event.target.value);
+		}
     }
 
     render() {
