@@ -12,6 +12,7 @@ import { IncDec } from './IncDec'
 import { StatisticsTable } from './StatisticsTable'
 import { TextureOptions } from './TextureOptions'
 import { NumberInput } from './NumberInput'
+import Button from '../Button'
 
 const generator = Generator(random)
 
@@ -582,7 +583,7 @@ export class MapGenerator extends Component<{}, State> {
 						</dd>
 					</dl>
 					<p>
-						<button onClick={this.handleResources}>Randomize Resources</button>
+						<Button onClick={this.handleResources}>Randomize Resources</Button>
 					</p>
 				</section>
 				<div className="player-positions">
@@ -668,7 +669,9 @@ export class MapGenerator extends Component<{}, State> {
 						/>
 					</label>
 					<br />
-					<button onClick={this.handleDownload}>Download</button>{' '}
+					<Button primary onClick={this.handleDownload}>
+						Download
+					</Button>{' '}
 					<small className="settlers2-playable-on">
 						Map is playable on{' '}
 						{this.isRttROnly(totalAreas) ? (

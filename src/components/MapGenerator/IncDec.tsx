@@ -15,7 +15,7 @@ export function IncDec({ delay = 1000, maximumValue, minimumValue, onChange, val
 		(event) => {
 			clearTimeout(state.timeout)
 			state.timeout = setTimeout(() => {
-				if (event.target instanceof HTMLInputElement) {
+				if (event.target instanceof HTMLInputElement && event.target.value !== '') {
 					onChange(~~event.target.value)
 				}
 			}, delay)
@@ -23,5 +23,5 @@ export function IncDec({ delay = 1000, maximumValue, minimumValue, onChange, val
 		[onChange]
 	)
 
-	return <input type="number" onChange={change} min={minimumValue} max={maximumValue} step="1" value={value} />
+	return <input type="range" onChange={change} min={minimumValue} max={maximumValue} step="1" value={value} />
 }

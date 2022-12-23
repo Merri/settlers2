@@ -51,6 +51,15 @@
 	--theme-code-bg: wheat;
 }
 
+:where(:focus:not(:focus-visible)) {
+	outline: none;
+}
+
+:where(:focus:focus-visible) {
+	outline: 3px solid Highlight;
+	outline-offset: 3px;
+}
+
 body {
 	background-image: url('/design/corner4.png'), url('/design/corner3.png'), url('/design/corner2.png'),
 		url('/design/corner1.png'), url('/design/border4.png'), url('/design/border3.png'), url('/design/border2.png'),

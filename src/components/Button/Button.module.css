@@ -1,0 +1,112 @@
+:where(.button) {
+	--button-hue: hue-rotate(0deg);
+	--button-brightness: brightness(0.5);
+}
+
+.button {
+	align-items: center;
+	appearance: none;
+	background: transparent;
+	backdrop-filter: blur(3px) var(--button-brightness) contrast(3.5);
+	border: 0;
+	border-radius: 0.5rem;
+	box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+	display: inline-flex;
+	filter: brightness(100%);
+	font-family: var(--font-heading);
+	font-weight: 600;
+	font-size: 1.25rem;
+	justify-content: center;
+	line-height: 1.5rem;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0.5rem 1rem;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
+	transform: translate(0);
+	user-select: none;
+}
+
+:where(.button svg) {
+	filter: drop-shadow(1px 1px rgba(0, 0, 0, 0.2));
+}
+
+/* Use pseudo element to avoid filter having effect on text */
+.button::before {
+	border-radius: inherit;
+	content: '';
+	inset: 0;
+	opacity: 0.9;
+	position: absolute;
+	z-index: -1;
+}
+
+/* `<input type="button" />` does not allow for pseudo elements */
+:where(input.button),
+.button::before {
+	background: linear-gradient(to bottom, #ffffff33, rgba(255, 255, 255, 0)),
+		linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+	/*background-blend-mode: color-dodge;*/
+	background-clip: border-box;
+	border: 0px solid;
+	border-color: rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.25) rgba(255, 255, 255, 0.5);
+	box-shadow: inset -1px -1px 1px 1px rgba(0, 0, 0, 0.2), inset -1px -1px 6px rgba(0, 0, 0, 0.2),
+		inset 1px 1px 1px 1px rgba(255, 255, 255, 0.5), inset 1px 1px 3px rgba(255, 255, 255, 0.5),
+		2px 2px 4px rgba(0, 0, 0, 0.1);
+	filter: var(--button-hue);
+}
+
+:where(input.button):focus,
+.button:focus::before {
+	filter: brightness(90%) contrast(115%) var(--button-hue);
+}
+
+:where(input.button):hover,
+.button:hover::before {
+	filter: brightness(102.5%) contrast(95%) var(--button-hue);
+}
+
+.button:hover,
+.button:focus {
+	backdrop-filter: blur(3px) var(--button-brightness) contrast(10);
+	text-decoration: none;
+}
+
+.button:active {
+	text-decoration: none;
+	transform: translate(1px, 1px);
+}
+
+:where(input.button):active,
+.button:active::before {
+	border-color: rgba(0, 0, 0, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.25);
+	box-shadow: inset -1px -1px 6px rgba(0, 0, 0, 0.2), inset 1px 1px 3px rgba(255, 255, 255, 0.5),
+		-1px -1px 4px rgba(0, 0, 0, 0.1);
+	filter: brightness(85%) contrast(125%) var(--button-hue);
+}
+
+:where(.button[data-variant='primary']) {
+	--button-hue: hue-rotate(0deg) brightness(90%) contrast(150%);
+	color: #ffdb17;
+}
+
+:where(input.button[data-variant='primary'], .button[data-variant='primary']::before) {
+	background-color: #874717;
+}
+
+:where(.button[data-variant='secondary']) {
+	--button-brightness: brightness(0.675);
+	color: black;
+}
+
+[data-variant='secondary']:hover,
+[data-variant='secondary']:focus {
+	--button-brightness: brightness(0.55);
+}
+
+:where(input.button[data-variant='secondary'], .button[data-variant='secondary']::before) {
+	background-color: #C3C7B3;
+}
