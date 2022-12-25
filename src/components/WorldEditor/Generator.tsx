@@ -38,6 +38,7 @@ interface MapOptions {
 	elevationOptions: {
 		peakBoost: number
 		peakRadius: number
+		mountLevel: number
 		seaLevel: number
 		snowPeakLevel: number
 	}
@@ -62,6 +63,7 @@ const emptyOptions: MapOptions = {
 		peakBoost: 0,
 		peakRadius: 7,
 		seaLevel: 33,
+		mountLevel: 50,
 		snowPeakLevel: 100,
 	},
 	height: 160,
@@ -150,7 +152,7 @@ export function Generator() {
 	useEffect(() => {
 		const random = new XORShift(seed)
 		const { width, height, assignment, distance, mirror, noise } = options
-		const { peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
+		const { mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
 		const world = generateEmptyMap({ width, height, random })
 
 		switch (mirror) {
@@ -176,6 +178,7 @@ export function Generator() {
 		assignPlayerPositions({ assignment, distance: distance / 100, map: world.map })
 		randomizeElevation({
 			...world,
+			mountLevel: mountLevel / 100,
 			peakBoost,
 			peakRadius,
 			seaLevel: seaLevel / 100,
@@ -375,6 +378,21 @@ export function Generator() {
 								step={1}
 								maximumValue={75}
 								value={options.elevationOptions.seaLevel}
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td>Mount level</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(mountLevel) =>
+									dispatchOptions({ type: 'elevationOptions', payload: { mountLevel } })
+								}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.elevationOptions.mountLevel}
 							/>
 						</td>
 					</tr>

@@ -229,6 +229,7 @@ interface ElevationBasedOptions {
 	baseLevel?: number
 	noiseArray: Float64Array
 	map: MapClass
+	mountLevel?: number
 	peakBoost?: number
 	peakRadius?: number
 	seaLevel?: number
@@ -244,6 +245,7 @@ export function randomizeElevation({
 	map,
 	peakBoost = 0,
 	peakRadius = 3,
+	mountLevel = 0.5,
 	seaLevel = 0.35,
 	snowPeakLevel = 1,
 }: ElevationBasedOptions) {
@@ -328,11 +330,15 @@ export function randomizeElevation({
 		if (value < minHeight) minHeight = value
 	})
 
+	const adjustedMountLevel = (snowPeakLevel - seaLevel) * mountLevel + seaLevel
 	const seaBelow = Math.round((maxHeight - minHeight) * seaLevel) + minHeight
+	const mountAbove = Math.round((maxHeight - minHeight) * adjustedMountLevel) + minHeight
 	const snowAbove = Math.round((maxHeight - minHeight) * snowPeakLevel) + minHeight
 
 	const tex1 = map.blocks[BlockType.Texture1]
 	const tex2 = map.blocks[BlockType.Texture2]
+
+	const miningTex = [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4]
 
 	heightMap.forEach((value, index) => {
 		if (value < seaBelow) {
@@ -353,6 +359,23 @@ export function randomizeElevation({
 			tex2[nodes.top2] = Texture.Inaccessible
 			tex2[nodes.bottom2Left] = Texture.Inaccessible
 			tex2[nodes.bottom2Right] = Texture.Inaccessible
+		} else if (value > mountAbove) {
+			const nodes = getTextureNodesByIndex(index, map.width, map.height)
+			const tex = miningTex[value % miningTex.length]
+			tex1[nodes.top1Left] = tex
+			tex1[nodes.top1Right] = tex
+			tex1[nodes.bottom1] = tex
+			tex2[nodes.top2] = tex
+			tex2[nodes.bottom2Left] = tex
+			tex2[nodes.bottom2Right] = tex
+		} else if (value === mountAbove) {
+			const nodes = getTextureNodesByIndex(index, map.width, map.height)
+			tex1[nodes.top1Left] = Texture.Buildable
+			tex1[nodes.top1Right] = Texture.Buildable
+			tex1[nodes.bottom1] = Texture.Buildable
+			tex2[nodes.top2] = Texture.Buildable
+			tex2[nodes.bottom2Left] = Texture.Buildable
+			tex2[nodes.bottom2Right] = Texture.Buildable
 		}
 	})
 }
