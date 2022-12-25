@@ -1,7 +1,7 @@
 import { XORShift } from 'random-seedable'
 
 import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
-import { BlockType, ConstructionSite, Texture } from './types'
+import { BlockType, ConstructionSite, Texture, TextureFeatureFlag, TextureFlag, Textures } from './types'
 
 interface SeedMapOptions {
 	random: XORShift
@@ -340,42 +340,57 @@ export function randomizeElevation({
 
 	const miningTex = [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4]
 
-	heightMap.forEach((value, index) => {
-		if (value < seaBelow) {
-			heightMap[index] = seaBelow - 1
-
-			const nodes = getTextureNodesByIndex(index, map.width, map.height)
-			tex1[nodes.top1Left] = Texture.UnbuildableWater
-			tex1[nodes.top1Right] = Texture.UnbuildableWater
-			tex1[nodes.bottom1] = Texture.UnbuildableWater
-			tex2[nodes.top2] = Texture.UnbuildableWater
-			tex2[nodes.bottom2Left] = Texture.UnbuildableWater
-			tex2[nodes.bottom2Right] = Texture.UnbuildableWater
-		} else if (value > snowAbove) {
-			const nodes = getTextureNodesByIndex(index, map.width, map.height)
-			tex1[nodes.top1Left] = Texture.Inaccessible
-			tex1[nodes.top1Right] = Texture.Inaccessible
-			tex1[nodes.bottom1] = Texture.Inaccessible
-			tex2[nodes.top2] = Texture.Inaccessible
-			tex2[nodes.bottom2Left] = Texture.Inaccessible
-			tex2[nodes.bottom2Right] = Texture.Inaccessible
-		} else if (value > mountAbove) {
-			const nodes = getTextureNodesByIndex(index, map.width, map.height)
-			const tex = miningTex[value % miningTex.length]
+	function draw(index: number, tex: Texture, flag?: TextureFeatureFlag) {
+		const nodes = getTextureNodesByIndex(index, map.width, map.height)
+		if (flag == null) {
 			tex1[nodes.top1Left] = tex
 			tex1[nodes.top1Right] = tex
 			tex1[nodes.bottom1] = tex
 			tex2[nodes.top2] = tex
 			tex2[nodes.bottom2Left] = tex
 			tex2[nodes.bottom2Right] = tex
+		} else {
+			if ((Textures.get(tex1[nodes.top1Left] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex1[nodes.top1Left] = tex
+			}
+			if ((Textures.get(tex1[nodes.top1Right] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex1[nodes.top1Right] = tex
+			}
+			if ((Textures.get(tex1[nodes.bottom1] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex1[nodes.bottom1] = tex
+			}
+			if ((Textures.get(tex2[nodes.top2] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex2[nodes.top2] = tex
+			}
+			if ((Textures.get(tex2[nodes.bottom2Left] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex2[nodes.bottom2Left] = tex
+			}
+			if ((Textures.get(tex2[nodes.bottom2Right] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex2[nodes.bottom2Right] = tex
+			}
+		}
+	}
+
+	const flagRegularGround =
+		TextureFeatureFlag.IsMeadow |
+		TextureFeatureFlag.IsMountMeadow |
+		TextureFeatureFlag.IsSavannah |
+		TextureFeatureFlag.IsSteppe
+
+	heightMap.forEach((value, index) => {
+		if (value < seaBelow) {
+			heightMap[index] = seaBelow - 1
+			draw(index, Texture.UnbuildableWater)
+		} else if (value > snowAbove) {
+			draw(index, Texture.Inaccessible)
+		} else if (value > mountAbove) {
+			if (noiseArray[index] >= 0.15) {
+				draw(index, miningTex[value % miningTex.length], flagRegularGround)
+			} else {
+				draw(index, Texture.MiningFarmland, flagRegularGround | TextureFeatureFlag.Rock)
+			}
 		} else if (value === mountAbove) {
-			const nodes = getTextureNodesByIndex(index, map.width, map.height)
-			tex1[nodes.top1Left] = Texture.Buildable
-			tex1[nodes.top1Right] = Texture.Buildable
-			tex1[nodes.bottom1] = Texture.Buildable
-			tex2[nodes.top2] = Texture.Buildable
-			tex2[nodes.bottom2Left] = Texture.Buildable
-			tex2[nodes.bottom2Right] = Texture.Buildable
+			draw(index, Texture.Buildable, TextureFeatureFlag.Arable)
 		}
 	})
 }
