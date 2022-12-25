@@ -56,7 +56,7 @@ function getAnimalName(animalType: AnimalType) {
 	}
 }
 
-function calculateHeightElevations(heightMap: Uint8Array) {
+export function calculateHeightElevations(heightMap: Uint8Array) {
 	const elevations = new Array(61).fill(0)
 
 	const log: string[] = []
@@ -360,7 +360,7 @@ export function WorldEditor() {
 								key={index}
 								title={world.title}
 							>
-								<MapCanvas {...world} color1={isSelected ? 0 : 255} color2={isSelected ? 255 : 0} />
+								<MapCanvas world={world} color1={isSelected ? 0 : 255} color2={isSelected ? 255 : 0} />
 								{filename}
 							</button>
 						)

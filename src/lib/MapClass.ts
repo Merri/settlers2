@@ -11,7 +11,7 @@ import {
 	AnimalType,
 } from './types'
 
-type MapClassBlocks = Record<BlockType, Uint8Array | null>
+type MapClassBlocks = Record<BlockType, Uint8Array>
 
 function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 	const size = world.width * world.height
@@ -104,16 +104,16 @@ function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 		const tex9 = texture1[tn2.bottom1] & TextureFlag.ToIdValue
 		const texA = texture2[tn2.bottom2Right] & TextureFlag.ToIdValue
 
-		const tex1Flags = Textures.get(tex1).featureFlags
-		const tex2Flags = Textures.get(tex2).featureFlags
-		const tex3Flags = Textures.get(tex3).featureFlags
-		const tex4Flags = Textures.get(tex4).featureFlags
-		const tex5Flags = Textures.get(tex5).featureFlags
-		const tex6Flags = Textures.get(tex6).featureFlags
-		const tex7Flags = Textures.get(tex7).featureFlags
-		const tex8Flags = Textures.get(tex8).featureFlags
-		const tex9Flags = Textures.get(tex9).featureFlags
-		const texAFlags = Textures.get(texA).featureFlags
+		const tex1Flags = Textures.get(tex1)!.featureFlags
+		const tex2Flags = Textures.get(tex2)!.featureFlags
+		const tex3Flags = Textures.get(tex3)!.featureFlags
+		const tex4Flags = Textures.get(tex4)!.featureFlags
+		const tex5Flags = Textures.get(tex5)!.featureFlags
+		const tex6Flags = Textures.get(tex6)!.featureFlags
+		const tex7Flags = Textures.get(tex7)!.featureFlags
+		const tex8Flags = Textures.get(tex8)!.featureFlags
+		const tex9Flags = Textures.get(tex9)!.featureFlags
+		const texAFlags = Textures.get(texA)!.featureFlags
 
 		// water or swamp texture count
 		const wets =
@@ -325,7 +325,7 @@ export function getNodesByIndex(index: number, width: number, height: number) {
 		  }
 }
 
-function getNodesAtRadius(index: number, radius: number, width: number, height: number) {
+export function getNodesAtRadius(index: number, radius: number, width: number, height: number) {
 	if (radius < 1) throw new Error('Radius must be 1 or more')
 	const maxRadius = Math.floor((Math.min(width, height) - 2) / 2)
 	if (radius > maxRadius) throw new Error('Maximum radius is ' + maxRadius)
@@ -449,29 +449,31 @@ interface WidthHeight {
 }
 
 type Options = WidthHeight | { fileContents: DataView }
-type Regions = [RegionType, number, number, number][]
-type Animals = [number, number, number][]
+type Regions = [type: RegionType, x: number, y: number, size: number][]
+type Animals = [type: number, x: number, y: number][]
 
 export class NotMapError extends Error {}
 
+const emptyMapBlock = new Uint8Array(0)
+
 export class MapClass {
 	blocks: MapClassBlocks = {
-		[BlockType.HeightMap]: null,
-		[BlockType.Texture1]: null,
-		[BlockType.Texture2]: null,
-		[BlockType.Roads]: null,
-		[BlockType.Object1]: null,
-		[BlockType.Object2]: null,
-		[BlockType.Animal]: null,
-		[BlockType.Unknown]: null,
-		[BlockType.BuildSite]: null,
-		[BlockType.FogOfWar]: null,
-		[BlockType.Icon]: null,
-		[BlockType.Resource]: null,
-		[BlockType.LightMap]: null,
-		[BlockType.RegionMap]: null,
+		[BlockType.HeightMap]: emptyMapBlock,
+		[BlockType.Texture1]: emptyMapBlock,
+		[BlockType.Texture2]: emptyMapBlock,
+		[BlockType.Roads]: emptyMapBlock,
+		[BlockType.Object1]: emptyMapBlock,
+		[BlockType.Object2]: emptyMapBlock,
+		[BlockType.Animal]: emptyMapBlock,
+		[BlockType.Unknown]: emptyMapBlock,
+		[BlockType.BuildSite]: emptyMapBlock,
+		[BlockType.FogOfWar]: emptyMapBlock,
+		[BlockType.Icon]: emptyMapBlock,
+		[BlockType.Resource]: emptyMapBlock,
+		[BlockType.LightMap]: emptyMapBlock,
+		[BlockType.RegionMap]: emptyMapBlock,
 	}
-	fileBuffer: ArrayBuffer | null = null
+	fileBuffer: ArrayBuffer = new ArrayBuffer(0)
 	height = 0
 	width = 0
 	/** Title in file */
@@ -528,7 +530,11 @@ export class MapClass {
 	private initBlocks = (size: number) => {
 		this.fileBuffer = new ArrayBuffer(size * BLOCKS)
 		Object.keys(this.blocks).forEach((index) => {
-			this.blocks[index] = new Uint8Array(this.fileBuffer, ~~index * size, size)
+			this.blocks[index as unknown as keyof typeof this.blocks] = new Uint8Array(
+				this.fileBuffer,
+				~~index * size,
+				size
+			)
 		})
 		this.blocks[BlockType.FogOfWar].fill(7)
 	}
@@ -741,22 +747,22 @@ export class MapClass {
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
 
-		const bottomLeft = Textures.get(t2[nodes.bottom2Left] & TextureFlag.ToIdValue).featureFlags & flags
+		const bottomLeft = Textures.get(t2[nodes.bottom2Left] & TextureFlag.ToIdValue)!.featureFlags & flags
 		if (bottomLeft === 0) return false
 
-		const bottomRight = Textures.get(t2[nodes.bottom2Right] & TextureFlag.ToIdValue).featureFlags & flags
+		const bottomRight = Textures.get(t2[nodes.bottom2Right] & TextureFlag.ToIdValue)!.featureFlags & flags
 		if (bottomRight === 0) return false
 
-		const top = Textures.get(t2[nodes.top2] & TextureFlag.ToIdValue).featureFlags & flags
+		const top = Textures.get(t2[nodes.top2] & TextureFlag.ToIdValue)!.featureFlags & flags
 		if (top === 0) return false
 
-		const topLeft = Textures.get(t1[nodes.top1Left] & TextureFlag.ToIdValue).featureFlags & flags
+		const topLeft = Textures.get(t1[nodes.top1Left] & TextureFlag.ToIdValue)!.featureFlags & flags
 		if (topLeft === 0) return false
 
-		const topRight = Textures.get(t1[nodes.top1Right] & TextureFlag.ToIdValue).featureFlags & flags
+		const topRight = Textures.get(t1[nodes.top1Right] & TextureFlag.ToIdValue)!.featureFlags & flags
 		if (topRight === 0) return false
 
-		const bottom = Textures.get(t1[nodes.bottom1] & TextureFlag.ToIdValue).featureFlags & flags
+		const bottom = Textures.get(t1[nodes.bottom1] & TextureFlag.ToIdValue)!.featureFlags & flags
 		if (bottom === 0) return false
 
 		return true
@@ -795,16 +801,16 @@ export class MapClass {
 			const tex9 = t1[tn2.bottom1] & TextureFlag.ToIdValue
 			const texA = t2[tn2.bottom2Right] & TextureFlag.ToIdValue
 
-			const tex1Flags = Textures.get(tex1).featureFlags
-			const tex2Flags = Textures.get(tex2).featureFlags
-			const tex3Flags = Textures.get(tex3).featureFlags
-			const tex4Flags = Textures.get(tex4).featureFlags
-			const tex5Flags = Textures.get(tex5).featureFlags
-			const tex6Flags = Textures.get(tex6).featureFlags
-			const tex7Flags = Textures.get(tex7).featureFlags
-			const tex8Flags = Textures.get(tex8).featureFlags
-			const tex9Flags = Textures.get(tex9).featureFlags
-			const texAFlags = Textures.get(texA).featureFlags
+			const tex1Flags = Textures.get(tex1)!.featureFlags
+			const tex2Flags = Textures.get(tex2)!.featureFlags
+			const tex3Flags = Textures.get(tex3)!.featureFlags
+			const tex4Flags = Textures.get(tex4)!.featureFlags
+			const tex5Flags = Textures.get(tex5)!.featureFlags
+			const tex6Flags = Textures.get(tex6)!.featureFlags
+			const tex7Flags = Textures.get(tex7)!.featureFlags
+			const tex8Flags = Textures.get(tex8)!.featureFlags
+			const tex9Flags = Textures.get(tex9)!.featureFlags
+			const texAFlags = Textures.get(texA)!.featureFlags
 
 			// water or swamp texture count
 			const wets =
@@ -983,7 +989,7 @@ export class MapClass {
 				const stack = [{ index: i, nodeFlags: 0x3f }]
 
 				while (stack.length) {
-					const item = stack.shift()
+					const item = stack.shift()!
 					const nodes = getNodesByIndex(item.index, this.width, this.height)
 
 					if (
@@ -1069,7 +1075,7 @@ export class MapClass {
 				const stack = [{ index: i, nodeFlags: 0x3f }]
 
 				while (stack.length) {
-					const item = stack.shift()
+					const item = stack.shift()!
 					const nodes = getNodesByIndex(item.index, this.width, this.height)
 
 					if (
@@ -1155,7 +1161,7 @@ export class MapClass {
 			}
 		}
 
-		regions.unshift([RegionType.Water, waterX, waterY, waterSize])
+		regions.unshift([RegionType.Water, waterX ?? 0, waterY ?? 0, waterSize])
 
 		this.regions = regions
 	}

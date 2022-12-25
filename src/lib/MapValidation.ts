@@ -9,22 +9,76 @@ export function validateMapClass(world: MapClass) {
 	if (world.title.length === 0) issues.push(`Map has no title`)
 	if (world.validationFlag !== 0) issues.push(`Validation flag is active: map can only be played as a campaign`)
 	if (world.playerCount === 0) issues.push(`No players set`)
-	if (world.playerCount > 7) issues.push(`[Return to the Roots] More than 7 players`)
+	if (world.playerCount > 7)
+		issues.push(`[The Settlers II]\nMore than 7 players, but this game only supports up to 7.`)
 	if (world.terrain > 2) issues.push(`Unknown terrain type: ${world.terrain} (expected 0, 1, or 2)`)
-	if (world.width & 3 || world.height & 3) issues.push(`World width and height should be divisable by 8`)
+	if (world.width & 1 || world.height & 1) issues.push(`World width and height must be even numbers`)
 
 	if (world.hqX.length !== world.hqY.length) {
 		issues.push(`Uneven amount of headquarters X and Y locations`)
 	} else if (world.hqX.length > 7) {
-		issues.push(`[Return to the Roots] More than 7 headquarters locations`)
+		issues.push(`[SWD / WLD]\nMore than 7 headquarters locations, but file format only supports up to 7.`)
 	} else if (world.hqX.reduce((count, x) => (count += x !== 0xffff ? 1 : 0), 0) !== world.playerCount) {
 		issues.push(`Player count does not match with headquarters count`)
+	} else if (
+		world.hqX.some((x) => x >= world.width && x < 0xffff) ||
+		world.hqY.some((y) => y >= world.height && y < 0xffff)
+	) {
+		issues.push(`A player's headquarters is out of bounds`)
 	} else {
-		if (
-			world.hqX.some((x) => x >= world.width && x < 0xffff) ||
-			world.hqY.some((y) => y >= world.height && y < 0xffff)
-		) {
-			issues.push(`A player's headquarters is out of bounds`)
+		const hq = world.hqX
+			.map((x, index) => ({ player: index + 1, x, y: world.hqY[index] }))
+			.filter((item) => item.x !== 0xffff && item.y !== 0xffff)
+			.map((item) => ({ ...item, index: item.y * world.width + item.x }))
+
+		const hqRegions = new Set<number>()
+		const regionMap = world.blocks[BlockType.RegionMap]
+		const buildSite = world.blocks[BlockType.BuildSite]
+
+		hq.forEach(({ index, player }) => {
+			hqRegions.add(regionMap[index])
+
+			switch (buildSite[index]) {
+				case ConstructionSite.OccupiedHouse:
+				case ConstructionSite.House: {
+					issues.push(`[Warning] Player ${player} is starting on house location`)
+					break
+				}
+
+				case ConstructionSite.OccupiedHut:
+				case ConstructionSite.Hut: {
+					issues.push(`[Warning] Player ${player} is starting on hut location`)
+					break
+				}
+
+				case ConstructionSite.OccupiedFlag:
+				case ConstructionSite.Flag: {
+					issues.push(`[Critical] Player ${player} not in game: on flag location`)
+					break
+				}
+
+				case ConstructionSite.OccupiedMine:
+				case ConstructionSite.Mine: {
+					issues.push(`[Critical] Player ${player} not in game: on mine location`)
+					break
+				}
+
+				case ConstructionSite.Impassable: {
+					issues.push(`[Critical] Player ${player} not in game: on impassable location`)
+					break
+				}
+
+				case ConstructionSite.Tree: {
+					issues.push(`[Critical] Player ${player} not in game: tree on the way`)
+					break
+				}
+			}
+		})
+
+		if (hqRegions.size > 1) {
+			issues.push(
+				`[The Settlers II]\nPlayers are on multiple regions. This limits the map into a custom campaign map.`
+			)
 		}
 	}
 
@@ -39,10 +93,12 @@ export function validateMapClass(world: MapClass) {
 	const heightMap = world.blocks[BlockType.HeightMap]
 
 	if (heightMap.some((value) => value > 60)) {
-		issues.push(`There are height values higher than 60. This guarantees graphical glitches within the game.`)
+		issues.push(
+			`[The Settlers II]\nThere are height values higher than 60. You may experience issues such as buildings not appearing to screen.`
+		)
 	}
 
-	const largeHeightDiffs = heightMap.reduce((items, value, index) => {
+	const largeHeightDiffs = heightMap.reduce<number[]>((items, value, index) => {
 		const nodes = getNodesByIndex(index, world.width, world.height)
 		if (
 			[
@@ -60,7 +116,9 @@ export function validateMapClass(world: MapClass) {
 	}, [])
 
 	if (largeHeightDiffs.length) {
-		issues.push(`There are height differences larger than 5. This might cause game to crash during play.`)
+		issues.push(
+			`[The Settlers II + Map Editor]\nThere are height differences larger than 5. Application may crash on large height difference when sprite moves between nodes.`
+		)
 	}
 
 	const t1 = world.blocks[BlockType.Texture1]
@@ -92,7 +150,9 @@ export function validateMapClass(world: MapClass) {
 		if (value & 0xc0) {
 			const x = index % world.width
 			const y = Math.floor((index - x) / world.width)
-			issues.push(`Texture 2 contains flags ${asHex(value & 0xc0)} at index ${index} / ${x} x ${y} (probably a savegame)`)
+			issues.push(
+				`Texture 2 contains flags ${asHex(value & 0xc0)} at index ${index} / ${x} x ${y} (probably a savegame)`
+			)
 		}
 
 		const textureId = value & TextureFlag.ToIdValue
@@ -205,7 +265,7 @@ export function validateMapClass(world: MapClass) {
 	})
 
 	if (world.blocks[BlockType.RegionMap].some((value) => value === 0xff)) {
-		issues.push(`Map region data will crash the game and map editor`)
+		issues.push(`[The Settlers II + Map Editor]\nMap region data will crash the program`)
 	}
 
 	return issues

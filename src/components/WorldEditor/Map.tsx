@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'preact/compat'
+import { useEffect, useMemo, useRef } from 'preact/compat'
 
 import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '$/lib/MapClass'
 
 import styles from './Map.module.css'
 import { BlockType, TextureFlag, Trees } from '$/lib/types'
 import { palettes, texturePaletteIndex } from '$/lib/palette'
+import { Position } from '$/lib/PlayerBasedGenerator'
 
 function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, color2 = 255) {
 	const buffer = canvas.getContext('2d')
@@ -109,16 +110,48 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, co
 	buffer.putImageData(imageData, 0, 0)
 }
 
-export function MapCanvas({ color1, color2, ...world }: MapClass & { color1: number; color2: number }) {
+interface Props {
+	color1: number
+	color2: number
+	showPlayers?: boolean
+	world: MapClass
+}
+
+export function MapCanvas({ color1, color2, showPlayers = false, world }: Props) {
 	const ref = useRef<HTMLCanvasElement>(null)
 
 	useEffect(() => {
-		if (ref.current && world) drawToCanvas(ref.current, world as MapClass, color1, color2)
+		if (ref.current && world) drawToCanvas(ref.current, world, color1, color2)
 	}, [world])
+
+	const positions = useMemo<Position[]>(() => {
+		if (!showPlayers) return []
+		return world.hqX
+			.map((x, index) => ({ number: index + 1, x, y: world.hqY[index] }))
+			.filter((pos) => pos.x !== 0xffff && pos.y !== 0xffff)
+	}, [showPlayers, world.hqX, world.hqY])
 
 	return (
 		<div className={styles.container}>
-			<canvas ref={ref} width={world.width} height={world.height} />
+			<div className={styles.canvasWrapper}>
+				<canvas ref={ref} width={world.width} height={world.height} />
+				{positions.map((pos) => (
+					<span
+						style={{
+							border: '1px solid white',
+							position: 'absolute',
+							left: `${pos.x - 1}px`,
+							top: `${pos.y - 1}px`,
+							width: '1px',
+							height: '1px',
+							backgroundColor: 'black',
+							borderRadius: '50%',
+							transform: 'scale(2)',
+							transformOrigin: '50%'
+						}}
+					/>
+				))}
+			</div>
 		</div>
 	)
 }

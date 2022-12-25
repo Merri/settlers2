@@ -48,7 +48,7 @@ export function hexRotate(world: MapClass): MapClass {
 
 	function getTargetXY(x: number, y: number) {
 		const sourceIndex = x + y * world.width
-		const targetIndex = indexMap.get(sourceIndex)
+		const targetIndex = indexMap.get(sourceIndex)!
 		const targetX = targetIndex % world.width
 		const targetY = Math.floor((targetIndex - targetX) / world.width)
 		return { targetX, targetY }

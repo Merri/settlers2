@@ -438,7 +438,7 @@ export const Textures = new Map<number, TextureData>([
 	],
 ])
 
-type RGBA = [number, number, number, number]
+type RGBA = [red: number, green: number, blue: number, alpha: number]
 
 interface Tree {
 	/** These are a set of customized colors for "prettier" rendering on minimap. */

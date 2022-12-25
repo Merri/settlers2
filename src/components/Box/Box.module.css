@@ -1,0 +1,54 @@
+.box {
+	--background: transparent;
+	--color: inherit;
+	--gap: 0rem;
+	--padding: 0rem;
+	background: --background;
+	color: --color;
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+	padding: var(--padding);
+}
+
+.box[data-gap='04'] {
+	--gap: 0.25rem;
+}
+
+.box[data-gap='08'] {
+	--gap: 0.5rem;
+}
+
+.box[data-gap='16'] {
+	--gap: 1rem;
+}
+
+.box[data-gap='24'] {
+	--gap: 1.5rem;
+}
+
+.box[data-theme='white'] {
+	--background: white
+	--color: #222;
+}
+
+.box[data-theme='black'] {
+	--background: #222
+	--color: white;
+}
+
+.box[data-variant^='card'] {
+	border-radius: 0.5rem;
+}
+
+.box[data-variant='card04'] {
+	--padding: 0.25rem;
+}
+
+.box[data-variant='card08'] {
+	--padding: 0.5rem;
+}
+
+.box[data-variant='card16'] {
+	--padding: 1rem;
+}

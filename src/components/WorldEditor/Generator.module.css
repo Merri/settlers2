@@ -1,0 +1,24 @@
+.description {
+	font-size: 1rem;
+	line-height: 1.25;
+	margin-left: 2rem;
+	max-width: 25rem;
+}
+
+.radio {
+	padding-left: 2rem;
+	position: relative;
+}
+
+.radio > input {
+	position: absolute;
+	left: 1rem;
+	margin: 0;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.bars {
+	display: flex;
+	gap: 0.125rem;
+}

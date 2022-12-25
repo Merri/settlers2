@@ -24,7 +24,7 @@ specifiers:
   prettier-plugin-astro: 0.7.0
   random-seedable: 1.0.8
   sanitize.css: 13.0.0
-  typescript: 4.9.3
+  typescript: 4.9.4
   typescript-plugin-css-modules: 4.1.0
 
 devDependencies:
@@ -51,8 +51,8 @@ devDependencies:
   prettier-plugin-astro: 0.7.0
   random-seedable: 1.0.8
   sanitize.css: 13.0.0
-  typescript: 4.9.3
-  typescript-plugin-css-modules: 4.1.0_typescript@4.9.3
+  typescript: 4.9.4
+  typescript-plugin-css-modules: 4.1.0_typescript@4.9.4
 
 packages:
 
@@ -940,7 +940,7 @@ packages:
       strip-ansi: 7.0.1
       supports-esm: 1.0.0
       tsconfig-resolver: 3.0.1
-      typescript: 4.9.3
+      typescript: 4.9.4
       unist-util-visit: 4.1.0
       vfile: 5.3.6
       vite: 3.2.4_@types+node@18.11.9
@@ -4450,7 +4450,7 @@ packages:
     resolution: {integrity: sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==}
     dev: true
 
-  /typescript-plugin-css-modules/4.1.0_typescript@4.9.3:
+  /typescript-plugin-css-modules/4.1.0_typescript@4.9.4:
     resolution: {integrity: sha512-B9TsloviXAIpijSxXcNfVndR/5rxeBafJzHgNMesxVPzSTBmKERH9KImLbm1qAL3NVRyfZlZzVKDYTaW04dGfg==}
     peerDependencies:
       typescript: '>=3.9.0'
@@ -4469,14 +4469,14 @@ packages:
       source-map-js: 1.0.2
       stylus: 0.59.0
       tsconfig-paths: 4.1.1
-      typescript: 4.9.3
+      typescript: 4.9.4
     transitivePeerDependencies:
       - supports-color
       - ts-node
     dev: true
 
-  /typescript/4.9.3:
-    resolution: {integrity: sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==}
+  /typescript/4.9.4:
+    resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
