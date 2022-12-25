@@ -303,7 +303,7 @@ export function randomizeElevation({
 			while (radius) {
 				const nodes = getNodesAtRadius(index, radius, map.width, map.height)
 				nodes.forEach((index) => {
-					heightMap[index] = Math.min(50, heightMap[index] + maxIncrement - radius)
+					heightMap[index] = Math.min(50, heightMap[index] + (maxIncrement - radius) / 3)
 				})
 				radius--
 			}
