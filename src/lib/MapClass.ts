@@ -327,8 +327,8 @@ export function getNodesByIndex(index: number, width: number, height: number) {
 
 export function getNodesAtRadius(index: number, radius: number, width: number, height: number) {
 	if (radius < 1) throw new Error('Radius must be 1 or more')
-	const maxRadius = Math.floor((Math.min(width, height) - 2) / 2)
-	if (radius > maxRadius) throw new Error('Maximum radius is ' + maxRadius)
+	//const maxRadius = Math.floor((Math.min(width, height) - 2) / 2)
+	//if (radius > maxRadius) throw new Error('Maximum radius is ' + maxRadius)
 	const size = width * height
 	const x = index % width
 	const y = (index - x) / width

@@ -35,6 +35,8 @@ interface MapOptions {
 	distance: number
 	mirror: string
 	noise: number
+	offsetX: number
+	offsetY: number
 	elevationOptions: {
 		peakBoost: number
 		peakRadius: number
@@ -69,6 +71,8 @@ const emptyOptions: MapOptions = {
 	height: 160,
 	mirror: '',
 	noise: 0.55,
+	offsetX: 0,
+	offsetY: 0,
 	width: 160,
 }
 
@@ -151,7 +155,7 @@ export function Generator() {
 
 	useEffect(() => {
 		const random = new XORShift(seed)
-		const { width, height, assignment, distance, mirror, noise } = options
+		const { width, height, assignment, distance, mirror, noise, offsetX, offsetY } = options
 		const { mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
 		const world = generateEmptyMap({ width, height, random })
 
@@ -179,6 +183,8 @@ export function Generator() {
 		randomizeElevation({
 			...world,
 			mountLevel: mountLevel / 100,
+			offsetX,
+			offsetY,
 			peakBoost,
 			peakRadius,
 			seaLevel: seaLevel / 100,
@@ -421,6 +427,32 @@ export function Generator() {
 								<option value="1.75">Medium noise</option>
 								<option value="2.25">Strong noise</option>
 							</select>
+							<br />
+							<label>
+								Offset X:
+								<br />
+								<IncDec
+									delay={25}
+									onChange={(offsetX) => dispatchOptions({ type: 'options', payload: { offsetX } })}
+									minimumValue={0}
+									maximumValue={world.map.width}
+									step={1}
+									value={options.offsetX}
+								/>
+							</label>
+							<br />
+							<label>
+								Offset Y:
+								<br />
+								<IncDec
+									delay={25}
+									onChange={(offsetY) => dispatchOptions({ type: 'options', payload: { offsetY } })}
+									minimumValue={0}
+									maximumValue={world.map.height}
+									step={2}
+									value={options.offsetY}
+								/>
+							</label>
 						</td>
 					</tr>
 				</tbody>
@@ -443,7 +475,9 @@ export function Generator() {
 				</div>
 			)}
 
-			<Button primary onClick={downloadSwd}>Download!</Button>
+			<Button primary onClick={downloadSwd}>
+				Download!
+			</Button>
 		</div>
 	)
 }

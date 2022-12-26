@@ -229,6 +229,8 @@ interface ElevationBasedOptions {
 	baseLevel?: number
 	noiseArray: Float64Array
 	map: MapClass
+	offsetX?: number
+	offsetY?: number
 	mountLevel?: number
 	peakBoost?: number
 	peakRadius?: number
@@ -243,6 +245,8 @@ export function randomizeElevation({
 	baseLevel = 15,
 	noiseArray,
 	map,
+	offsetX = 0,
+	offsetY = 0,
 	peakBoost = 0,
 	peakRadius = 3,
 	mountLevel = 0.5,
@@ -321,6 +325,22 @@ export function randomizeElevation({
 		})
 		heightMap[index] = Math.round(value / (nodes.length + 1))
 	})
+
+	offsetY &= 0xfffe
+
+	if (offsetX || offsetY) {
+		const source = heightMap.slice()
+
+		for (let y = 0; y < map.height; y++) {
+			const sourceIndex = y * map.width
+			const targetIndex = ((y + offsetY) % map.height) * map.width
+
+			for (let x = 0; x < map.width; x++) {
+				const targetX = (x + offsetX) % map.width
+				heightMap[targetIndex + targetX] = source[sourceIndex + x]
+			}
+		}
+	}
 
 	let minHeight = Number.POSITIVE_INFINITY
 	let maxHeight = Number.NEGATIVE_INFINITY
