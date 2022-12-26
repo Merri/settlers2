@@ -361,7 +361,7 @@ export function Generator() {
 								}
 								minimumValue={3}
 								step={1}
-								maximumValue={15}
+								maximumValue={100}
 								value={options.elevationOptions.peakRadius}
 							/>
 						</td>

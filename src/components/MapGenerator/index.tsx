@@ -26,7 +26,7 @@ const hasLocalStorage = (function (key) {
 	}
 })('_')
 
-function generateAndGetResources(seed: number) {
+function generateAndGetResources(seed: number | bigint) {
 	random.seed = seed
 	return generator.applyResources({})
 }
@@ -63,7 +63,7 @@ interface State {
 	height: number
 	width: number
 	title: string
-	seed: number
+	seed: bigint
 }
 
 export class MapGenerator extends Component<{}, State> {
@@ -108,7 +108,7 @@ export class MapGenerator extends Component<{}, State> {
 			height,
 			width,
 			title: 'Untitled',
-			seed: 1,
+			seed: BigInt(1),
 		}
 	}
 
@@ -148,7 +148,7 @@ export class MapGenerator extends Component<{}, State> {
 		const randomSeed = mode === 'random'
 		console.time('New Seed, Height Map, Textures and Resources')
 
-		const seed = randomSeed ? (Date.now() & 0xfffffffe) + 1 : this.state.seed
+		const seed = randomSeed ? (Date.now() & 0xfffffffe) + 1 : Number(BigInt.asUintN(32, this.state.seed))
 		const seedOptions = { ...this.state.seedOptions }
 		const startingPoints = (1 + (seedOptions.width * seedOptions.height * seedOptions.massRatio) / 40960) | 0
 
@@ -172,7 +172,7 @@ export class MapGenerator extends Component<{}, State> {
 
 		this.setState(
 			{
-				seed,
+				seed: BigInt(seed),
 				width: this.state.seedOptions.width,
 				height: this.state.seedOptions.height,
 				seedOptions,
