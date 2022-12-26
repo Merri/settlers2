@@ -331,7 +331,9 @@ export function randomizeElevation({
 	})
 
 	const adjustedMountLevel = (snowPeakLevel - seaLevel) * mountLevel + seaLevel
+	const adjustedMeadowLevel = (adjustedMountLevel - seaLevel) * 0.25 + seaLevel
 	const seaBelow = Math.round((maxHeight - minHeight) * seaLevel) + minHeight
+	const meadowAbove = Math.round((maxHeight - minHeight) * adjustedMeadowLevel) + minHeight
 	const mountAbove = Math.round((maxHeight - minHeight) * adjustedMountLevel) + minHeight
 	const snowAbove = Math.round((maxHeight - minHeight) * snowPeakLevel) + minHeight
 
@@ -339,6 +341,7 @@ export function randomizeElevation({
 	const tex2 = map.blocks[BlockType.Texture2]
 
 	const miningTex = [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4]
+	const meadowTex = [Texture.Farmland2, Texture.Farmland3, Texture.Farmland4, Texture.Farmland6]
 
 	function draw(index: number, tex: Texture, flag?: TextureFeatureFlag) {
 		const nodes = getTextureNodesByIndex(index, map.width, map.height)
@@ -371,26 +374,36 @@ export function randomizeElevation({
 		}
 	}
 
-	const flagRegularGround =
-		TextureFeatureFlag.IsMeadow |
-		TextureFeatureFlag.IsMountMeadow |
-		TextureFeatureFlag.IsSavannah |
-		TextureFeatureFlag.IsSteppe
+	const flagRegularGround = TextureFeatureFlag.IsMeadow | TextureFeatureFlag.IsSavannah | TextureFeatureFlag.IsSteppe
 
 	heightMap.forEach((value, index) => {
 		if (value < seaBelow) {
 			heightMap[index] = seaBelow - 1
-			draw(index, Texture.UnbuildableWater)
+			draw(index, Texture.UnbuildableWater, TextureFeatureFlag.IsSavannah)
+			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+			nodes.forEach((index) => {
+				if (heightMap[index] >= seaBelow) {
+					if (noiseArray[index] >= 0.5) {
+						draw(index, Texture.Roadland)
+					} else {
+						draw(index, Texture.Farmland5)
+					}
+				}
+			})
 		} else if (value > snowAbove) {
 			draw(index, Texture.Inaccessible)
 		} else if (value > mountAbove) {
 			if (noiseArray[index] >= 0.15) {
 				draw(index, miningTex[value % miningTex.length], flagRegularGround)
+			} else if (noiseArray[index] >= 0.1) {
+				draw(index, Texture.Buildable, flagRegularGround | TextureFeatureFlag.Rock)
 			} else {
 				draw(index, Texture.MiningFarmland, flagRegularGround | TextureFeatureFlag.Rock)
 			}
 		} else if (value === mountAbove) {
 			draw(index, Texture.Buildable, TextureFeatureFlag.Arable)
+		} else if (value > meadowAbove) {
+			draw(index, meadowTex[value % meadowTex.length], TextureFeatureFlag.IsSavannah)
 		}
 	})
 }
