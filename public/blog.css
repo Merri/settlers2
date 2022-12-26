@@ -387,13 +387,13 @@ tr:nth-child(odd) {
 }
 
 .terrains td:nth-child(2) img {
-	background: url('/world-editor/terrain0.png') no-repeat;
+	background: url('/assets/docs/terrain0.png') no-repeat;
 }
 .terrains td:nth-child(3) img {
-	background: url('/world-editor/terrain1.png') no-repeat;
+	background: url('/assets/docs/terrain1.png') no-repeat;
 }
 .terrains td:nth-child(4) img {
-	background: url('/world-editor/terrain2.png') no-repeat;
+	background: url('/assets/docs/terrain2.png') no-repeat;
 }
 .terrains tr:nth-child(2) img {
 	background-position: 0 -3rem;
