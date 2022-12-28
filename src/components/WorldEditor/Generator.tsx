@@ -1,11 +1,12 @@
 import {
 	adjustPlayerLocations,
 	assignPlayerPositions,
+	blockadeMapEdges,
 	generateEmptyMap,
 	PlayerAssignment,
 	randomizeElevation,
 } from '$/lib/PlayerBasedGenerator'
-import { BlockType } from '$/lib/types'
+import { BlockType, RegionType } from '$/lib/types'
 import { ChangeEventHandler } from 'preact/compat'
 import { useCallback, useEffect, useReducer, useState } from 'preact/hooks'
 import { XORShift } from 'random-seedable'
@@ -32,12 +33,14 @@ interface MapOptions {
 	width: number
 	height: number
 	assignment: PlayerAssignment
+	continuous: boolean
 	distance: number
 	mirror: string
 	noise: number
 	offsetX: number
 	offsetY: number
 	elevationOptions: {
+		border: number
 		peakBoost: number
 		peakRadius: number
 		mountLevel: number
@@ -60,8 +63,10 @@ type MapOptionsAction = MapOptionsPayload | MapElevationOptionsPayload
 
 const emptyOptions: MapOptions = {
 	assignment: PlayerAssignment.hexCenter7,
+	continuous: false,
 	distance: 50,
 	elevationOptions: {
+		border: 0,
 		peakBoost: 0,
 		peakRadius: 7,
 		seaLevel: 33,
@@ -89,6 +94,7 @@ export function Generator() {
 		const params = new URLSearchParams(window.location.search)
 
 		const assignment = params.get('assignment') as PlayerAssignment | null
+		options.continuous = params.has('continuous')
 		const mirror = params.get('mirror')
 		const opts = params.get('options')
 		if (assignment) options.assignment = assignment
@@ -146,8 +152,9 @@ export function Generator() {
 	useEffect(() => {
 		const params = new URLSearchParams()
 		params.set('seed', `${seed}`)
-		const { assignment, mirror, ...limitedOptions } = options
+		const { assignment, continuous, mirror, ...limitedOptions } = options
 		params.set('assignment', assignment)
+		if (continuous) params.set('continuous', '')
 		mirror && params.set('mirror', mirror)
 		params.set('options', JSON.stringify(limitedOptions))
 		history.replaceState(null, '', `?${params}`)
@@ -155,8 +162,8 @@ export function Generator() {
 
 	useEffect(() => {
 		const random = new XORShift(seed)
-		const { width, height, assignment, distance, mirror, noise, offsetX, offsetY } = options
-		const { mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
+		const { width, height, assignment, continuous, distance, mirror, noise, offsetX, offsetY } = options
+		const { border, mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
 		const world = generateEmptyMap({ width, height, random })
 
 		switch (mirror) {
@@ -183,8 +190,9 @@ export function Generator() {
 		randomizeElevation({
 			...world,
 			mountLevel: mountLevel / 100,
-			offsetX,
-			offsetY,
+			offsetX: (offsetX + world.map.width) % world.map.width,
+			offsetY: (offsetY + world.map.height) % world.map.height,
+			border: border / 100,
 			peakBoost,
 			peakRadius,
 			seaLevel: seaLevel / 100,
@@ -196,6 +204,10 @@ export function Generator() {
 			heightMap.forEach((_, index) => {
 				heightMap[index] += Math.round(world.noiseArray[index] * noise)
 			})
+		}
+
+		if (!continuous) {
+			blockadeMapEdges(world.map)
 		}
 
 		world.map.updateBuildSiteMap()
@@ -216,6 +228,13 @@ export function Generator() {
 		},
 		[world.map]
 	)
+
+	/*
+	const regions = world.map.regions
+		.map(([type, _x, _y, size], index) => ({ index, size, type }))
+		.filter(({ size, type }) => type === RegionType.Land && size)
+		.sort((a, b) => b.size - a.size)
+	*/
 
 	const validation = validateMapClass(world.map)
 
@@ -272,53 +291,23 @@ export function Generator() {
 						</td>
 					</tr>
 					<tr>
-						<td>Player assignment</td>
+						<td>Continuous?</td>
 						<td>
-							<select onChange={handleAssignment} value={options.assignment}>
-								<optgroup label="One player">
-									<option value={PlayerAssignment.center}>Center</option>
-									<option value={PlayerAssignment.topLeft}>Top left</option>
-									<option value={PlayerAssignment.topRight}>Top right</option>
-									<option value={PlayerAssignment.left}>Left</option>
-									<option value={PlayerAssignment.right}>Right</option>
-									<option value={PlayerAssignment.bottomLeft}>Bottom left</option>
-									<option value={PlayerAssignment.bottomRight}>Bottom right</option>
-								</optgroup>
-								<optgroup label="Two players">
-									<option value={PlayerAssignment.hex2Pos1}>Two, type 1</option>
-									<option value={PlayerAssignment.hex2Pos2}>Two, type 2</option>
-									<option value={PlayerAssignment.hex2Pos3}>Two, type 3</option>
-								</optgroup>
-								<optgroup label="Three players">
-									<option value={PlayerAssignment.hex3Pos1}>Three, type 1</option>
-									<option value={PlayerAssignment.hex3Pos2}>Three, type 2</option>
-								</optgroup>
-								<optgroup label="Four players">
-									<option value={PlayerAssignment.hex4Pos1}>Four, type 1</option>
-									<option value={PlayerAssignment.hex4Pos2}>Four, type 2</option>
-									<option value={PlayerAssignment.hex4Pos3}>Four, type 3</option>
-								</optgroup>
-								<optgroup label="More than four players">
-									<option value={PlayerAssignment.hexCenter5}>Five players</option>
-									<option value={PlayerAssignment.hex6}>Six players</option>
-									<option value={PlayerAssignment.hexCenter7}>Seven players</option>
-								</optgroup>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>Player distance</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(distance) => dispatchOptions({ type: 'options', payload: { distance } })}
-								minimumValue={0}
-								step={1}
-								maximumValue={100}
-								value={options.distance}
+							<input
+								type="checkbox"
+								onChange={(event: Event) => {
+									if (event.target instanceof HTMLInputElement) {
+										dispatchOptions({
+											type: 'options',
+											payload: { continuous: event.target.checked },
+										})
+									}
+								}}
+								checked={options.continuous}
 							/>
 						</td>
 					</tr>
+					{/*
 					<tr>
 						<td>Texturing</td>
 						<td>
@@ -340,6 +329,21 @@ export function Generator() {
 								may control the terrain type of each player. Players are guaranteed to be connected via
 								land route.
 							</p>
+						</td>
+					</tr>*/}
+					<tr>
+						<td>Elevation free border</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(border) =>
+									dispatchOptions({ type: 'elevationOptions', payload: { border } })
+								}
+								minimumValue={0}
+								step={1}
+								maximumValue={25}
+								value={options.elevationOptions.border}
+							/>
 						</td>
 					</tr>
 					<tr>
@@ -434,7 +438,7 @@ export function Generator() {
 								<IncDec
 									delay={25}
 									onChange={(offsetX) => dispatchOptions({ type: 'options', payload: { offsetX } })}
-									minimumValue={0}
+									minimumValue={-world.map.width}
 									maximumValue={world.map.width}
 									step={1}
 									value={options.offsetX}
@@ -447,12 +451,60 @@ export function Generator() {
 								<IncDec
 									delay={25}
 									onChange={(offsetY) => dispatchOptions({ type: 'options', payload: { offsetY } })}
-									minimumValue={0}
+									minimumValue={-world.map.height}
 									maximumValue={world.map.height}
 									step={2}
 									value={options.offsetY}
 								/>
 							</label>
+						</td>
+					</tr>
+					<tr>
+						<td>Player assignment</td>
+						<td>
+							<select onChange={handleAssignment} value={options.assignment}>
+								<optgroup label="One player">
+									<option value={PlayerAssignment.center}>Center</option>
+									<option value={PlayerAssignment.topLeft}>Top left</option>
+									<option value={PlayerAssignment.topRight}>Top right</option>
+									<option value={PlayerAssignment.left}>Left</option>
+									<option value={PlayerAssignment.right}>Right</option>
+									<option value={PlayerAssignment.bottomLeft}>Bottom left</option>
+									<option value={PlayerAssignment.bottomRight}>Bottom right</option>
+								</optgroup>
+								<optgroup label="Two players">
+									<option value={PlayerAssignment.hex2Pos1}>Two, type 1</option>
+									<option value={PlayerAssignment.hex2Pos2}>Two, type 2</option>
+									<option value={PlayerAssignment.hex2Pos3}>Two, type 3</option>
+								</optgroup>
+								<optgroup label="Three players">
+									<option value={PlayerAssignment.hex3Pos1}>Three, type 1</option>
+									<option value={PlayerAssignment.hex3Pos2}>Three, type 2</option>
+								</optgroup>
+								<optgroup label="Four players">
+									<option value={PlayerAssignment.hex4Pos1}>Four, type 1</option>
+									<option value={PlayerAssignment.hex4Pos2}>Four, type 2</option>
+									<option value={PlayerAssignment.hex4Pos3}>Four, type 3</option>
+								</optgroup>
+								<optgroup label="More than four players">
+									<option value={PlayerAssignment.hexCenter5}>Five players</option>
+									<option value={PlayerAssignment.hex6}>Six players</option>
+									<option value={PlayerAssignment.hexCenter7}>Seven players</option>
+								</optgroup>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Player distance</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(distance) => dispatchOptions({ type: 'options', payload: { distance } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.distance}
+							/>
 						</td>
 					</tr>
 				</tbody>
@@ -474,6 +526,12 @@ export function Generator() {
 					<pre>{validation.join('\n')}</pre>
 				</div>
 			)}
+
+			{/*
+			<div>
+				<h4>Regions</h4>
+				<pre>{JSON.stringify(regions, null, '\t')}</pre>
+			</div>*/}
 
 			<Button primary onClick={downloadSwd}>
 				Download!

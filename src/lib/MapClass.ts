@@ -1359,4 +1359,37 @@ export class MapClass {
 		view.setUint8(footerIndex + footerSize, 0xff)
 		return buffer
 	}
+
+	draw = (index: number, tex: Texture, flag?: TextureFeatureFlag) => {
+		const tex1 = this.blocks[BlockType.Texture1]
+		const tex2 = this.blocks[BlockType.Texture2]
+		const nodes = getTextureNodesByIndex(index, this.width, this.height)
+		if (flag == null) {
+			tex1[nodes.top1Left] = tex
+			tex1[nodes.top1Right] = tex
+			tex1[nodes.bottom1] = tex
+			tex2[nodes.top2] = tex
+			tex2[nodes.bottom2Left] = tex
+			tex2[nodes.bottom2Right] = tex
+		} else {
+			if ((Textures.get(tex1[nodes.top1Left] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex1[nodes.top1Left] = tex
+			}
+			if ((Textures.get(tex1[nodes.top1Right] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex1[nodes.top1Right] = tex
+			}
+			if ((Textures.get(tex1[nodes.bottom1] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex1[nodes.bottom1] = tex
+			}
+			if ((Textures.get(tex2[nodes.top2] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex2[nodes.top2] = tex
+			}
+			if ((Textures.get(tex2[nodes.bottom2Left] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex2[nodes.bottom2Left] = tex
+			}
+			if ((Textures.get(tex2[nodes.bottom2Right] & TextureFlag.ToIdValue)?.featureFlags ?? 0) & flag) {
+				tex2[nodes.bottom2Right] = tex
+			}
+		}
+	}
 }
