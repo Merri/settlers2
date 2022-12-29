@@ -1,7 +1,9 @@
 import {
+	addSubterrainResources,
 	adjustPlayerLocations,
 	assignPlayerPositions,
 	blockadeMapEdges,
+	calculateResources,
 	generateEmptyMap,
 	PlayerAssignment,
 	randomizeElevation,
@@ -47,11 +49,19 @@ interface MapOptions {
 		seaLevel: number
 		snowPeakLevel: number
 	}
+	minerals: {
+		coal: number
+		gold: number
+		granite: number
+		ironOre: number
+		quantity: number
+		replicate: number
+	}
 }
 
 interface MapOptionsPayload {
 	type: 'options'
-	payload: Partial<Exclude<MapOptions, 'elevationOptions'>>
+	payload: Partial<Exclude<MapOptions, 'elevationOptions' | 'minerals'>>
 }
 
 interface MapElevationOptionsPayload {
@@ -59,7 +69,12 @@ interface MapElevationOptionsPayload {
 	payload: Partial<MapOptions['elevationOptions']>
 }
 
-type MapOptionsAction = MapOptionsPayload | MapElevationOptionsPayload
+interface MapMineralsOptionsPayload {
+	type: 'minerals'
+	payload: Partial<MapOptions['minerals']>
+}
+
+type MapOptionsAction = MapOptionsPayload | MapElevationOptionsPayload | MapMineralsOptionsPayload
 
 const emptyOptions: MapOptions = {
 	assignment: PlayerAssignment.hexCenter7,
@@ -72,6 +87,14 @@ const emptyOptions: MapOptions = {
 		seaLevel: 33,
 		mountLevel: 50,
 		snowPeakLevel: 100,
+	},
+	minerals: {
+		coal: 75,
+		gold: 25,
+		granite: 50,
+		ironOre: 50,
+		quantity: 100,
+		replicate: 100,
 	},
 	height: 160,
 	mirror: '',
@@ -102,9 +125,10 @@ export function Generator() {
 
 		if (opts) {
 			try {
-				const { elevationOptions, ...rest } = JSON.parse(opts)
+				const { elevationOptions = {}, minerals = {}, ...rest } = JSON.parse(opts)
 				Object.assign(options, rest)
 				options.elevationOptions = { ...options.elevationOptions, ...elevationOptions }
+				options.minerals = { ...options.minerals, ...minerals }
 			} catch (e) {}
 		}
 
@@ -115,6 +139,10 @@ export function Generator() {
 		switch (action.type) {
 			case 'options': {
 				return { ...options, ...action.payload }
+			}
+
+			case 'minerals': {
+				return { ...options, minerals: { ...options.minerals, ...action.payload } }
 			}
 
 			case 'elevationOptions': {
@@ -130,6 +158,7 @@ export function Generator() {
 		assignPlayerPositions({ assignment, distance: distance / 100, map: world.map })
 		return world
 	})
+	const [resources, setResources] = useState(() => calculateResources({ map: world.map }))
 
 	const handleAssignment: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
 		if (event.target instanceof HTMLSelectElement) {
@@ -152,10 +181,11 @@ export function Generator() {
 	useEffect(() => {
 		const params = new URLSearchParams()
 		params.set('seed', `${seed}`)
-		const { assignment, continuous, mirror, ...limitedOptions } = options
+		const { assignment, continuous, minerals, mirror, ...limitedOptions } = options
 		params.set('assignment', assignment)
 		if (continuous) params.set('continuous', '')
 		mirror && params.set('mirror', mirror)
+		params.set('minerals', JSON.stringify(minerals))
 		params.set('options', JSON.stringify(limitedOptions))
 		history.replaceState(null, '', `?${params}`)
 	}, [options, seed])
@@ -164,6 +194,7 @@ export function Generator() {
 		const random = new XORShift(seed)
 		const { width, height, assignment, continuous, distance, mirror, noise, offsetX, offsetY } = options
 		const { border, mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
+		const { coal, gold, granite, ironOre, quantity, replicate } = options.minerals
 		const world = generateEmptyMap({ width, height, random })
 
 		switch (mirror) {
@@ -214,6 +245,17 @@ export function Generator() {
 		world.map.updateRegions()
 
 		adjustPlayerLocations({ map: world.map })
+		addSubterrainResources({
+			...world,
+			coalRatio: coal / 100,
+			goldRatio: gold / 100,
+			graniteRatio: granite / 100,
+			ironOreRatio: ironOre / 100,
+			mineralQuantity: quantity / 100,
+			replicateMineral: replicate / 100,
+		})
+
+		setResources(calculateResources({ map: world.map }))
 
 		setWorld(world)
 	}, [options, seed])
@@ -221,6 +263,7 @@ export function Generator() {
 	const downloadSwd = useCallback(
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
+			world.map.updateLightMap()
 			const filename = 'UNTITLED'
 			const buffer = world.map.getFileBuffer({ format: 'SWD' })
 			const name = filename.replace(/(\.WLD|\.DAT|\b)$/i, '.SWD')
@@ -504,6 +547,115 @@ export function Generator() {
 								step={1}
 								maximumValue={100}
 								value={options.distance}
+							/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Mineral</th>
+						<th>Ratio</th>
+						<th>Generated</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Coal</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(coal) => dispatchOptions({ type: 'minerals', payload: { coal } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.coal}
+							/>
+						</td>
+						<td>{resources.mineralCoal}</td>
+					</tr>
+					<tr>
+						<td>Iron ore</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(ironOre) => dispatchOptions({ type: 'minerals', payload: { ironOre } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.ironOre}
+							/>
+						</td>
+						<td>{resources.mineralIronOre}</td>
+					</tr>
+					<tr>
+						<td>Gold</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(gold) => dispatchOptions({ type: 'minerals', payload: { gold } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.gold}
+							/>
+						</td>
+						<td>{resources.mineralGold}</td>
+					</tr>
+					<tr>
+						<td>Granite</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(granite) => dispatchOptions({ type: 'minerals', payload: { granite } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.granite}
+							/>
+						</td>
+						<td>{resources.mineralGranite}</td>
+					</tr>
+					<tr>
+						<td>Fish</td>
+						<td>
+							<em>Always maximum</em>
+						</td>
+						<td>{resources.fish}</td>
+					</tr>
+					<tr>
+						<td>
+							Replication likelyhood
+							<br />
+							<small>of same mineral nearby</small>
+						</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(replicate) => dispatchOptions({ type: 'minerals', payload: { replicate } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.replicate}
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Mineral quantity
+							<br />
+							<small>smaller value = less likely max quantity</small>
+						</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(quantity) => dispatchOptions({ type: 'minerals', payload: { quantity } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.quantity}
 							/>
 						</td>
 					</tr>

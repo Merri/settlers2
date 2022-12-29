@@ -1,7 +1,7 @@
 import { XORShift } from 'random-seedable'
 
 import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
-import { BlockType, ConstructionSite, Texture, TextureFeatureFlag, TextureFlag, Textures } from './types'
+import { BlockType, ConstructionSite, ResourceFlag, Texture, TextureFeatureFlag, TextureFlag, Textures } from './types'
 
 interface SeedMapOptions {
 	random: XORShift
@@ -352,12 +352,22 @@ export function randomizeElevation({
 			const isCrater = noiseArray[index] < 0.625
 
 			while (radius) {
+				if (
+					(radius > maxIncrement && noiseArray[index] < 0.75) ||
+					(radius === maxIncrement && noiseArray[index] < 0.5)
+				) {
+					radius--
+					continue
+				}
 				const nodes = getNodesAtRadius(index, radius, map.width, map.height)
 				const power = (maxIncrement - radius) / 3
 				nodes.forEach((index) => {
 					heightMap[index] = Math.max(
 						0,
-						Math.min(MAX_HEIGHT - 3 * noiseArray[index], heightMap[index] + power)
+						Math.min(
+							MAX_HEIGHT - 3 * noiseArray[index],
+							heightMap[index] + power - 0.55 * noiseArray[index]
+						)
 					)
 				})
 				radius--
@@ -495,4 +505,151 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 		map.hqX[playerIndex] = x
 		map.hqY[playerIndex] = y
 	})
+}
+
+interface AddSubterrainResourcesOptions {
+	coalRatio?: number
+	goldRatio?: number
+	graniteRatio?: number
+	ironOreRatio?: number
+	mineralQuantity?: number
+	replicateMineral?: number
+	map: MapClass
+	noiseArray: Float64Array
+}
+
+export function addSubterrainResources({
+	coalRatio = 1,
+	goldRatio = 0.25,
+	graniteRatio = 0.5,
+	ironOreRatio = 0.75,
+	mineralQuantity = 0,
+	replicateMineral = 1,
+	map,
+	noiseArray,
+}: AddSubterrainResourcesOptions) {
+	const buildSite = map.blocks[BlockType.BuildSite]
+	const resource = map.blocks[BlockType.Resource]
+
+	resource.fill(0)
+
+	resource.forEach((_, index) => {
+		if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.IsWater)) {
+			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+			if (nodes.every((index) => buildSite[index] !== ConstructionSite.Impassable)) {
+				resource[index] = ResourceFlag.Fish
+			}
+		} else if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.Arable)) {
+			resource[index] = ResourceFlag.FreshWater
+		} else if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.Rock)) {
+			if (noiseArray[index] < replicateMineral) {
+				const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+				const mineral: ResourceFlag =
+					(nodes
+						.map((index) => resource[index])
+						.find(
+							(value) => value !== 0 && value !== ResourceFlag.FreshWater && value !== ResourceFlag.Fish
+						) ?? 0) & 0xf8
+
+				switch (mineral) {
+					case ResourceFlag.Coal:
+					case ResourceFlag.Gold:
+					case ResourceFlag.Granite:
+					case ResourceFlag.IronOre: {
+						const random = noiseArray[Math.floor(nodes.length * noiseArray[index])]
+						resource[index] =
+							mineral |
+							(mineralQuantity === 1
+								? 7
+								: Math.floor(8 * (mineralQuantity + random * (1 - mineralQuantity))))
+						return
+					}
+				}
+			}
+
+			let coalBelow = 0
+			let goldBelow = 0
+			let graniteBelow = 0
+
+			if (coalRatio === goldRatio && goldRatio === graniteRatio && graniteRatio === ironOreRatio) {
+				graniteBelow = 0.25
+				coalBelow = 0.5
+				goldBelow = 0.75
+			} else {
+				const total = coalRatio + goldRatio + graniteRatio + ironOreRatio
+				graniteBelow = graniteRatio / total
+				coalBelow = coalRatio / total + graniteBelow
+				goldBelow = goldRatio / total + coalBelow
+			}
+
+			const mineral =
+			(noiseArray[index] < graniteBelow && ResourceFlag.Granite) ||
+			(noiseArray[index] < coalBelow && ResourceFlag.Coal) ||
+				(noiseArray[index] < goldBelow && ResourceFlag.Gold) ||
+				ResourceFlag.IronOre
+
+			const random = noiseArray[noiseArray.length - index - 1]
+			resource[index] =
+				mineral |
+				(mineralQuantity === 1 ? 7 : Math.floor(8 * (mineralQuantity + random * (1 - mineralQuantity))))
+		}
+	})
+}
+
+interface CalculateResourceOptions {
+	map: MapClass
+}
+
+interface ResourceResult {
+	mineralCoal: number
+	mineralGold: number
+	mineralGranite: number
+	mineralIronOre: number
+	fish: number
+	granite: number
+	tree: number
+}
+
+export function calculateResources({ map }: CalculateResourceOptions) {
+	const resource = map.blocks[BlockType.Resource]
+
+	const result: ResourceResult = {
+		mineralCoal: 0,
+		mineralGold: 0,
+		mineralGranite: 0,
+		mineralIronOre: 0,
+		fish: 0,
+		granite: 0,
+		tree: 0,
+	}
+
+	resource.forEach((value) => {
+		if (value === ResourceFlag.Fish) {
+			result.fish++
+			return
+		}
+
+		const withoutQuantity: ResourceFlag = value & 0xf8
+
+		switch (withoutQuantity) {
+			case ResourceFlag.Coal: {
+				result.mineralCoal += value & 7
+				return
+			}
+			case ResourceFlag.Gold: {
+				result.mineralGold += value & 7
+				return
+			}
+			case ResourceFlag.Granite: {
+				result.mineralGranite += value & 7
+				return
+			}
+			case ResourceFlag.IronOre: {
+				result.mineralIronOre += value & 7
+				return
+			}
+		}
+	})
+
+	return result
 }

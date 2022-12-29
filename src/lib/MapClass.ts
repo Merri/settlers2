@@ -742,7 +742,7 @@ export class MapClass {
 		return true
 	}
 
-	private isEachTextureWithAnyOfFlags(index: number, flags: TextureFeatureFlag) {
+	isEachTextureWithAnyOfFlags = (index: number, flags: TextureFeatureFlag) => {
 		const t1 = this.blocks[BlockType.Texture1]
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
