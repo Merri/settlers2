@@ -100,6 +100,8 @@ export enum TextureFeatureFlag {
 	IsSavannah = 0x00004000,
 	IsMeadow = 0x00008000,
 	IsMountMeadow = 0x00010000,
+	/** Duplicate of 0x04 */
+	Useless = 0x10000000
 }
 
 /**
@@ -128,11 +130,11 @@ export interface TextureData {
 /**
  * ### Vocabulary
  *
- * - `Farmland`: allows roads, buildings, fresh water, farms
+ * - `Fertile`: allows roads, buildings, fresh water, farms
  * - `Mining`: allows roads, mines, underground resources
  * - `Inaccessible`: nothing can be built in a node touching this texture
  * - `Unbuildable`: nothing can be built in a node fully surrounded by this texture
- * - `Roadland`: allows roads
+ * - `Houseless`: allows roads
  * - `Buildable`: allows roads, buildings
  * - `Water`: has palette rotation
  * - `Lava`: has palette rotation
@@ -142,33 +144,54 @@ export interface TextureData {
  * "Has palette rotation" means that the texture never has shading / lighting.
  */
 export enum Texture {
-	Farmland1 = 0x00,
+	/** 0x00: [Savannah | Dark Steppe | Taiga] */
+	Fertile1 = 0x00,
+	/** 0x01: [Mountain #1] */
 	Mining1 = 0x01,
+	/** 0x02: [Snow | Lava with few stones | Few ice floes] */
 	Inaccessible = 0x02,
+	/** 0x03: [Swamp | Lava with many stones | Many ice floes] */
 	UnbuildableLand = 0x03,
-	Roadland = 0x04,
-	/** Allows ship traffic, coastal flag poles, boat routes, on coast contains fish */
+	/** 0x04: [Desert | Wasteland | Ice] */
+	Houseless = 0x04,
+	/** 0x05: [Water | Moor | Water] (allows fish, boats, ships) */
 	UnbuildableWater = 0x05,
+	/** 0x06: [Water | Moor | Water] (allows buildings) */
 	BuildableWater = 0x06,
-	/** Clone of `Roadland` texture */
-	RoadlandAlt = 0x07,
-	Farmland2 = 0x08,
-	Farmland3 = 0x09,
-	Farmland4 = 0x0A,
-	Mining2 = 0x0B,
-	Mining3 = 0x0C,
-	Mining4 = 0x0D,
-	Farmland5 = 0x0E,
-	Farmland6 = 0x0F,
+	/** 0x07: [Desert | Wasteland | Ice] (clone of #4) */
+	HouselessAlt = 0x07,
+	/** 0x08: [Meadow #1 | Pasture #1 | Taiga / Tundra] */
+	Fertile2 = 0x08,
+	/** 0x09: [Meadow #2 | Pasture #2 | Tundra #1] */
+	Fertile3 = 0x09,
+	/** 0x0A: [Meadow #3 | Pasture #3 | Tundra #2] */
+	Fertile4 = 0x0a,
+	/** 0x0B: [Mountain #2] */
+	Mining2 = 0x0b,
+	/** 0x0C: [Mountain #3] */
+	Mining3 = 0x0c,
+	/** 0x0D: [Mountain #4] */
+	Mining4 = 0x0d,
+	/** 0x0E: [Steppe | Light Steppe | Tundra #3] */
+	Fertile5 = 0x0e,
+	/** 0x0F: [Flower Meadow | Flower Pasture | Tundra #4] */
+	Fertile6 = 0x0f,
+	/** 0x10: [Lava] */
 	InaccessibleLava = 0x10,
-	RoadlandSingleColor = 0x11,
+	/** 0x11: [Magenta | Dark red | Black] (single pixel texture) */
+	HouselessSingleColor = 0x11,
+	/** 0x12: [Mountain Meadow | Alpine Pasture (stones) | Snow] */
 	Buildable = 0x12,
+	/** 0x13: [Water | Moor | Water] (impassable) */
 	InaccessibleWater = 0x13,
+	/** 0x14: [Beta lava #1] (low res texture) */
 	InaccessibleLavaLowRes1 = 0x14,
+	/** 0x15: [Beta lava #2] (low res texture) */
 	InaccessibleLavaLowRes2 = 0x15,
+	/** 0x16: [Beta lava #3] (low res texture) */
 	InaccessibleLavaLowRes3 = 0x16,
-	/** Clone of `Mining2` texture but behaves like farmland */
-	MiningFarmland = 0x22,
+	/** 0x22: [Mountain #2] (clone of 0x0B, allows buildings) */
+	FertileMining = 0x22,
 }
 
 export const Textures = new Map<number, TextureData>([
@@ -252,7 +275,7 @@ export const Textures = new Map<number, TextureData>([
 	[
 		7,
 		{
-			featureFlags: TextureFeatureFlag.Arid,
+			featureFlags: TextureFeatureFlag.Arid | TextureFeatureFlag.Useless,
 			name: ['Desert #2', 'Wasteland #2', 'Ice #2'],
 			x: 48,
 			y: 0,
