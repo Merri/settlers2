@@ -374,6 +374,13 @@ export function Generator() {
 
 	return (
 		<div>
+			<div style="position:sticky; top: 5rem; float: right">
+				<MapCanvas showPlayers world={world.map} color1={0} color2={255} />
+				<Button primary onClick={downloadSwd}>
+					Download!
+				</Button>
+			</div>
+
 			<table>
 				<thead>
 					<tr>
@@ -769,8 +776,6 @@ export function Generator() {
 				</tbody>
 			</table>
 
-			<MapCanvas showPlayers world={world.map} color1={0} color2={255} />
-
 			<small className={styles.bars}>
 				{calculateHeightElevations(world.map.blocks[BlockType.HeightMap]).elevations.map((value, elevation) => (
 					<span key={elevation} title={`Elevation ${elevation} total: ${value}`}>
@@ -791,10 +796,6 @@ export function Generator() {
 				<h4>Regions</h4>
 				<pre>{JSON.stringify(regions, null, '\t')}</pre>
 			</div>*/}
-
-			<Button primary onClick={downloadSwd}>
-				Download!
-			</Button>
 		</div>
 	)
 }
