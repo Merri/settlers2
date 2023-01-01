@@ -74,6 +74,7 @@ export interface TextureResource {
 }
 
 export interface TextureGroup {
+	id: SupportedTexture
 	name: string
 	type: TextureSet
 	textureNames: Record<Texture, string>
@@ -127,8 +128,9 @@ const DefaultResources: Record<Texture, TextureResource> = {
 	[Texture.FertileMining]: defaultResources.Fertile,
 } as const
 
-export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
+export const TerrainSets: Record<SupportedTexture, TextureGroup> = {
 	Greenland: {
+		id: SupportedTexture.Greenland,
 		type: TextureSet.Greenland,
 		name: 'Greenland',
 		textureNames: {
@@ -171,6 +173,7 @@ export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
 		},
 	},
 	Wasteland: {
+		id: SupportedTexture.Wasteland,
 		type: TextureSet.Wasteland,
 		name: 'Wasteland',
 		textureNames: {
@@ -213,6 +216,7 @@ export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
 		},
 	},
 	WinterWorld: {
+		id: SupportedTexture.WinterWorld,
 		type: TextureSet.WinterWorld,
 		name: 'Winter World',
 		textureNames: {
@@ -255,6 +259,7 @@ export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
 		},
 	},
 	NewGreenland: {
+		id: SupportedTexture.NewGreenland,
 		type: TextureSet.Greenland,
 		name: `Merri's New Greenland`,
 		textureNames: {
@@ -297,6 +302,7 @@ export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
 		},
 	},
 	Wetlands: {
+		id: SupportedTexture.Wetlands,
 		type: TextureSet.Greenland,
 		name: `Wetlands`,
 		textureNames: {
@@ -339,6 +345,7 @@ export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
 		},
 	},
 	RustyValley: {
+		id: SupportedTexture.RustyValley,
 		type: TextureSet.Wasteland,
 		name: `Rusty Valley`,
 		textureNames: {
@@ -381,6 +388,7 @@ export const TextureInfo: Partial<Record<SupportedTexture, TextureGroup>> = {
 		},
 	},
 	PolarNight: {
+		id: SupportedTexture.PolarNight,
 		type: TextureSet.WinterWorld,
 		name: 'Polar Night',
 		textureNames: {

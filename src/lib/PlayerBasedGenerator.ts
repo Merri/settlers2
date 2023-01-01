@@ -3,7 +3,16 @@ import { XORShift } from 'random-seedable'
 import { getNodesAtRadius, getNodesByIndex, getTextureNodesByIndex, MapClass } from './MapClass'
 import { allRegularDecoration } from './objects'
 import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
-import { BlockType, ConstructionSite, ResourceFlag, Texture, TextureFeatureFlag, TextureFlag, Textures } from './types'
+import {
+	BlockType,
+	ConstructionSite,
+	ResourceFlag,
+	Texture,
+	TextureFeatureFlag,
+	TextureFlag,
+	Textures,
+	TextureSet,
+} from './types'
 
 interface SeedMapOptions {
 	random: XORShift
@@ -259,14 +268,20 @@ export function blockadeMapEdges(map: MapClass) {
 	}
 }
 
-interface ElevationBrush {
+export interface ElevationBrush {
+	default: Texture
 	sea: Texture[]
 	coast: Texture[]
 	meadow: Texture[]
 	mining: Texture[]
-	miningMeadow: Texture
 	peak: Texture[]
 	lavaEdge: Texture[]
+	lowLandEdge: Texture[]
+	mountainRoot: Texture
+	mountain1Meadow: Texture[]
+	mountain2Meadow: Texture[]
+	mountain3Meadow: Texture[]
+	mountain4Meadow: Texture[]
 }
 
 interface ElevationBasedOptions {
@@ -300,13 +315,19 @@ export function randomizeElevation({
 	seaLevel = 0.35,
 	snowPeakLevel = 1,
 	brush = {
+		default: Texture.Fertile1,
 		sea: [Texture.UnbuildableWater, Texture.UnbuildableLand, Texture.InaccessibleLava],
 		coast: [Texture.Houseless, Texture.Fertile5],
 		meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile6],
 		mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
-		miningMeadow: Texture.Buildable,
+		mountainRoot: Texture.Buildable,
 		peak: [Texture.Inaccessible, Texture.Buildable],
 		lavaEdge: [Texture.FertileMining],
+		lowLandEdge: [],
+		mountain1Meadow: [Texture.Buildable, Texture.FertileMining],
+		mountain2Meadow: [Texture.Buildable, Texture.FertileMining],
+		mountain3Meadow: [Texture.Buildable, Texture.FertileMining],
+		mountain4Meadow: [Texture.Buildable, Texture.FertileMining],
 	},
 }: ElevationBasedOptions) {
 	const heightMap = map.blocks[BlockType.HeightMap]
@@ -475,6 +496,7 @@ export function randomizeElevation({
 			const isLava = isLavaTexture(texture)
 			const isLavaOrWater = isWater || isLava
 			const useLavaBrush = brush.lavaEdge.length > 0 && isLava
+			const useLowLandBrush = brush.lowLandEdge.length > 0
 
 			while (queue.length) {
 				const index = queue.shift()!
@@ -494,57 +516,91 @@ export function randomizeElevation({
 					painted.add(index)
 					if (heightMap[index] < seaBelow) {
 						queue.push(index)
-					} else {
-						if (isWater) {
-							map.draw(index, brush.coast[Math.floor(noiseArray[index] * brush.coast.length)])
-						} else if (useLavaBrush) {
-							map.draw(index, brush.lavaEdge[Math.floor(noiseArray[index] * brush.lavaEdge.length)])
-						} else if (noiseArray[index] < 0.25) {
-							// TODO: do objects "a bit better"
-							objectIndex[index] = allRegularDecoration[heightMap[index] % allRegularDecoration.length]
-							objectType[index] = 0xc8
-						}
+					} else if (isWater) {
+						map.draw(index, brush.coast[Math.floor(noiseArray[index] * brush.coast.length)])
+					} else if (useLavaBrush) {
+						map.draw(index, brush.lavaEdge[Math.floor(noiseArray[index] * brush.lavaEdge.length)])
+					} else if (useLowLandBrush) {
+						map.draw(index, brush.lowLandEdge[Math.floor(noiseArray[index] * brush.lowLandEdge.length)])
 					}
 				})
 			}
 		} else if (value > peakAbove && brush.peak.length) {
-			if (brush.peak.length === 1) {
-				map.draw(index, brush.peak[0])
-			} else {
-				const nodes = getTextureNodesByIndex(index, map.width, map.height)
+			if (painted.has(index)) return
+			const queue: number[] = []
+			queue.push(index)
+			painted.add(index)
 
-				const texture =
-					(brush.peak.includes(tex1[nodes.top1Left]) && tex1[nodes.top1Left]) ||
-					(brush.peak.includes(tex1[nodes.top1Right]) && tex1[nodes.top1Right]) ||
-					(brush.peak.includes(tex2[nodes.top2]) && tex2[nodes.top2]) ||
-					(brush.peak.includes(tex2[nodes.bottom2Left]) && tex2[nodes.bottom2Left]) ||
-					(brush.peak.includes(tex2[nodes.bottom2Right]) && tex2[nodes.bottom2Right]) ||
-					(brush.peak.includes(tex1[nodes.bottom1]) && tex1[nodes.bottom1]) ||
-					brush.peak[Math.floor(noiseArray[index] * brush.peak.length)]
+			const texture = brush.peak[Math.floor(noiseArray[index] * brush.peak.length)]
+			const isImpassable =
+				TextureBuildFeature[texture] === 'noRoad' || TextureBuildFeature[texture] === 'edgeRoad'
 
+			const elevationLimit = isImpassable ? 255 : value + Math.floor(noiseArray[index] * 5) + 1
+
+			while (queue.length) {
+				const index = queue.shift()!
 				map.draw(index, texture)
+
+				const around = getNodesAtRadius(index, 1, map.width, map.height)
+
+				around.forEach((index) => {
+					if (painted.has(index)) return
+
+					if (heightMap[index] > peakAbove && heightMap[index] < elevationLimit) {
+						painted.add(index)
+						queue.push(index)
+					}
+				})
 			}
 		} else if (value > mountAbove) {
-			if (noiseArray[index] >= 0.15) {
-				const nodes = getTextureNodesByIndex(index, map.width, map.height)
+			if (painted.has(index)) return
+			const queue: number[] = []
+			queue.push(index)
+			painted.add(index)
 
-				const texture =
-					(TextureBuildFeature[tex1[nodes.top1Left] as Texture] === 'mine' && tex1[nodes.top1Left]) ||
-					(TextureBuildFeature[tex1[nodes.top1Right] as Texture] === 'mine' && tex1[nodes.top1Right]) ||
-					(TextureBuildFeature[tex2[nodes.top2] as Texture] === 'mine' && tex2[nodes.top2]) ||
-					(TextureBuildFeature[tex2[nodes.bottom2Left] as Texture] === 'mine' && tex2[nodes.bottom2Left]) ||
-					(TextureBuildFeature[tex2[nodes.bottom2Right] as Texture] === 'mine' && tex2[nodes.bottom2Right]) ||
-					(TextureBuildFeature[tex1[nodes.bottom1] as Texture] === 'mine' && tex1[nodes.bottom1]) ||
-					brush.mining[Math.floor(noiseArray[index] * brush.mining.length)]
+			const nodes = getTextureNodesByIndex(index, map.width, map.height)
 
-				map.draw(index, texture, TextureFeatureFlag.Useless)
-			} else if (noiseArray[index] >= 0.1) {
-				map.draw(index, brush.miningMeadow, TextureFeatureFlag.Useless | TextureFeatureFlag.Rock)
-			} else {
-				map.draw(index, Texture.FertileMining, TextureFeatureFlag.Useless | TextureFeatureFlag.Rock)
+			const texture =
+				(TextureBuildFeature[tex1[nodes.top1Left] as Texture] === 'mine' && tex1[nodes.top1Left]) ||
+				(TextureBuildFeature[tex1[nodes.top1Right] as Texture] === 'mine' && tex1[nodes.top1Right]) ||
+				(TextureBuildFeature[tex2[nodes.top2] as Texture] === 'mine' && tex2[nodes.top2]) ||
+				(TextureBuildFeature[tex2[nodes.bottom2Left] as Texture] === 'mine' && tex2[nodes.bottom2Left]) ||
+				(TextureBuildFeature[tex2[nodes.bottom2Right] as Texture] === 'mine' && tex2[nodes.bottom2Right]) ||
+				(TextureBuildFeature[tex1[nodes.bottom1] as Texture] === 'mine' && tex1[nodes.bottom1]) ||
+				brush.mining[Math.floor(noiseArray[index] * brush.mining.length)]
+
+			let meadowTexture = [Texture.FertileMining]
+
+			if (texture === Texture.Mining1) meadowTexture = brush.mountain1Meadow
+			else if (texture === Texture.Mining2) meadowTexture = brush.mountain2Meadow
+			else if (texture === Texture.Mining3) meadowTexture = brush.mountain3Meadow
+			else if (texture === Texture.Mining4) meadowTexture = brush.mountain4Meadow
+
+			const peakAboveActual = brush.peak.length === 0 ? 255 : peakAbove
+
+			while (queue.length) {
+				const index = queue.shift()!
+				const around = getNodesAtRadius(index, 1, map.width, map.height)
+
+				const mountainRoot = around.some((index) => heightMap[index] < mountAbove)
+
+				if (mountainRoot || noiseArray[index] >= 0.15) {
+					map.draw(index, texture, mountainRoot ? undefined : TextureFeatureFlag.Useless)
+				} else {
+					const meadow = meadowTexture[Math.floor((noiseArray[index] / 0.15) * meadowTexture.length)]
+					map.draw(index, meadow, TextureFeatureFlag.Useless | TextureFeatureFlag.Rock)
+				}
+
+				around.forEach((index) => {
+					if (painted.has(index)) return
+					painted.add(index)
+					if (heightMap[index] > mountAbove && heightMap[index] <= peakAboveActual) {
+						queue.push(index)
+					} else if (heightMap[index] <= mountAbove) {
+						map.draw(index, brush.mountainRoot, TextureFeatureFlag.Useless)
+					}
+				})
 			}
-		} else if (value === mountAbove) {
-			map.draw(index, brush.miningMeadow, TextureFeatureFlag.Arable | TextureFeatureFlag.Useless)
 		} else if (value > meadowAbove) {
 			map.draw(index, brush.meadow[value % brush.meadow.length], TextureFeatureFlag.Useless)
 		}
@@ -552,9 +608,24 @@ export function randomizeElevation({
 
 	// Now we can get rid of the least useful texture
 	tex1.forEach((value, index) => {
-		if (value === Texture.HouselessAlt) tex1[index] = Texture.Fertile1
+		if (value === Texture.HouselessAlt) tex1[index] = brush.default
 		if (tex2[index] === Texture.HouselessAlt) {
-			tex2[index] = Texture.Fertile1
+			tex2[index] = brush.default
+		}
+
+		if (map.terrain === TextureSet.WinterWorld) {
+			if (value === Texture.Inaccessible) {
+				if (heightMap[index] & 1) tex1[index] = Texture.UnbuildableWater
+				else tex1[index] = Texture.Houseless
+			} else if (value === Texture.UnbuildableLand) {
+				if (noiseArray[index] < 0.25) tex1[index] = Texture.UnbuildableWater
+				else if (noiseArray[index] < 0.5) tex1[index] = Texture.Houseless
+			}
+
+			if (tex2[index] === Texture.Inaccessible || tex2[index] === Texture.UnbuildableLand) {
+				if ((heightMap[index] & 3) === 0) tex2[index] = Texture.UnbuildableWater
+				else if ((heightMap[index] & 3) === 2) tex2[index] = Texture.Houseless
+			}
 		}
 	})
 }

@@ -4,11 +4,12 @@ import {
 	assignPlayerPositions,
 	blockadeMapEdges,
 	calculateResources,
+	ElevationBrush,
 	generateEmptyMap,
 	PlayerAssignment,
 	randomizeElevation,
 } from '$/lib/PlayerBasedGenerator'
-import { BlockType, RegionType } from '$/lib/types'
+import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types'
 import { ChangeEventHandler } from 'preact/compat'
 import { useCallback, useEffect, useReducer, useState } from 'preact/hooks'
 import { XORShift } from 'random-seedable'
@@ -21,6 +22,83 @@ import { calculateHeightElevations } from '.'
 import { validateMapClass } from '$/lib/MapValidation'
 import { NumberInput } from '../MapGenerator/NumberInput'
 import Button from '../Button'
+import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
+
+const terrainMap = new Map<TextureSet, TextureGroup[]>([
+	[0, []],
+	[1, []],
+	[2, []],
+])
+
+Object.entries(TerrainSets).forEach(([_key, terrain]) => void terrainMap.get(terrain.type)!.push(terrain))
+
+const terrainType = ['Greenland', 'Wasteland', 'Winter World']
+
+const defaultGreenland: ElevationBrush = {
+	default: Texture.Fertile1,
+	sea: [Texture.UnbuildableWater, Texture.UnbuildableLand, Texture.InaccessibleLava],
+	coast: [Texture.Houseless, Texture.Fertile5],
+	meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile6],
+	mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
+	peak: [Texture.Inaccessible, Texture.Buildable, Texture.FertileMining, Texture.Houseless],
+	lavaEdge: [Texture.FertileMining],
+	lowLandEdge: [],
+	mountainRoot: Texture.Buildable,
+	mountain1Meadow: [Texture.Buildable, Texture.FertileMining],
+	mountain2Meadow: [Texture.Buildable, Texture.FertileMining],
+	mountain3Meadow: [Texture.Buildable, Texture.FertileMining],
+	mountain4Meadow: [Texture.Buildable, Texture.FertileMining],
+}
+
+const defaultWasteland: ElevationBrush = {
+	default: Texture.Buildable,
+	sea: [Texture.UnbuildableWater, Texture.Houseless, Texture.InaccessibleLava],
+	coast: [Texture.Fertile4, Texture.Fertile5],
+	meadow: [Texture.Fertile3, Texture.Fertile6],
+	mining: [Texture.Mining1, Texture.Mining2, Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
+	peak: [Texture.Fertile1, Texture.Fertile2, Texture.Buildable, Texture.FertileMining, Texture.Houseless],
+	lavaEdge: [Texture.Inaccessible, Texture.UnbuildableLand, Texture.Buildable],
+	lowLandEdge: [Texture.Fertile4, Texture.Fertile5],
+	mountainRoot: Texture.Fertile1,
+	mountain1Meadow: [Texture.Fertile1],
+	mountain2Meadow: [Texture.FertileMining],
+	mountain3Meadow: [Texture.FertileMining],
+	mountain4Meadow: [Texture.Buildable],
+}
+
+const defaultWinterWorld: ElevationBrush = {
+	default: Texture.Fertile1,
+	sea: [Texture.UnbuildableWater, Texture.Houseless, Texture.InaccessibleLava],
+	coast: [
+		Texture.Houseless,
+		Texture.Houseless,
+		Texture.Houseless,
+		Texture.Inaccessible,
+		Texture.Houseless,
+		Texture.UnbuildableLand,
+		Texture.Houseless,
+	],
+	meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile5],
+	mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
+	peak: [Texture.Buildable, Texture.FertileMining],
+	lavaEdge: [Texture.Mining3],
+	lowLandEdge: [Texture.Fertile1],
+	mountainRoot: Texture.Fertile6,
+	mountain1Meadow: [Texture.FertileMining],
+	mountain2Meadow: [Texture.FertileMining],
+	mountain3Meadow: [Texture.FertileMining],
+	mountain4Meadow: [Texture.FertileMining],
+}
+
+const TerrainBrush: Record<SupportedTexture, ElevationBrush> = {
+	Greenland: defaultGreenland,
+	NewGreenland: defaultGreenland,
+	Wetlands: defaultGreenland,
+	Wasteland: defaultWasteland,
+	RustyValley: defaultWasteland,
+	WinterWorld: defaultWinterWorld,
+	PolarNight: defaultWinterWorld,
+}
 
 function download(filename: string, contents: BlobPart, mimeType = 'application/octet-stream') {
 	const link = document.createElement('a')
@@ -35,6 +113,7 @@ interface MapOptions {
 	width: number
 	height: number
 	assignment: PlayerAssignment
+	brush: SupportedTexture
 	continuous: boolean
 	distance: number
 	mirror: string
@@ -78,6 +157,7 @@ type MapOptionsAction = MapOptionsPayload | MapElevationOptionsPayload | MapMine
 
 const emptyOptions: MapOptions = {
 	assignment: PlayerAssignment.hexCenter7,
+	brush: 'Greenland',
 	continuous: false,
 	distance: 60,
 	elevationOptions: {
@@ -117,10 +197,12 @@ export function Generator() {
 		const params = new URLSearchParams(window.location.search)
 
 		const assignment = params.get('assignment') as PlayerAssignment | null
+		const brush = params.get('brush') ?? SupportedTexture.Greenland
 		options.continuous = params.has('continuous')
 		const mirror = params.get('mirror')
 		const opts = params.get('options')
 		if (assignment) options.assignment = assignment
+		if (brush && brush in TerrainBrush) options.brush = brush as SupportedTexture
 		if (mirror) options.mirror = mirror
 
 		if (opts) {
@@ -166,6 +248,12 @@ export function Generator() {
 		}
 	}, [])
 
+	const handleBrush: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
+		if (event.target instanceof HTMLSelectElement && event.target.value in TerrainBrush) {
+			dispatchOptions({ type: 'options', payload: { brush: event.target.value as SupportedTexture } })
+		}
+	}, [])
+
 	const handleMirror: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
 		if (event.target instanceof HTMLSelectElement) {
 			dispatchOptions({ type: 'options', payload: { mirror: event.target.value } })
@@ -181,8 +269,9 @@ export function Generator() {
 	useEffect(() => {
 		const params = new URLSearchParams()
 		params.set('seed', `${seed}`)
-		const { assignment, continuous, minerals, mirror, ...limitedOptions } = options
+		const { assignment, brush, continuous, minerals, mirror, ...limitedOptions } = options
 		params.set('assignment', assignment)
+		if (brush !== SupportedTexture.Greenland) params.set('brush', brush)
 		if (continuous) params.set('continuous', '')
 		mirror && params.set('mirror', mirror)
 		params.set('minerals', JSON.stringify(minerals))
@@ -192,10 +281,11 @@ export function Generator() {
 
 	useEffect(() => {
 		const random = new XORShift(seed)
-		const { width, height, assignment, continuous, distance, mirror, noise, offsetX, offsetY } = options
+		const { width, height, assignment, brush, continuous, distance, mirror, noise, offsetX, offsetY } = options
 		const { border, mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
 		const { coal, gold, granite, ironOre, quantity, replicate } = options.minerals
 		const world = generateEmptyMap({ width, height, random })
+		world.map.terrain = TerrainSets[brush].type
 
 		switch (mirror) {
 			case 'imperfect-horizontal': {
@@ -228,6 +318,7 @@ export function Generator() {
 			peakRadius,
 			seaLevel: seaLevel / 100,
 			snowPeakLevel: snowPeakLevel / 100,
+			brush: TerrainBrush[brush],
 		})
 
 		if (noise) {
@@ -304,6 +395,22 @@ export function Generator() {
 								<option value="">Off</option>
 								<option value="imperfect-horizontal">Imperfect horizontal</option>
 								<option value="imperfect-vertical">Imperfect vertical</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Terrain set</td>
+						<td>
+							<select onChange={handleBrush} name="terrainSet" value={options.brush}>
+								{Array.from(terrainMap.entries()).map(([textureSet, textureGroup]) => (
+									<optgroup label={terrainType[textureSet]} key={textureSet}>
+										{textureGroup.map((group) => (
+											<option key={group.id} value={group.id}>
+												{group.name}
+											</option>
+										))}
+									</optgroup>
+								))}
 							</select>
 						</td>
 					</tr>
