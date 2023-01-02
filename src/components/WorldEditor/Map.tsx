@@ -7,7 +7,7 @@ import { BlockType, TextureFlag, Trees } from '$/lib/types'
 import { palettes, texturePaletteIndex } from '$/lib/palette'
 import { Position } from '$/lib/PlayerBasedGenerator'
 
-function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, color2 = 255) {
+function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, color2 = 255, blockType?: BlockType) {
 	const buffer = canvas.getContext('2d')
 	if (!buffer) throw new Error('Could not get canvas')
 	const imageData = buffer.getImageData(0, 0, world.width, world.height)
@@ -15,6 +15,20 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, co
 	const size = world.width * world.height
 	const palette = palettes[world.terrain]
 	const texPalette = texturePaletteIndex[world.terrain]
+
+	if (blockType != null) {
+		for (let i = 0; i < size; i++) {
+			const index = world.blocks[blockType][i]
+			image[i * 4] = palette[index * 3]
+			image[i * 4 + 1] = palette[index * 3 + 1]
+			image[i * 4 + 2] = palette[index * 3 + 2]
+			image[i * 4 + 3] = 255
+		}
+
+		buffer.putImageData(imageData, 0, 0)
+		return
+	}
+
 	const heightMap = world.blocks[BlockType.HeightMap]
 	const t1 = world.blocks[BlockType.Texture1]
 	const t2 = world.blocks[BlockType.Texture2]
@@ -111,18 +125,19 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, co
 }
 
 interface Props {
+	blockType?: BlockType
 	color1: number
 	color2: number
 	showPlayers?: boolean
 	world: MapClass
 }
 
-export function MapCanvas({ color1, color2, showPlayers = false, world }: Props) {
+export function MapCanvas({ blockType, color1, color2, showPlayers = false, world }: Props) {
 	const ref = useRef<HTMLCanvasElement>(null)
 
 	useEffect(() => {
-		if (ref.current && world) drawToCanvas(ref.current, world, color1, color2)
-	}, [world])
+		if (ref.current && world) drawToCanvas(ref.current, world, color1, color2, blockType)
+	}, [blockType, color1, color2, world])
 
 	const positions = useMemo<Position[]>(() => {
 		if (!showPlayers) return []
@@ -147,7 +162,7 @@ export function MapCanvas({ color1, color2, showPlayers = false, world }: Props)
 							backgroundColor: 'black',
 							borderRadius: '50%',
 							transform: 'scale(2)',
-							transformOrigin: '50%'
+							transformOrigin: '50%',
 						}}
 					/>
 				))}

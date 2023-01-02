@@ -730,7 +730,7 @@ export function addSubterrainResources({
 	resource.forEach((_, index) => {
 		if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.IsWater)) {
 			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
-			if (nodes.every((index) => buildSite[index] !== ConstructionSite.Impassable)) {
+			if (nodes.some((index) => buildSite[index] !== ConstructionSite.Impassable)) {
 				resource[index] = ResourceFlag.Fish
 			}
 		} else if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.Arable)) {

@@ -1,4 +1,5 @@
 import { cp437ToString, stringToCp437 } from './cp437'
+import { TextureBuildFeature } from './textures'
 import {
 	BlockType,
 	RegionType,
@@ -790,36 +791,25 @@ export class MapClass {
 			const tn1 = getTextureNodesByIndex(i, this.width, this.height)
 			const tn2 = getTextureNodesByIndex(nodes.bottomRight, this.width, this.height)
 
-			const tex1 = t1[tn1.top1Left] & TextureFlag.ToIdValue
-			const tex2 = t2[tn1.top2] & TextureFlag.ToIdValue
-			const tex3 = t1[tn1.top1Right] & TextureFlag.ToIdValue
-			const tex4 = t2[tn1.bottom2Left] & TextureFlag.ToIdValue
-			const tex5 = t1[tn1.bottom1] & TextureFlag.ToIdValue
-			const tex6 = t2[tn1.bottom2Right] & TextureFlag.ToIdValue
-			const tex7 = t1[tn2.top1Right] & TextureFlag.ToIdValue
-			const tex8 = t2[tn2.bottom2Left] & TextureFlag.ToIdValue
-			const tex9 = t1[tn2.bottom1] & TextureFlag.ToIdValue
-			const texA = t2[tn2.bottom2Right] & TextureFlag.ToIdValue
-
-			const tex1Flags = Textures.get(tex1)!.featureFlags
-			const tex2Flags = Textures.get(tex2)!.featureFlags
-			const tex3Flags = Textures.get(tex3)!.featureFlags
-			const tex4Flags = Textures.get(tex4)!.featureFlags
-			const tex5Flags = Textures.get(tex5)!.featureFlags
-			const tex6Flags = Textures.get(tex6)!.featureFlags
-			const tex7Flags = Textures.get(tex7)!.featureFlags
-			const tex8Flags = Textures.get(tex8)!.featureFlags
-			const tex9Flags = Textures.get(tex9)!.featureFlags
-			const texAFlags = Textures.get(texA)!.featureFlags
+			const tex1: Texture = t1[tn1.top1Left] & TextureFlag.ToIdValue
+			const tex2: Texture = t2[tn1.top2] & TextureFlag.ToIdValue
+			const tex3: Texture = t1[tn1.top1Right] & TextureFlag.ToIdValue
+			const tex4: Texture = t2[tn1.bottom2Left] & TextureFlag.ToIdValue
+			const tex5: Texture = t1[tn1.bottom1] & TextureFlag.ToIdValue
+			const tex6: Texture = t2[tn1.bottom2Right] & TextureFlag.ToIdValue
+			const tex7: Texture = t1[tn2.top1Right] & TextureFlag.ToIdValue
+			const tex8: Texture = t2[tn2.bottom2Left] & TextureFlag.ToIdValue
+			const tex9: Texture = t1[tn2.bottom1] & TextureFlag.ToIdValue
+			const texA: Texture = t2[tn2.bottom2Right] & TextureFlag.ToIdValue
 
 			// water or swamp texture count
 			const wets =
-				((tex1Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
-				((tex2Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
-				((tex3Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
-				((tex4Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
-				((tex5Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0) +
-				((tex6Flags & TextureFeatureFlag.Wet) === TextureFeatureFlag.Wet ? 1 : 0)
+				(TextureBuildFeature[tex1] === 'edgeRoad' ? 1 : 0) +
+				(TextureBuildFeature[tex2] === 'edgeRoad' ? 1 : 0) +
+				(TextureBuildFeature[tex3] === 'edgeRoad' ? 1 : 0) +
+				(TextureBuildFeature[tex4] === 'edgeRoad' ? 1 : 0) +
+				(TextureBuildFeature[tex5] === 'edgeRoad' ? 1 : 0) +
+				(TextureBuildFeature[tex6] === 'edgeRoad' ? 1 : 0)
 
 			const objectType = o2[i] & ObjectType.Match
 
@@ -827,12 +817,12 @@ export class MapClass {
 				wets === 6 ||
 				objectType === ObjectType.Granite ||
 				// snow or lava
-				(tex1Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex2Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex3Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex4Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex5Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex6Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme
+				TextureBuildFeature[tex1] === 'noRoad' ||
+				TextureBuildFeature[tex2] === 'noRoad' ||
+				TextureBuildFeature[tex3] === 'noRoad' ||
+				TextureBuildFeature[tex4] === 'noRoad' ||
+				TextureBuildFeature[tex5] === 'noRoad' ||
+				TextureBuildFeature[tex6] === 'noRoad'
 			) {
 				buildSite[i] = ConstructionSite.Impassable
 				continue
@@ -853,24 +843,24 @@ export class MapClass {
 				(o2[nodes.bottomLeft] & ObjectType.Match) === ObjectType.Granite ||
 				(o2[nodes.bottomRight] & ObjectType.Match) === ObjectType.Granite ||
 				// arid textures only allow building flag poles
-				(tex1Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
-				(tex2Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
-				(tex3Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
-				(tex4Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
-				(tex5Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid ||
-				(tex6Flags & TextureFeatureFlag.Arid) === TextureFeatureFlag.Arid
+				TextureBuildFeature[tex1] === 'road' ||
+				TextureBuildFeature[tex2] === 'road' ||
+				TextureBuildFeature[tex3] === 'road' ||
+				TextureBuildFeature[tex4] === 'road' ||
+				TextureBuildFeature[tex5] === 'road' ||
+				TextureBuildFeature[tex6] === 'road'
 			) {
 				buildSite[i] = ConstructionSite.OccupiedFlag
 				continue
 			}
 
 			const mountains =
-				((tex1Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
-				((tex2Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
-				((tex3Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
-				((tex4Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
-				((tex5Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0) +
-				((tex6Flags & TextureFeatureFlag.Rock) === TextureFeatureFlag.Rock ? 1 : 0)
+				(TextureBuildFeature[tex1] === 'mine' ? 1 : 0) +
+				(TextureBuildFeature[tex2] === 'mine' ? 1 : 0) +
+				(TextureBuildFeature[tex3] === 'mine' ? 1 : 0) +
+				(TextureBuildFeature[tex4] === 'mine' ? 1 : 0) +
+				(TextureBuildFeature[tex5] === 'mine' ? 1 : 0) +
+				(TextureBuildFeature[tex6] === 'mine' ? 1 : 0)
 
 			const nodeHeight = heightMap[i]
 
@@ -880,10 +870,10 @@ export class MapClass {
 					// too big height difference
 					nodeHeight - heightMap[nodes.bottomRight] < -3 ||
 					// snow or lava
-					(tex7Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-					(tex8Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-					(tex9Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-					(texAFlags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
+					TextureBuildFeature[tex7] === 'noRoad' ||
+					TextureBuildFeature[tex8] === 'noRoad' ||
+					TextureBuildFeature[tex9] === 'noRoad' ||
+					TextureBuildFeature[texA] === 'noRoad' ||
 					// tree
 					(o2[nodes.bottomRight] & ObjectType.Match) === ObjectType.Tree
 				) {
@@ -915,10 +905,10 @@ export class MapClass {
 
 			if (
 				// snow or lava
-				(tex7Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex8Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(tex9Flags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme ||
-				(texAFlags & TextureFeatureFlag.Extreme) === TextureFeatureFlag.Extreme
+				TextureBuildFeature[tex7] === 'noRoad' ||
+				TextureBuildFeature[tex8] === 'noRoad' ||
+				TextureBuildFeature[tex9] === 'noRoad' ||
+				TextureBuildFeature[texA] === 'noRoad'
 			) {
 				buildSite[i] = ConstructionSite.OccupiedFlag
 				continue
