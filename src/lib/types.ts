@@ -46,7 +46,7 @@ export enum ResourceFlag {
 	Gold = 0x50,
 	Granite = 0x58,
 	/** Fish will run out once all 7 fishes have been caught. */
-	Fish = 0x87,
+	Fish = 0x80,
 }
 
 export enum ObjectType {
@@ -101,7 +101,7 @@ export enum TextureFeatureFlag {
 	IsMeadow = 0x00008000,
 	IsMountMeadow = 0x00010000,
 	/** Duplicate of 0x04 */
-	Useless = 0x10000000
+	Useless = 0x10000000,
 }
 
 /**

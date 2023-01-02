@@ -731,7 +731,7 @@ export function addSubterrainResources({
 		if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.IsWater)) {
 			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
 			if (nodes.some((index) => buildSite[index] !== ConstructionSite.Impassable)) {
-				resource[index] = ResourceFlag.Fish
+				resource[index] = ResourceFlag.Fish + 7
 			}
 		} else if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.Arable)) {
 			resource[index] = ResourceFlag.FreshWater
@@ -742,7 +742,8 @@ export function addSubterrainResources({
 					(nodes
 						.map((index) => resource[index])
 						.find(
-							(value) => value !== 0 && value !== ResourceFlag.FreshWater && value !== ResourceFlag.Fish
+							(value) =>
+								value !== 0 && value !== ResourceFlag.FreshWater && (value & 0xf8) !== ResourceFlag.Fish
 						) ?? 0) & 0xf8
 
 				switch (mineral) {
@@ -818,14 +819,13 @@ export function calculateResources({ map }: CalculateResourceOptions) {
 	}
 
 	resource.forEach((value) => {
-		if (value === ResourceFlag.Fish) {
-			result.fish++
-			return
-		}
-
 		const withoutQuantity: ResourceFlag = value & 0xf8
 
 		switch (withoutQuantity) {
+			case ResourceFlag.Fish: {
+				result.fish += value & 7
+				return
+			}
 			case ResourceFlag.Coal: {
 				result.mineralCoal += value & 7
 				return
