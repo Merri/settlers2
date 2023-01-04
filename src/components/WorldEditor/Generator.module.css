@@ -22,3 +22,40 @@
 	display: flex;
 	gap: 0.125rem;
 }
+
+.mapView {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	min-width: 20rem;
+	position: sticky;
+	top: 5rem;
+	float: right;
+}
+
+.resourcesList {
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 0.75rem;
+	gap: 1rem;
+	margin: 0;
+	max-width: 20rem;
+	padding: 0.25rem;
+}
+
+.resourcesList img {
+	vertical-align: middle;
+}
+
+.resourcesList > div {
+	align-items: center;
+	display: inline-flex;
+	gap: 0.5rem;
+}
+
+.resourcesList > div > dd,
+.resourcesList > div > dt {
+	margin: 0;
+	padding: 0;
+}

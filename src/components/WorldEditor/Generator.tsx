@@ -18,7 +18,7 @@ import { IncDec } from '../MapGenerator/IncDec'
 import { MapCanvas } from './Map'
 
 import styles from './Generator.module.css'
-import { calculateHeightElevations } from '.'
+//import { calculateHeightElevations } from '.'
 import { validateMapClass } from '$/lib/MapValidation'
 import { NumberInput } from '../MapGenerator/NumberInput'
 import Button from '../Button'
@@ -116,6 +116,7 @@ interface MapOptions {
 	brush: SupportedTexture
 	continuous: boolean
 	distance: number
+	invertHeight: boolean
 	mirror: string
 	noise: number
 	offsetX: number
@@ -160,6 +161,7 @@ const emptyOptions: MapOptions = {
 	brush: 'Greenland',
 	continuous: false,
 	distance: 60,
+	invertHeight: false,
 	elevationOptions: {
 		border: 10,
 		peakBoost: 7,
@@ -199,6 +201,7 @@ export function Generator() {
 		const assignment = params.get('assignment') as PlayerAssignment | null
 		const brush = params.get('brush') ?? SupportedTexture.Greenland
 		options.continuous = params.has('continuous')
+		options.invertHeight = params.has('invertHeight')
 		const mirror = params.get('mirror')
 		const opts = params.get('options')
 		if (assignment) options.assignment = assignment
@@ -269,10 +272,11 @@ export function Generator() {
 	useEffect(() => {
 		const params = new URLSearchParams()
 		params.set('seed', `${seed}`)
-		const { assignment, brush, continuous, minerals, mirror, ...limitedOptions } = options
+		const { assignment, brush, continuous, invertHeight, minerals, mirror, ...limitedOptions } = options
 		params.set('assignment', assignment)
 		if (brush !== SupportedTexture.Greenland) params.set('brush', brush)
 		if (continuous) params.set('continuous', '')
+		if (invertHeight) params.set('invertHeight', '')
 		mirror && params.set('mirror', mirror)
 		params.set('minerals', JSON.stringify(minerals))
 		params.set('options', JSON.stringify(limitedOptions))
@@ -281,7 +285,19 @@ export function Generator() {
 
 	useEffect(() => {
 		const random = new XORShift(seed)
-		const { width, height, assignment, brush, continuous, distance, mirror, noise, offsetX, offsetY } = options
+		const {
+			width,
+			height,
+			assignment,
+			brush,
+			continuous,
+			distance,
+			invertHeight,
+			mirror,
+			noise,
+			offsetX,
+			offsetY,
+		} = options
 		const { border, mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
 		const { coal, gold, granite, ironOre, quantity, replicate } = options.minerals
 		const world = generateEmptyMap({ width, height, random })
@@ -332,6 +348,15 @@ export function Generator() {
 			blockadeMapEdges(world.map)
 		}
 
+		if (invertHeight) {
+			const heightMap = world.map.blocks[BlockType.HeightMap]
+			const min = heightMap.reduce((smallest, current) => Math.min(smallest, current), 255)
+			const maxDelta = heightMap.reduce((biggest, current) => Math.max(biggest, current), 0) - min
+			heightMap.forEach((value, index) => {
+				heightMap[index] = maxDelta - (value - min) + min
+			})
+		}
+
 		world.map.updateBuildSiteMap()
 		world.map.updateRegions()
 
@@ -374,7 +399,51 @@ export function Generator() {
 
 	return (
 		<div>
-			<div style="position:sticky; top: 5rem; float: right">
+			<div className={styles.mapView}>
+				<dl className={styles.resourcesList}>
+					<div>
+						<dt>
+							<img alt="Coal" src="/assets/res/coal.png" height="24" width="24" />
+						</dt>
+						<dd>{resources.mineralCoal}</dd>
+					</div>
+					<div>
+						<dt>
+							<img alt="Iron ore" src="/assets/res/iron-ore.png" height="24" width="24" />
+						</dt>
+						<dd>{resources.mineralIronOre}</dd>
+					</div>
+					<div>
+						<dt>
+							<img alt="Gold" src="/assets/res/gold.png" height="24" width="24" />
+						</dt>
+						<dd>{resources.mineralGold}</dd>
+					</div>
+					<div>
+						<dt>
+							<img alt="Granite" src="/assets/res/granite.png" height="24" width="24" />
+						</dt>
+						<dd>{resources.mineralGranite}</dd>
+					</div>
+					<div>
+						<dt>
+							<img alt="Iron" src="/assets/res/iron.png" height="24" width="24" />
+						</dt>
+						<dd>Max of {Math.min(resources.mineralCoal, resources.mineralIronOre)}</dd>
+					</div>
+					<div>
+						<dt>
+							<img alt="Gold coin" src="/assets/res/gold-coin.png" height="24" width="24" />
+						</dt>
+						<dd>Max of {Math.min(resources.mineralCoal, resources.mineralGold)}</dd>
+					</div>
+					<div>
+						<dt>
+							<img alt="Fish" src="/assets/res/fish.png" height="24" width="24" />
+						</dt>
+						<dd>{resources.fish}</dd>
+					</div>
+				</dl>
 				<MapCanvas showPlayers world={world.map} color1={0} color2={255} />
 				<Button primary onClick={downloadSwd}>
 					Download!
@@ -448,20 +517,39 @@ export function Generator() {
 						</td>
 					</tr>
 					<tr>
-						<td>Continuous?</td>
+						<td>Booleans</td>
 						<td>
-							<input
-								type="checkbox"
-								onChange={(event: Event) => {
-									if (event.target instanceof HTMLInputElement) {
-										dispatchOptions({
-											type: 'options',
-											payload: { continuous: event.target.checked },
-										})
-									}
-								}}
-								checked={options.continuous}
-							/>
+							<label>
+								<input
+									type="checkbox"
+									onChange={(event: Event) => {
+										if (event.target instanceof HTMLInputElement) {
+											dispatchOptions({
+												type: 'options',
+												payload: { continuous: event.target.checked },
+											})
+										}
+									}}
+									checked={options.continuous}
+								/>{' '}
+								Continuous?
+							</label>
+							<br />
+							<label>
+								<input
+									type="checkbox"
+									onChange={(event: Event) => {
+										if (event.target instanceof HTMLInputElement) {
+											dispatchOptions({
+												type: 'options',
+												payload: { invertHeight: event.target.checked },
+											})
+										}
+									}}
+									checked={options.invertHeight}
+								/>{' '}
+								Invert height map?
+							</label>
 						</td>
 					</tr>
 					{/*
@@ -672,7 +760,6 @@ export function Generator() {
 					<tr>
 						<th>Mineral</th>
 						<th>Ratio</th>
-						<th>Generated</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -688,7 +775,6 @@ export function Generator() {
 								value={options.minerals.coal}
 							/>
 						</td>
-						<td>{resources.mineralCoal}</td>
 					</tr>
 					<tr>
 						<td>Iron ore</td>
@@ -702,7 +788,6 @@ export function Generator() {
 								value={options.minerals.ironOre}
 							/>
 						</td>
-						<td>{resources.mineralIronOre}</td>
 					</tr>
 					<tr>
 						<td>Gold</td>
@@ -716,7 +801,6 @@ export function Generator() {
 								value={options.minerals.gold}
 							/>
 						</td>
-						<td>{resources.mineralGold}</td>
 					</tr>
 					<tr>
 						<td>Granite</td>
@@ -730,14 +814,6 @@ export function Generator() {
 								value={options.minerals.granite}
 							/>
 						</td>
-						<td>{resources.mineralGranite}</td>
-					</tr>
-					<tr>
-						<td>Fish</td>
-						<td>
-							<em>Always maximum</em>
-						</td>
-						<td>{resources.fish}</td>
 					</tr>
 					<tr>
 						<td>
@@ -776,6 +852,7 @@ export function Generator() {
 				</tbody>
 			</table>
 
+			{/*
 			<small className={styles.bars}>
 				{calculateHeightElevations(world.map.blocks[BlockType.HeightMap]).elevations.map((value, elevation) => (
 					<span key={elevation} title={`Elevation ${elevation} total: ${value}`}>
@@ -783,6 +860,7 @@ export function Generator() {
 					</span>
 				))}
 			</small>
+			*/}
 
 			{validation.length > 0 && (
 				<div>
