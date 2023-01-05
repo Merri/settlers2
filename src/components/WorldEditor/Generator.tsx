@@ -427,21 +427,44 @@ export function Generator() {
 					</div>
 					<div>
 						<dt>
+							<img alt="Fish" src="/assets/res/fish.png" height="24" width="24" />
+						</dt>
+						<dd>{resources.fish}</dd>
+					</div>
+					<div>
+						<dt>
 							<img alt="Iron" src="/assets/res/iron.png" height="24" width="24" />
 						</dt>
-						<dd>Max of {Math.min(resources.mineralCoal, resources.mineralIronOre)}</dd>
+						<dd>
+							Estimate:
+							<br />
+							{Math.min(Math.floor(resources.mineralCoal / 4), resources.mineralIronOre)}
+						</dd>
 					</div>
 					<div>
 						<dt>
 							<img alt="Gold coin" src="/assets/res/gold-coin.png" height="24" width="24" />
 						</dt>
-						<dd>Max of {Math.min(resources.mineralCoal, resources.mineralGold)}</dd>
+						<dd>
+							Estimate:
+							<br />
+							{Math.min(Math.floor(resources.mineralCoal / 4), resources.mineralGold)}
+						</dd>
 					</div>
 					<div>
 						<dt>
-							<img alt="Fish" src="/assets/res/fish.png" height="24" width="24" />
+							<img alt="Sword" src="/assets/res/sword.png" height="24" width="24" />
+							+
+							<img alt="Shield" src="/assets/res/shield.png" height="24" width="24" />
 						</dt>
-						<dd>{resources.fish}</dd>
+						<dd>
+							Estimate:
+							<br />
+							{Math.min(
+								Math.floor(resources.mineralCoal / 8),
+								Math.floor(Math.min(resources.mineralIronOre / 3))
+							)}
+						</dd>
 					</div>
 				</dl>
 				<MapCanvas showPlayers world={world.map} color1={0} color2={255} />
