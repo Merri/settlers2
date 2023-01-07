@@ -13,6 +13,8 @@ const CP437 = [
 	8730, 8319, 178, 9632, 160,
 ]
 
+const CP437set = new Set(CP437)
+
 export function cp437ToString(data: Uint8Array): string {
 	return Array.from(data)
 		.map((char) => String.fromCharCode(CP437[char]))
@@ -32,7 +34,7 @@ export function stringToCp437(str: string): Uint8Array {
 export function sanitizeAsCp437(str: string): string {
 	let validChars = ''
 	for (let i = 0; i < str.length; i++) {
-		if (CP437.includes(str.charCodeAt(i))) validChars += str[i]
+		if (CP437set.has(str.charCodeAt(i))) validChars += str[i]
 	}
 	return validChars
 }

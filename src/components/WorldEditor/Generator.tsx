@@ -25,6 +25,7 @@ import { validateMapClass } from '$/lib/MapValidation'
 import { NumberInput } from '../MapGenerator/NumberInput'
 import Button from '../Button'
 import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
+import { sanitizeAsCp437 } from '$/lib/cp437'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -189,6 +190,8 @@ const emptyOptions: MapOptions = {
 }
 
 export function Generator() {
+	const [title, setTitle] = useState('Generated map')
+
 	const [seed, setSeed] = useState(() => {
 		if (typeof window === 'undefined') return BigInt(1337)
 		const seed = new URLSearchParams(window.location.search).get('seed')
@@ -270,6 +273,12 @@ export function Generator() {
 			dispatchOptions({ type: 'options', payload: { noise: Number(event.target.value) || 0 } })
 		}
 	}, [])
+
+	const handleTitle: ChangeEventHandler<HTMLInputElement> = (event) => {
+		if (event.target instanceof HTMLInputElement) {
+			setTitle(sanitizeAsCp437(event.target.value))
+		}
+	}
 
 	useEffect(() => {
 		const params = new URLSearchParams()
@@ -385,21 +394,26 @@ export function Generator() {
 	const downloadSwd = useCallback(
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
+			world.map.title = title
 			world.map.updateLightMap()
 			const filename = 'UNTITLED'
 			const buffer = world.map.getFileBuffer({ format: 'SWD' })
 			const name = filename.replace(/(\.WLD|\.DAT|\b)$/i, '.SWD')
 			download(name, buffer)
 		},
-		[world.map]
+		[world.map, title]
 	)
 
-	/*
-	const regions = world.map.regions
+	const rawRegions = world.map.regions
 		.map(([type, _x, _y, size], index) => ({ index, size, type }))
 		.filter(({ size, type }) => type === RegionType.Land && size)
 		.sort((a, b) => b.size - a.size)
-	*/
+
+	const totalSize = rawRegions.reduce((total, { size }) => total + size, 0)
+
+	const regions = rawRegions
+		.map((region) => ({ ...region, pct: (region.size / totalSize) * 100 }))
+		.filter((region) => region.pct >= 1)
 
 	const validation = validateMapClass(world.map)
 
@@ -474,6 +488,39 @@ export function Generator() {
 					</div>
 				</dl>
 				<MapCanvas showPlayers world={world.map} color1={0} color2={255} />
+				<table>
+					<thead>
+						<tr>
+							<th>Land #</th>
+							<th>Size</th>
+						</tr>
+					</thead>
+					<tbody>
+						{regions.map((region) => (
+							<tr key={region.index}>
+								<td>{region.index}</td>
+								<td>{region.pct.toFixed(2)} %</td>
+							</tr>
+						))}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colSpan={2}>
+								<small>+ {rawRegions.length - regions.length} small land regions</small>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+				<label>
+					Map title: <input onChange={handleTitle} type="text" name="title" value={title} maxLength={19} />
+					<br />
+					<small>
+						Valid characters, see{' '}
+						<a href="https://en.wikipedia.org/wiki/Code_page_437#Character_set" target="_blank">
+							Wikipedia: CP437 (new window)
+						</a>
+					</small>
+				</label>
 				<Button primary onClick={downloadSwd}>
 					Download!
 				</Button>
