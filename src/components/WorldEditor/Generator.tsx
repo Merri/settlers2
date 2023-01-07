@@ -7,7 +7,9 @@ import {
 	ElevationBrush,
 	generateEmptyMap,
 	PlayerAssignment,
-	randomizeElevation,
+	elevationBasedTexturization,
+	updateHeightMapFromNoiseArray,
+	setHeight,
 } from '$/lib/PlayerBasedGenerator'
 import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types'
 import { ChangeEventHandler } from 'preact/compat'
@@ -324,28 +326,20 @@ export function Generator() {
 		}
 
 		assignPlayerPositions({ assignment, distance: distance / 100, map: world.map })
-		randomizeElevation({
+		updateHeightMapFromNoiseArray({
 			...world,
-			mountLevel: mountLevel / 100,
 			offsetX: (offsetX + world.map.width) % world.map.width,
 			offsetY: (offsetY + world.map.height) % world.map.height,
 			border: border / 100,
 			peakBoost,
 			peakRadius,
-			seaLevel: seaLevel / 100,
-			snowPeakLevel: snowPeakLevel / 100,
-			brush: TerrainBrush[brush],
 		})
 
 		if (noise) {
 			const heightMap = world.map.blocks[BlockType.HeightMap]
 			heightMap.forEach((_, index) => {
-				heightMap[index] += Math.round(world.noiseArray[index] * noise)
+				setHeight(world.map, index, heightMap[index] + Math.round(world.noiseArray[index] * noise))
 			})
-		}
-
-		if (!continuous) {
-			blockadeMapEdges(world.map)
 		}
 
 		if (invertHeight) {
@@ -355,6 +349,18 @@ export function Generator() {
 			heightMap.forEach((value, index) => {
 				heightMap[index] = maxDelta - (value - min) + min
 			})
+		}
+
+		elevationBasedTexturization({
+			...world,
+			brush: TerrainBrush[brush],
+			mountLevel: mountLevel / 100,
+			seaLevel: seaLevel / 100,
+			snowPeakLevel: snowPeakLevel / 100,
+		})
+
+		if (!continuous) {
+			blockadeMapEdges(world.map)
 		}
 
 		world.map.updateBuildSiteMap()
@@ -675,7 +681,7 @@ export function Generator() {
 						</td>
 					</tr>
 					<tr>
-						<td>Snow peak level</td>
+						<td>Mount peak level</td>
 						<td>
 							<IncDec
 								delay={25}

@@ -284,26 +284,55 @@ export interface ElevationBrush {
 	mountain4Meadow: Texture[]
 }
 
-interface ElevationBasedOptions {
+interface HeightElevationOptions {
 	baseLevel?: number
 	noiseArray: Float64Array
 	map: MapClass
 	offsetX?: number
 	offsetY?: number
 	border?: number
-	mountLevel?: number
 	peakBoost?: number
 	peakRadius?: number
-	seaLevel?: number
-	snowPeakLevel?: number
-	brush?: ElevationBrush
 }
 
 const decreaseMode = 1 / 3
 const flatteningMode = 2 / 3
 
-export function randomizeElevation({
-	baseLevel = 2,
+export function setHeight(map: MapClass, index: number, value: number) {
+	const heightMap = map.blocks[BlockType.HeightMap]
+	const newHeight = Math.min(MAX_HEIGHT, Math.max(0, value))
+	if (newHeight === heightMap[index]) return
+
+	heightMap[index] = newHeight
+	let expectedMinHeight = Math.max(0, newHeight - 5)
+	let expectedMaxHeight = Math.min(MAX_HEIGHT, newHeight + 5)
+	let radius = 0
+	let tooDown = 0
+	let tooHigh = 0
+
+	do {
+		tooDown = 0
+		tooHigh = 0
+		radius++
+		const nodes = getNodesAtRadius(index, radius, map.width, map.height)
+
+		nodes.forEach((index) => {
+			if (heightMap[index] < expectedMinHeight) {
+				tooDown++
+				heightMap[index] = expectedMinHeight
+			} else if (heightMap[index] > expectedMaxHeight) {
+				tooHigh++
+				heightMap[index] = expectedMaxHeight
+			}
+		})
+
+		expectedMinHeight = Math.max(0, expectedMinHeight - 5)
+		expectedMaxHeight = Math.max(0, expectedMaxHeight + 5)
+	} while (tooDown > 0 || tooHigh > 0)
+}
+
+export function updateHeightMapFromNoiseArray({
+	baseLevel = 0,
 	noiseArray,
 	map,
 	offsetX = 0,
@@ -311,33 +340,11 @@ export function randomizeElevation({
 	border = 0,
 	peakBoost = 0,
 	peakRadius = 3,
-	mountLevel = 0.5,
-	seaLevel = 0.35,
-	snowPeakLevel = 1,
-	brush = {
-		default: Texture.Fertile1,
-		sea: [Texture.UnbuildableWater, Texture.UnbuildableLand, Texture.InaccessibleLava],
-		coast: [Texture.Houseless, Texture.Fertile5],
-		meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile6],
-		mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
-		mountainRoot: Texture.Buildable,
-		peak: [Texture.Inaccessible, Texture.Buildable],
-		lavaEdge: [Texture.FertileMining],
-		lowLandEdge: [],
-		mountain1Meadow: [Texture.Buildable, Texture.FertileMining],
-		mountain2Meadow: [Texture.Buildable, Texture.FertileMining],
-		mountain3Meadow: [Texture.Buildable, Texture.FertileMining],
-		mountain4Meadow: [Texture.Buildable, Texture.FertileMining],
-	},
-}: ElevationBasedOptions) {
+}: HeightElevationOptions) {
 	const heightMap = map.blocks[BlockType.HeightMap]
-	const tex1 = map.blocks[BlockType.Texture1]
-	const tex2 = map.blocks[BlockType.Texture2]
-	heightMap.fill(baseLevel)
-
-	// The least useful texture: 0x07 is a clone of 0x04
-	tex1.fill(Texture.HouselessAlt)
-	tex2.fill(Texture.HouselessAlt)
+	heightMap.forEach((_, index) => {
+		heightMap[index] = Math.floor(noiseArray[index] * 5) + baseLevel
+	})
 
 	const borderSize = Math.round(Math.min(map.width, map.height) * border)
 	const minY = borderSize * map.width
@@ -397,9 +404,9 @@ export function randomizeElevation({
 		raw.forEach((value, index) => {
 			if (value < maxRawHeight - peakBoost) return
 			const maxIncrement = Math.floor(noiseArray[index] * peakRadius) + 1
-			let radius = maxIncrement + 1
 			const isCrater = noiseArray[index] < 0.625
 
+			let radius = maxIncrement + 1
 			while (radius) {
 				if (
 					(radius > maxIncrement && noiseArray[index] < 0.75) ||
@@ -426,6 +433,7 @@ export function randomizeElevation({
 		})
 	}
 
+	// SOFTEN
 	const rough = heightMap.slice()
 
 	rough.forEach((value, index) => {
@@ -436,6 +444,35 @@ export function randomizeElevation({
 		heightMap[index] = Math.round(value / (nodes.length + 1))
 	})
 
+	// REMOVE LARGE HEIGHT DIFFERENCES
+	for (let runs = 0; runs < 10; runs++) {
+		let found = 0
+
+		heightMap.forEach((value, index) => {
+			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+			const { maxValue, minValue } = nodes.reduce(
+				(memo, index) => {
+					const value = heightMap[index]
+					if (memo.maxValue < value) memo.maxValue = value
+					else if (memo.minValue > value) memo.minValue = value
+					return memo
+				},
+				{ maxValue: 0, minValue: MAX_HEIGHT }
+			)
+
+			if (minValue < value - 5) {
+				heightMap[index] = minValue + 5
+				found++
+			} else if (maxValue > value + 5) {
+				heightMap[index] = maxValue - 5
+				found++
+			}
+		})
+
+		if (!found) break
+	}
+
+	// ADJUST POSITION
 	offsetY &= 0xfffe
 
 	if (offsetX || offsetY) {
@@ -451,6 +488,40 @@ export function randomizeElevation({
 			}
 		}
 	}
+}
+
+interface HeightElevationTextureOptions {
+	brush?: ElevationBrush
+	map: MapClass
+	mountLevel?: number
+	noiseArray: Float64Array
+	seaLevel?: number
+	snowPeakLevel?: number
+}
+
+export function elevationBasedTexturization({
+	brush = {
+		default: Texture.Fertile1,
+		sea: [Texture.UnbuildableWater, Texture.UnbuildableLand, Texture.InaccessibleLava],
+		coast: [Texture.Houseless, Texture.Fertile5],
+		meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile6],
+		mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
+		mountainRoot: Texture.Buildable,
+		peak: [Texture.Inaccessible, Texture.Buildable],
+		lavaEdge: [Texture.FertileMining],
+		lowLandEdge: [],
+		mountain1Meadow: [Texture.Buildable, Texture.FertileMining],
+		mountain2Meadow: [Texture.Buildable, Texture.FertileMining],
+		mountain3Meadow: [Texture.Buildable, Texture.FertileMining],
+		mountain4Meadow: [Texture.Buildable, Texture.FertileMining],
+	},
+	map,
+	mountLevel = 0.5,
+	noiseArray,
+	seaLevel = 0.35,
+	snowPeakLevel = 1,
+}: HeightElevationTextureOptions) {
+	const heightMap = map.blocks[BlockType.HeightMap]
 
 	let minHeight = Number.POSITIVE_INFINITY
 	let maxHeight = Number.NEGATIVE_INFINITY
@@ -470,6 +541,11 @@ export function randomizeElevation({
 
 	const objectIndex = map.blocks[BlockType.Object1]
 	const objectType = map.blocks[BlockType.Object2]
+	const tex1 = map.blocks[BlockType.Texture1]
+	const tex2 = map.blocks[BlockType.Texture2]
+	// The least useful texture: 0x07 is a clone of 0x04
+	tex1.fill(Texture.HouselessAlt)
+	tex2.fill(Texture.HouselessAlt)
 
 	heightMap.forEach((value, index) => {
 		if (value < seaBelow && brush.sea.length) {
