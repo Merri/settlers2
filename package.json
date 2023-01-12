@@ -36,6 +36,7 @@
 		"marked": "4.2.3",
 		"memoizee": "0.4.15",
 		"normalize.css": "8.0.1",
+		"pako": "2.1.0",
 		"postgres": "3.3.2",
 		"preact": "10.11.3",
 		"prettier-plugin-astro": "0.7.0",

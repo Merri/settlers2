@@ -4,6 +4,7 @@ import deno from '@astrojs/deno'
 import node from '@astrojs/node'
 import preact from '@astrojs/preact'
 import fs from 'node:fs'
+import { deflate } from 'pako'
 //import vercel from '@astrojs/vercel/static'
 
 const isDeno = process.argv.includes('--deno')
@@ -18,9 +19,9 @@ const uint8ArrayLoader = {
 		if (query !== 'uint8array') return null
 
 		const data = fs.readFileSync(path)
-		const array = Array.from(new Uint8Array(data))
+		const array = Array.from(deflate(new Uint8Array(data)))
 
-		return `export default new Uint8Array(${JSON.stringify(array)});`
+		return `import { inflate } from 'pako';export default inflate(new Uint8Array(${JSON.stringify(array)}));`
 	},
 }
 
