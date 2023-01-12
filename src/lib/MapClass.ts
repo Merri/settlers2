@@ -1295,7 +1295,7 @@ export class MapClass {
 		view.setUint8(10 + maxTitleLength, 0)
 
 		const authorBuffer = new Uint8Array(buffer, 36, 19)
-		authorBuffer.set(stringToCp437(this.author || `Merri♥settlers2.net`))
+		authorBuffer.set(stringToCp437(this.author || `Merri║settlers2.net`))
 		view.setUint8(55, 0)
 
 		const hqX = new Uint16Array(buffer, 56, 7)

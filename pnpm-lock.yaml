@@ -2850,7 +2850,7 @@ packages:
     resolution: {integrity: sha512-dwkzOTjQe8JCCHVE3Cb0pLHTYLudf7t9WCAnb20jI8/dW+VHjgWhjtIUVA3oigNkssgjEwX+i+3XesUdCnXGyA==}
     dependencies:
       '@types/mdast': 3.0.10
-      mdast-util-to-markdown: 1.2.3
+      mdast-util-to-markdown: 1.3.0
     dev: true
 
   /mdast-util-gfm/2.0.1:
@@ -2862,7 +2862,7 @@ packages:
       mdast-util-gfm-strikethrough: 1.0.0
       mdast-util-gfm-table: 1.0.1
       mdast-util-gfm-task-list-item: 1.0.0
-      mdast-util-to-markdown: 1.2.3
+      mdast-util-to-markdown: 1.3.0
     transitivePeerDependencies:
       - supports-color
     dev: true

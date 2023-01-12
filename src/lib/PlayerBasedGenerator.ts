@@ -1,18 +1,9 @@
 import { XORShift } from 'random-seedable'
 
-import { getNodesAtRadius, getNodesByIndex, getTextureNodesByIndex, MapClass } from './MapClass'
+import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
 import { allRegularDecoration } from './objects'
 import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
-import {
-	BlockType,
-	ConstructionSite,
-	ResourceFlag,
-	Texture,
-	TextureFeatureFlag,
-	TextureFlag,
-	Textures,
-	TextureSet,
-} from './types'
+import { BlockType, ConstructionSite, ResourceFlag, Texture, TextureFeatureFlag, TextureSet } from './types'
 
 interface SeedMapOptions {
 	random: XORShift

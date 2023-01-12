@@ -95,7 +95,9 @@ const defaultWinterWorld: ElevationBrush = {
 
 const TerrainBrush: Record<SupportedTexture, ElevationBrush> = {
 	Greenland: defaultGreenland,
+	GreenlandPatch152: defaultGreenland,
 	NewGreenland: defaultGreenland,
+	Jungle: defaultGreenland,
 	Wetlands: defaultGreenland,
 	Wasteland: defaultWasteland,
 	RustyValley: defaultWasteland,
@@ -191,6 +193,7 @@ const emptyOptions: MapOptions = {
 
 export function Generator() {
 	const [title, setTitle] = useState('Generated map')
+	const [author, setAuthor] = useState(`║${new Date().getUTCFullYear()}║settlers2.net`)
 
 	const [seed, setSeed] = useState(() => {
 		if (typeof window === 'undefined') return BigInt(1337)
@@ -277,6 +280,12 @@ export function Generator() {
 	const handleTitle: ChangeEventHandler<HTMLInputElement> = (event) => {
 		if (event.target instanceof HTMLInputElement) {
 			setTitle(sanitizeAsCp437(event.target.value))
+		}
+	}
+
+	const handleAuthor: ChangeEventHandler<HTMLInputElement> = (event) => {
+		if (event.target instanceof HTMLInputElement) {
+			setAuthor(sanitizeAsCp437(event.target.value))
 		}
 	}
 
@@ -395,13 +404,14 @@ export function Generator() {
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
 			world.map.title = title
+			world.map.author = author
 			world.map.updateLightMap()
 			const filename = 'UNTITLED'
 			const buffer = world.map.getFileBuffer({ format: 'SWD' })
 			const name = filename.replace(/(\.WLD|\.DAT|\b)$/i, '.SWD')
 			download(name, buffer)
 		},
-		[world.map, title]
+		[world.map, title, author]
 	)
 
 	const rawRegions = world.map.regions
@@ -511,8 +521,16 @@ export function Generator() {
 						</tr>
 					</tfoot>
 				</table>
-				<label>
-					Map title: <input onChange={handleTitle} type="text" name="title" value={title} maxLength={19} />
+				<div>
+					<label>
+						Map title:{' '}
+						<input onChange={handleTitle} type="text" name="title" value={title} maxLength={19} />
+					</label>
+					<br />
+					<label>
+						Map author:{' '}
+						<input onChange={handleAuthor} type="text" name="author" value={author} maxLength={19} />
+					</label>
 					<br />
 					<small>
 						Valid characters, see{' '}
@@ -520,7 +538,7 @@ export function Generator() {
 							Wikipedia: CP437 (new window)
 						</a>
 					</small>
-				</label>
+				</div>
 				<Button primary onClick={downloadSwd}>
 					Download!
 				</Button>
