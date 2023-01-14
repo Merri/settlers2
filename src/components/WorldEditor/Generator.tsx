@@ -323,7 +323,8 @@ export function Generator() {
 			offsetX,
 			offsetY,
 		} = options
-		const { border, heightLimit, mountLevel, peakBoost, peakRadius, seaLevel, soften, snowPeakLevel } = options.elevationOptions
+		const { border, heightLimit, mountLevel, peakBoost, peakRadius, seaLevel, soften, snowPeakLevel } =
+			options.elevationOptions
 		const { coal, gold, granite, ironOre, quantity, replicate } = options.minerals
 		const world = generateEmptyMap({ width, height, random })
 		world.map.terrain = TerrainSets[brush].type
@@ -515,7 +516,7 @@ export function Generator() {
 						</dd>
 					</div>
 				</dl>
-				<MapCanvas showPlayers world={world.map} color1={0} color2={255} />
+				<MapCanvas showPlayers world={world.map} color1={0} color2={255} texture={options.brush} />
 				<table>
 					<thead>
 						<tr>

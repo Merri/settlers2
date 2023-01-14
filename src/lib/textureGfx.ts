@@ -188,6 +188,7 @@ export interface TextureGfx {
 	type: 'normal' | 'low-res' | 'high-res'
 	renderWidth?: number
 	renderHeight?: number
+	paletteIndex?: number
 }
 
 const normal1: TextureGfx = { x: 0, y: 0, height: 32, width: 32, type: 'normal' }
@@ -215,6 +216,7 @@ const highRes1: TextureGfx = {
 	renderWidth: 54,
 	renderHeight: 27,
 	type: 'high-res',
+	paletteIndex: 240
 }
 const highRes2: TextureGfx = {
 	x: 193,
@@ -224,10 +226,11 @@ const highRes2: TextureGfx = {
 	renderWidth: 54,
 	renderHeight: 27,
 	type: 'high-res',
+	paletteIndex: 57
 }
 // lava + lava + lava
-const lowRes1: TextureGfx = { x: 66, y: 222, height: 33, width: 31, renderWidth: 32, renderHeight: 16, type: 'low-res' }
-const lowRes2: TextureGfx = { x: 99, y: 222, height: 33, width: 31, renderWidth: 32, renderHeight: 16, type: 'low-res' }
+const lowRes1: TextureGfx = { x: 66, y: 222, height: 33, width: 31, renderWidth: 32, renderHeight: 16, type: 'low-res', paletteIndex: 57 }
+const lowRes2: TextureGfx = { x: 99, y: 222, height: 33, width: 31, renderWidth: 32, renderHeight: 16, type: 'low-res', paletteIndex: 57 }
 const lowRes3: TextureGfx = {
 	x: 132,
 	y: 222,
@@ -236,6 +239,7 @@ const lowRes3: TextureGfx = {
 	renderWidth: 32,
 	renderHeight: 16,
 	type: 'low-res',
+	paletteIndex: 57
 }
 
 export const texturePos: Map<Exclude<Texture, Texture.HouselessAlt>, TextureGfx> = new Map([

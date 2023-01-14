@@ -6,22 +6,52 @@ import styles from './Map.module.css'
 import { BlockType, RegionType, TextureFlag, Trees } from '$/lib/types'
 import { palettes, texturePaletteIndex } from '$/lib/palette'
 import { Position } from '$/lib/PlayerBasedGenerator'
+import { SupportedTexture } from '$/lib/textures'
+import { TextureData, textureGfxSet, UniqueTextureId } from '$/lib/textureGfx'
 
-function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, color2 = 255, blockType?: BlockType) {
+interface DrawOptions {
+	canvas: HTMLCanvasElement
+	world: MapClass
+	color1: number
+	color2: number
+	blockType?: BlockType
+	texture?: SupportedTexture
+}
+
+function createTexturePaletteIndex(texture: SupportedTexture): Uint8Array {
+	const paletteIndex = new Uint8Array(0x40)
+	const { width, body } = textureGfxSet[texture]
+	const image = new Uint8Array(body)
+
+	for (let i = 0; i < 0x40; i++) {
+		const gfx = TextureData[i as UniqueTextureId].gfx
+		if (gfx.paletteIndex != null) {
+			paletteIndex[i] = gfx.paletteIndex
+		} else {
+			const index = gfx.y * width + gfx.x + (gfx.width >>> 1)
+			paletteIndex[i] = image[index]
+		}
+	}
+
+	return paletteIndex
+}
+
+function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, texture }: DrawOptions) {
 	const buffer = canvas.getContext('2d')
 	if (!buffer) throw new Error('Could not get canvas')
 	const imageData = buffer.getImageData(0, 0, world.width, world.height)
 	const image = imageData.data
 	const size = world.width * world.height
-	const palette = palettes[world.terrain]
-	const texPalette = texturePaletteIndex[world.terrain]
+	const palette = texture != null ? new Uint8Array(textureGfxSet[texture].palette) : palettes[world.terrain]
+	const paletteSize = palette.length === 1024 ? 4 : 3
+	const texPalette = texture != null ? createTexturePaletteIndex(texture) : texturePaletteIndex[world.terrain]
 
 	if (blockType != null) {
 		for (let i = 0; i < size; i++) {
 			const index = world.blocks[blockType][i]
-			image[i * 4] = palette[index * 3]
-			image[i * 4 + 1] = palette[index * 3 + 1]
-			image[i * 4 + 2] = palette[index * 3 + 2]
+			image[i * 4] = palette[index * paletteSize]
+			image[i * 4 + 1] = palette[index * paletteSize + 1]
+			image[i * 4 + 2] = palette[index * paletteSize + 2]
 			image[i * 4 + 3] = 255
 		}
 
@@ -66,24 +96,24 @@ function drawToCanvas(canvas: HTMLCanvasElement, world: MapClass, color1 = 0, co
 		const lightB = lightRatio * (g < 144 ? color1 : color2)
 		const colorRatio = 1 - lightRatio
 
-		const r1 = palette[i1 * 3] * colorRatio + lightR
-		const r2 = palette[i2 * 3] * colorRatio + lightR
-		const r3 = palette[i3 * 3] * colorRatio + lightR
-		const r4 = palette[i4 * 3] * colorRatio + lightR
-		const r5 = palette[i5 * 3] * colorRatio + lightR
-		const r6 = palette[i6 * 3] * colorRatio + lightR
-		const g1 = palette[i1 * 3 + 1] * colorRatio + lightG
-		const g2 = palette[i2 * 3 + 1] * colorRatio + lightG
-		const g3 = palette[i3 * 3 + 1] * colorRatio + lightG
-		const g4 = palette[i4 * 3 + 1] * colorRatio + lightG
-		const g5 = palette[i5 * 3 + 1] * colorRatio + lightG
-		const g6 = palette[i6 * 3 + 1] * colorRatio + lightG
-		const b1 = palette[i1 * 3 + 2] * colorRatio + lightB
-		const b2 = palette[i2 * 3 + 2] * colorRatio + lightB
-		const b3 = palette[i3 * 3 + 2] * colorRatio + lightB
-		const b4 = palette[i4 * 3 + 2] * colorRatio + lightB
-		const b5 = palette[i5 * 3 + 2] * colorRatio + lightB
-		const b6 = palette[i6 * 3 + 2] * colorRatio + lightB
+		const r1 = palette[i1 * paletteSize] * colorRatio + lightR
+		const r2 = palette[i2 * paletteSize] * colorRatio + lightR
+		const r3 = palette[i3 * paletteSize] * colorRatio + lightR
+		const r4 = palette[i4 * paletteSize] * colorRatio + lightR
+		const r5 = palette[i5 * paletteSize] * colorRatio + lightR
+		const r6 = palette[i6 * paletteSize] * colorRatio + lightR
+		const g1 = palette[i1 * paletteSize + 1] * colorRatio + lightG
+		const g2 = palette[i2 * paletteSize + 1] * colorRatio + lightG
+		const g3 = palette[i3 * paletteSize + 1] * colorRatio + lightG
+		const g4 = palette[i4 * paletteSize + 1] * colorRatio + lightG
+		const g5 = palette[i5 * paletteSize + 1] * colorRatio + lightG
+		const g6 = palette[i6 * paletteSize + 1] * colorRatio + lightG
+		const b1 = palette[i1 * paletteSize + 2] * colorRatio + lightB
+		const b2 = palette[i2 * paletteSize + 2] * colorRatio + lightB
+		const b3 = palette[i3 * paletteSize + 2] * colorRatio + lightB
+		const b4 = palette[i4 * paletteSize + 2] * colorRatio + lightB
+		const b5 = palette[i5 * paletteSize + 2] * colorRatio + lightB
+		const b6 = palette[i6 * paletteSize + 2] * colorRatio + lightB
 
 		let red = (r1 + r2 + r3 + r4 + r5 + r6) / 6
 		let green = (g1 + g2 + g3 + g4 + g5 + g6) / 6
@@ -130,16 +160,16 @@ interface Props {
 	color2: number
 	showPlayers?: boolean
 	world: MapClass
+	texture?: SupportedTexture
 }
 
-export function MapCanvas({ blockType, color1, color2, showPlayers = false, world }: Props) {
+export function MapCanvas({ blockType, color1, color2, showPlayers = false, world, texture }: Props) {
 	const ref = useRef<HTMLCanvasElement>(null)
 	const [info, setInfo] = useState(0)
-	const [showInfo, setShowInfo] = useState(false)
 
 	useEffect(() => {
-		if (ref.current && world) drawToCanvas(ref.current, world, color1, color2, blockType)
-	}, [blockType, color1, color2, world])
+		if (ref.current && world) drawToCanvas({ canvas: ref.current, world, color1, color2, blockType, texture })
+	}, [blockType, color1, color2, world, texture])
 
 	const positions = useMemo<Position[]>(() => {
 		if (!showPlayers) return []
@@ -148,15 +178,18 @@ export function MapCanvas({ blockType, color1, color2, showPlayers = false, worl
 			.filter((pos) => pos.x !== 0xffff && pos.y !== 0xffff)
 	}, [showPlayers, world.hqX, world.hqY])
 
-	const onMouseMove = useCallback((event: MouseEvent) => {
-		if (event.target instanceof HTMLCanvasElement) {
-			const rect = event.target.getBoundingClientRect()
-			const x = (Math.floor(event.clientX - rect.left) + world.width) % world.width
-			const y = (Math.floor(event.clientY - rect.top) + world.height) % world.height
-			const index = y * world.width + x
-			setInfo(index)
-		}
-	}, [world.width, world.height])
+	const onMouseMove = useCallback(
+		(event: MouseEvent) => {
+			if (event.target instanceof HTMLCanvasElement) {
+				const rect = event.target.getBoundingClientRect()
+				const x = (Math.floor(event.clientX - rect.left) + world.width) % world.width
+				const y = (Math.floor(event.clientY - rect.top) + world.height) % world.height
+				const index = y * world.width + x
+				setInfo(index)
+			}
+		},
+		[world.width, world.height]
+	)
 
 	const regionId = world.blocks[BlockType.RegionMap][info]
 	const regionType = world.regions[regionId]?.[0] ?? RegionType.Impassable
