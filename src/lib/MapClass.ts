@@ -1,4 +1,5 @@
 import { cp437ToString, stringToCp437 } from './cp437'
+import { getAllMapRegions, locateCoastalCastles } from './mapRegions'
 import { TextureBuildFeature } from './textures'
 import {
 	BlockType,
@@ -940,218 +941,131 @@ export class MapClass {
 	/**
 	 * Pre-calculated region map stored in a map file. Required by the original game.
 	 *
-	 * Calculated based on texture blocks.
-	 *
-	 * Could be made smarter by accounting for actual harbors (water regions),
-	 * and by detecting inaccessible land areas (lack of harbors, no players).
-	 *
-	 * Smartness is mostly required on maps that may have lots of small inaccessible islands.
 	 * The file format limits us to 250 regions max.
 	 */
 	updateRegions = () => {
+		const allRegions = getAllMapRegions(this)
+		const seaRoutes = locateCoastalCastles(this, allRegions)
 		const size = this.width * this.height
-		const regionMap = this.blocks[BlockType.RegionMap]
-		const indexProcessed = new Set<number>()
-		regionMap.fill(0)
-		this.regions = []
-
-		// for simplicity use only a single water region
-		const waterIndex = 0
-		let waterSize = 0
-		let waterX: number | undefined
-		let waterY: number | undefined
-		// remaining are all land regions up to index 249
-		let regionIndex = 1
-		const regions: Regions = []
+		const t1 = this.blocks[BlockType.Texture1]
 
 		for (let i = 0; i < size; i++) {
-			if (indexProcessed.has(i)) continue
-
-			if (this.isEachTextureSame(i, Texture.UnbuildableWater)) {
-				if (waterX == null) {
-					waterX = i % this.width
-					waterY = Math.round((i - waterX) / this.width) || 0
-				}
-				indexProcessed.add(i)
-				regionMap[i] = waterIndex
-				waterSize++
-				// nodeFlags tells which of six directions is possible to check
-				const stack = [{ index: i, nodeFlags: 0x3f }]
-
-				while (stack.length) {
-					const item = stack.shift()!
-					const nodes = getNodesByIndex(item.index, this.width, this.height)
-
-					if (
-						(item.nodeFlags & 0x01) === 0x01 &&
-						!indexProcessed.has(nodes.left) &&
-						this.isEachTextureSame(nodes.left, Texture.UnbuildableWater)
-					) {
-						indexProcessed.add(nodes.left)
-						regionMap[nodes.left] = waterIndex
-						waterSize++
-						// topLeft, left, bottomLeft
-						stack.push({ index: nodes.left, nodeFlags: 0x23 })
-					}
-
-					if (
-						(item.nodeFlags & 0x02) === 0x02 &&
-						!indexProcessed.has(nodes.topLeft) &&
-						this.isEachTextureSame(nodes.topLeft, Texture.UnbuildableWater)
-					) {
-						indexProcessed.add(nodes.topLeft)
-						regionMap[nodes.topLeft] = waterIndex
-						waterSize++
-						// left, topLeft, topRight
-						stack.push({ index: nodes.topLeft, nodeFlags: 0x07 })
-					}
-
-					if (
-						(item.nodeFlags & 0x04) === 0x04 &&
-						!indexProcessed.has(nodes.topRight) &&
-						this.isEachTextureSame(nodes.topRight, Texture.UnbuildableWater)
-					) {
-						indexProcessed.add(nodes.topRight)
-						regionMap[nodes.topRight] = waterIndex
-						waterSize++
-						// topLeft, topRight, right
-						stack.push({ index: nodes.topRight, nodeFlags: 0x0e })
-					}
-
-					if (
-						(item.nodeFlags & 0x08) === 0x08 &&
-						!indexProcessed.has(nodes.right) &&
-						this.isEachTextureSame(nodes.right, Texture.UnbuildableWater)
-					) {
-						indexProcessed.add(nodes.right)
-						regionMap[nodes.right] = waterIndex
-						waterSize++
-						// topRight, right, bottomRight
-						stack.push({ index: nodes.right, nodeFlags: 0x1c })
-					}
-
-					if (
-						(item.nodeFlags & 0x10) === 0x10 &&
-						!indexProcessed.has(nodes.bottomRight) &&
-						this.isEachTextureSame(nodes.bottomRight, Texture.UnbuildableWater)
-					) {
-						indexProcessed.add(nodes.bottomRight)
-						regionMap[nodes.bottomRight] = waterIndex
-						waterSize++
-						// right, bottomRight, bottomLeft
-						stack.push({ index: nodes.bottomRight, nodeFlags: 0x38 })
-					}
-
-					if (
-						(item.nodeFlags & 0x20) === 0x20 &&
-						!indexProcessed.has(nodes.bottomLeft) &&
-						this.isEachTextureSame(nodes.bottomLeft, Texture.UnbuildableWater)
-					) {
-						indexProcessed.add(nodes.bottomLeft)
-						regionMap[nodes.bottomLeft] = waterIndex
-						waterSize++
-						// bottomRight, bottomLeft, left
-						stack.push({ index: nodes.bottomLeft, nodeFlags: 0x31 })
-					}
-				}
-			} else if (this.isEachTextureWithAnyOfFlags(i, TextureFeatureFlag.Impassable)) {
-				indexProcessed.add(i)
-				regionMap[i] = RegionType.Impassable
-			} else {
-				indexProcessed.add(i)
-				regionMap[i] = regionIndex
-				let regionSize = 1
-				// nodeFlags tells which of six directions is possible to check
-				const stack = [{ index: i, nodeFlags: 0x3f }]
-
-				while (stack.length) {
-					const item = stack.shift()!
-					const nodes = getNodesByIndex(item.index, this.width, this.height)
-
-					if (
-						(item.nodeFlags & 0x01) === 0x01 &&
-						!indexProcessed.has(nodes.left) &&
-						!this.isEachTextureWithAnyOfFlags(nodes.left, TextureFeatureFlag.Impassable)
-					) {
-						indexProcessed.add(nodes.left)
-						regionMap[nodes.left] = regionIndex
-						regionSize++
-						// topLeft, left, bottomLeft
-						stack.push({ index: nodes.left, nodeFlags: 0x23 })
-					}
-
-					if (
-						(item.nodeFlags & 0x02) === 0x02 &&
-						!indexProcessed.has(nodes.topLeft) &&
-						!this.isEachTextureWithAnyOfFlags(nodes.topLeft, TextureFeatureFlag.Impassable)
-					) {
-						indexProcessed.add(nodes.topLeft)
-						regionMap[nodes.topLeft] = regionIndex
-						regionSize++
-						// left, topLeft, topRight
-						stack.push({ index: nodes.topLeft, nodeFlags: 0x07 })
-					}
-
-					if (
-						(item.nodeFlags & 0x04) === 0x04 &&
-						!indexProcessed.has(nodes.topRight) &&
-						!this.isEachTextureWithAnyOfFlags(nodes.topRight, TextureFeatureFlag.Impassable)
-					) {
-						indexProcessed.add(nodes.topRight)
-						regionMap[nodes.topRight] = regionIndex
-						regionSize++
-						// topLeft, topRight, right
-						stack.push({ index: nodes.topRight, nodeFlags: 0x0e })
-					}
-
-					if (
-						(item.nodeFlags & 0x08) === 0x08 &&
-						!indexProcessed.has(nodes.right) &&
-						!this.isEachTextureWithAnyOfFlags(nodes.right, TextureFeatureFlag.Impassable)
-					) {
-						indexProcessed.add(nodes.right)
-						regionMap[nodes.right] = regionIndex
-						regionSize++
-						// topRight, right, bottomRight
-						stack.push({ index: nodes.right, nodeFlags: 0x1c })
-					}
-
-					if (
-						(item.nodeFlags & 0x10) === 0x10 &&
-						!indexProcessed.has(nodes.bottomRight) &&
-						!this.isEachTextureWithAnyOfFlags(nodes.bottomRight, TextureFeatureFlag.Impassable)
-					) {
-						indexProcessed.add(nodes.bottomRight)
-						regionMap[nodes.bottomRight] = regionIndex
-						regionSize++
-						// right, bottomRight, bottomLeft
-						stack.push({ index: nodes.bottomRight, nodeFlags: 0x38 })
-					}
-
-					if (
-						(item.nodeFlags & 0x20) === 0x20 &&
-						!indexProcessed.has(nodes.bottomLeft) &&
-						!this.isEachTextureWithAnyOfFlags(nodes.bottomLeft, TextureFeatureFlag.Impassable)
-					) {
-						indexProcessed.add(nodes.bottomLeft)
-						regionMap[nodes.bottomLeft] = regionIndex
-						regionSize++
-						// bottomRight, bottomLeft, left
-						stack.push({ index: nodes.bottomLeft, nodeFlags: 0x31 })
-					}
-				}
-
-				// keep using index 250 forever for all remaining pieces of land
-				if (regionIndex < 250) {
-					const x = i % this.width
-					const y = Math.round((i - x) / this.width) || 0
-					regions.push([RegionType.Land, x, y, regionSize])
-					regionIndex++
-				}
-			}
+			t1[i] = t1[i] & 0xbf
 		}
 
-		regions.unshift([RegionType.Water, waterX ?? 0, waterY ?? 0, waterSize])
+		const playerLandRegionIds = new Set<number>()
+
+		seaRoutes.forEach((sea) => {
+			sea.connections.forEach((castle) => {
+				playerLandRegionIds.add(castle.regionId)
+				t1[castle.index] = t1[castle.index] | 0x40
+			})
+		})
+
+		if (playerLandRegionIds.size === 0) {
+			const biggestLandRegion = allRegions.reduce((current, region) => {
+				return current.positions.size >= region.positions.size ? current : region
+			}, allRegions[0])
+
+			playerLandRegionIds.add(biggestLandRegion.regionId)
+		}
+
+		const regionMap = this.blocks[BlockType.RegionMap]
+		regionMap.fill(254)
+		this.regions = []
+
+		const regions: Regions = []
+		const regionIdToRegionIndex = new Map<number, number>()
+		const regionIndexToRegionId = new Map<number, number>()
+
+		let regionIndex = 0
+
+		playerLandRegionIds.forEach((regionId) => {
+			// might be a troublesome map for the original game if this condition happens...
+			if (regionIndex >= 247) return
+
+			const region = allRegions.find((region) => region.regionId === regionId)!
+			regionIdToRegionIndex.set(regionId, regionIndex)
+			regionIndexToRegionId.set(regionIndex, regionId)
+			const x = region.posIndex % this.width
+			const y = Math.round((region.posIndex - x) / this.width)
+			regions.push([RegionType.Land, x, y, region.positions.size])
+			regionIndex++
+		})
+
+		seaRoutes.forEach((region) => {
+			// might be a troublesome map for the original game if this condition happens...
+			if (regionIndex >= 248) return
+
+			regionIdToRegionIndex.set(region.regionId, regionIndex)
+			regionIndexToRegionId.set(regionIndex, region.regionId)
+			const x = region.posIndex % this.width
+			const y = Math.round((region.posIndex - x) / this.width)
+			regions.push([RegionType.Water, x, y, region.size])
+			regionIndex++
+		})
+
+		const INACCESSIBLE_LAND_INDEX = regionIndex++
+		const UNIMPORTANT_WATER_INDEX = regionIndex++
+
+		const inaccessibleLand: Regions[number] = [RegionType.Land, -1, -1, 0]
+		const unimportantWater: Regions[number] = [RegionType.Water, -1, -1, 0]
+
+		allRegions.forEach((region) => {
+			let regionIndex = regionIdToRegionIndex.get(region.regionId)
+
+			if (regionIndex == null) {
+				if (region.type === 'water') {
+					if (unimportantWater[1] === -1) {
+						const x = region.posIndex % this.width
+						const y = Math.round((region.posIndex - x) / this.width)
+						unimportantWater[1] = x
+						unimportantWater[2] = y
+					}
+					unimportantWater[3] += region.positions.size
+					regionIndex = UNIMPORTANT_WATER_INDEX
+				} else if (region.type === 'ground') {
+					if (inaccessibleLand[1] === -1) {
+						const x = region.posIndex % this.width
+						const y = Math.round((region.posIndex - x) / this.width)
+						inaccessibleLand[1] = x
+						inaccessibleLand[2] = y
+					}
+					inaccessibleLand[3] += region.positions.size
+					regionIndex = INACCESSIBLE_LAND_INDEX
+				}
+			}
+
+			if (regionIndex == null) {
+				return
+			}
+
+			const rIndex = regionIndex
+
+			region.positions.forEach((index) => {
+				regionMap[index] = rIndex
+			})
+		})
+
+		if (
+			inaccessibleLand[1] >= 0 &&
+			inaccessibleLand[1] < this.width &&
+			inaccessibleLand[2] >= 0 &&
+			inaccessibleLand[2] < this.height
+		) {
+			regions.push(inaccessibleLand)
+		} else {
+			regions.push([RegionType.Unused, 0, 0, 0])
+		}
+
+		if (
+			unimportantWater[1] >= 0 &&
+			unimportantWater[1] < this.width &&
+			unimportantWater[2] >= 0 &&
+			unimportantWater[2] < this.height
+		) {
+			regions.push(unimportantWater)
+		}
 
 		this.regions = regions
 	}

@@ -392,15 +392,6 @@ export function Generator() {
 		world.map.updateBuildSiteMap()
 		world.map.updateRegions()
 
-		const seaRoutes = locateCoastalCastles(world.map)
-
-		seaRoutes.forEach((sea) => {
-			sea.connections.forEach((castle) => {
-				world.map.blocks[BlockType.Texture1][castle.index] =
-					world.map.blocks[BlockType.Texture1][castle.index] | 0x40
-			})
-		})
-
 		adjustPlayerLocations({ map: world.map })
 		addSubterrainResources({
 			...world,

@@ -1,10 +1,12 @@
 import { getNodesAtRadius, getNodesByIndex, MapClass } from './MapClass'
+import { Position } from './PlayerBasedGenerator'
 import { BlockType, ConstructionSite, Texture, TextureFeatureFlag } from './types'
 
 interface Region {
 	type: 'water' | 'ground'
 	positions: Set<number>
 	regionId: number
+	posIndex: number
 }
 
 export function getAllMapRegions(map: MapClass) {
@@ -19,7 +21,7 @@ export function getAllMapRegions(map: MapClass) {
 
 		if (map.isEachTextureSame(i, Texture.UnbuildableWater)) {
 			done.add(i)
-			regions.unshift({ type: 'water', positions: new Set([i]), regionId })
+			regions.unshift({ type: 'water', positions: new Set([i]), regionId, posIndex: i })
 			regionId++
 
 			// nodeFlags tells which of six directions is possible to check
@@ -99,7 +101,7 @@ export function getAllMapRegions(map: MapClass) {
 			done.add(i)
 		} else {
 			done.add(i)
-			regions.unshift({ type: 'ground', positions: new Set([i]), regionId })
+			regions.unshift({ type: 'ground', positions: new Set([i]), regionId, posIndex: i })
 			regionId++
 			// nodeFlags tells which of six directions is possible to check
 			const stack = [{ index: i, nodeFlags: 0x3f }]
@@ -186,8 +188,7 @@ interface CoastalCastle {
 	seaRegionId: Set<number>
 }
 
-export function locateCoastalCastles(map: MapClass) {
-	const regions = getAllMapRegions(map)
+export function locateCoastalCastles(map: MapClass, regions: Region[] = getAllMapRegions(map)) {
 	const regionSize = new Map(regions.map((region) => [region.regionId, region.positions.size]))
 
 	const groundMap = regions
@@ -242,7 +243,7 @@ export function locateCoastalCastles(map: MapClass) {
 		// one = nothing else to connect to
 		if (connections.length === 1) connections.length = 0
 
-		return { regionId: region.regionId, connections, size: region.positions.size }
+		return { regionId: region.regionId, connections, size: region.positions.size, posIndex: region.posIndex }
 	})
 
 	return tradeRoutes.sort((a, b) => b.connections.length - a.connections.length || b.size - a.size)

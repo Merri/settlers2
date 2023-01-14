@@ -3,7 +3,7 @@ import { XORShift } from 'random-seedable'
 import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
 import { allRegularDecoration } from './objects'
 import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
-import { BlockType, ConstructionSite, ResourceFlag, Texture, TextureFeatureFlag, TextureSet } from './types'
+import { BlockType, ConstructionSite, RegionType, ResourceFlag, Texture, TextureFeatureFlag, TextureSet } from './types'
 
 interface SeedMapOptions {
 	random: XORShift
@@ -231,7 +231,7 @@ export function assignPlayerPositions({ assignment, distance = 0.5, map }: Playe
 
 export function blockadeMapEdges(map: MapClass) {
 	for (let i = 0; i < map.width; i++) {
-		map.draw(i, Texture.UnbuildableWater, TextureFeatureFlag.IsWater)
+		map.draw(i, Texture.InaccessibleWater, TextureFeatureFlag.IsWater)
 		map.draw(
 			i,
 			Texture.UnbuildableLand,
@@ -245,7 +245,7 @@ export function blockadeMapEdges(map: MapClass) {
 	}
 	for (let y = 0; y < map.height; y++) {
 		const i = y * map.width
-		map.draw(i, Texture.UnbuildableWater, TextureFeatureFlag.IsWater)
+		map.draw(i, Texture.InaccessibleWater, TextureFeatureFlag.IsWater)
 		map.draw(
 			i,
 			Texture.UnbuildableLand,
@@ -739,10 +739,16 @@ interface AdjustPlayerLocationOptions {
 export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 	const maxRadius = (Math.min(map.width, map.height) - 4) >>> 1
 
+	const harbours = map.getHarbourMap()
+	const validPlayerRegions = new Set(
+		harbours.size === 0 ? [map.regions.findIndex((item) => item[0] === RegionType.Land)] : harbours.keys()
+	)
+
 	const texture1 = map.blocks[BlockType.Texture1]
 	const objectIndex = map.blocks[BlockType.Object1]
 	const objectType = map.blocks[BlockType.Object2]
 	const buildSite = map.blocks[BlockType.BuildSite]
+	const regionMap = map.blocks[BlockType.RegionMap]
 	const hq = map.hqX
 		.map((x, index) => ({ player: index + 1, x, y: map.hqY[index] }))
 		.filter((item) => item.x !== 0xffff && item.y !== 0xffff)
@@ -758,7 +764,11 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 	hq.forEach((item) => {
 		const playerIndex = item.player - 1
 
-		if (isCastleSite(buildSite[item.index]) && !isHarbour(texture1[item.index])) {
+		if (
+			validPlayerRegions.has(regionMap[item.index]) &&
+			isCastleSite(buildSite[item.index]) &&
+			!isHarbour(texture1[item.index])
+		) {
 			objectType[item.index] = 0x80
 			objectIndex[item.index] = playerIndex
 			return
@@ -770,7 +780,11 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 			const nodes = getNodesAtRadius(item.index, radius, map.width, map.height)
 
 			for (let nodeIndex of nodes) {
-				if (isCastleSite(buildSite[nodeIndex]) && !isHarbour(texture1[nodeIndex])) {
+				if (
+					validPlayerRegions.has(regionMap[nodeIndex]) &&
+					isCastleSite(buildSite[nodeIndex]) &&
+					!isHarbour(texture1[nodeIndex])
+				) {
 					newIndex = nodeIndex
 					break
 				}
