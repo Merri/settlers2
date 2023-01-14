@@ -129,11 +129,13 @@ interface MapOptions {
 	offsetY: number
 	elevationOptions: {
 		border: number
+		heightLimit: number
 		peakBoost: number
 		peakRadius: number
 		mountLevel: number
 		seaLevel: number
 		snowPeakLevel: number
+		soften: boolean
 	}
 	minerals: {
 		coal: number
@@ -170,10 +172,12 @@ const emptyOptions: MapOptions = {
 	invertHeight: false,
 	elevationOptions: {
 		border: 10,
+		heightLimit: 5,
 		peakBoost: 7,
 		peakRadius: 24,
 		seaLevel: 20,
 		mountLevel: 43,
+		soften: true,
 		snowPeakLevel: 80,
 	},
 	minerals: {
@@ -319,7 +323,7 @@ export function Generator() {
 			offsetX,
 			offsetY,
 		} = options
-		const { border, mountLevel, peakBoost, peakRadius, seaLevel, snowPeakLevel } = options.elevationOptions
+		const { border, heightLimit, mountLevel, peakBoost, peakRadius, seaLevel, soften, snowPeakLevel } = options.elevationOptions
 		const { coal, gold, granite, ironOre, quantity, replicate } = options.minerals
 		const world = generateEmptyMap({ width, height, random })
 		world.map.terrain = TerrainSets[brush].type
@@ -350,8 +354,10 @@ export function Generator() {
 			offsetX: (offsetX + world.map.width) % world.map.width,
 			offsetY: (offsetY + world.map.height) % world.map.height,
 			border: border / 100,
+			heightLimit,
 			peakBoost,
 			peakRadius,
+			soften,
 		})
 
 		if (noise) {
@@ -435,7 +441,7 @@ export function Generator() {
 
 	const regions = rawRegions
 		.map((region) => ({ ...region, pct: (region.size / totalSize) * 100 }))
-		.filter((region) => region.pct >= 1 || harbours.get(region.index) > 0)
+		.filter((region) => region.pct >= 1 || (harbours.get(region.index) ?? 0 > 0))
 
 	const validation = validateMapClass(world.map)
 
@@ -658,6 +664,22 @@ export function Generator() {
 								/>{' '}
 								Invert height map?
 							</label>
+							<br />
+							<label>
+								<input
+									type="checkbox"
+									onChange={(event: Event) => {
+										if (event.target instanceof HTMLInputElement) {
+											dispatchOptions({
+												type: 'elevationOptions',
+												payload: { soften: event.target.checked },
+											})
+										}
+									}}
+									checked={options.elevationOptions.soften}
+								/>{' '}
+								Soften?
+							</label>
 						</td>
 					</tr>
 					{/*
@@ -726,6 +748,21 @@ export function Generator() {
 								step={1}
 								maximumValue={100}
 								value={options.elevationOptions.peakRadius}
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td>Height diff limit</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(heightLimit) =>
+									dispatchOptions({ type: 'elevationOptions', payload: { heightLimit } })
+								}
+								minimumValue={0}
+								step={1}
+								maximumValue={5}
+								value={options.elevationOptions.heightLimit}
 							/>
 						</td>
 					</tr>

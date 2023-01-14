@@ -284,6 +284,8 @@ interface HeightElevationOptions {
 	border?: number
 	peakBoost?: number
 	peakRadius?: number
+	soften?: boolean
+	heightLimit?: number
 }
 
 const decreaseMode = 1 / 3
@@ -324,6 +326,7 @@ export function setHeight(map: MapClass, index: number, value: number) {
 
 export function updateHeightMapFromNoiseArray({
 	baseLevel = 0,
+	heightLimit = 5,
 	noiseArray,
 	map,
 	offsetX = 0,
@@ -331,6 +334,7 @@ export function updateHeightMapFromNoiseArray({
 	border = 0,
 	peakBoost = 0,
 	peakRadius = 3,
+	soften = true,
 }: HeightElevationOptions) {
 	const heightMap = map.blocks[BlockType.HeightMap]
 	heightMap.forEach((_, index) => {
@@ -425,18 +429,28 @@ export function updateHeightMapFromNoiseArray({
 	}
 
 	// SOFTEN
-	const rough = heightMap.slice()
+	if (soften) {
+		const rough = heightMap.slice()
 
-	rough.forEach((value, index) => {
-		const nodes = getNodesAtRadius(index, 1, map.width, map.height)
-		nodes.forEach((index) => {
-			value += rough[index]
+		rough.forEach((value, index) => {
+			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+			nodes.forEach((index) => {
+				value += rough[index]
+			})
+			heightMap[index] = Math.round(value / (nodes.length + 1))
 		})
-		heightMap[index] = Math.round(value / (nodes.length + 1))
-	})
+	}
+
+	const getHeightLimit: (index: number) => number =
+		(heightLimit === 5 && (() => 5)) ||
+		(heightLimit === 4 && (() => 4)) ||
+		(heightLimit === 3 && ((index) => 2 + Math.floor(noiseArray[index] * 3))) ||
+		(heightLimit === 2 && ((index) => 2 + Math.floor(noiseArray[index] * 2))) ||
+		(heightLimit === 1 && ((index) => 1 + Math.floor(noiseArray[index] * 3))) ||
+		((index) => 1 + Math.floor(noiseArray[index] * 2))
 
 	// REMOVE LARGE HEIGHT DIFFERENCES
-	for (let runs = 0; runs < 10; runs++) {
+	for (let runs = 0; runs < 20; runs++) {
 		let found = 0
 
 		heightMap.forEach((value, index) => {
@@ -451,11 +465,13 @@ export function updateHeightMapFromNoiseArray({
 				{ maxValue: 0, minValue: MAX_HEIGHT }
 			)
 
-			if (minValue < value - 5) {
-				heightMap[index] = minValue + 5
+			const maxHeightDiff = getHeightLimit(index)
+
+			if (minValue < value - maxHeightDiff) {
+				heightMap[index] = minValue + maxHeightDiff
 				found++
-			} else if (maxValue > value + 5) {
-				heightMap[index] = maxValue - 5
+			} else if (maxValue > value + maxHeightDiff) {
+				heightMap[index] = maxValue - maxHeightDiff
 				found++
 			}
 		})
