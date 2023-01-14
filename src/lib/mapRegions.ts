@@ -1,5 +1,4 @@
 import { getNodesAtRadius, getNodesByIndex, MapClass } from './MapClass'
-import { Position } from './PlayerBasedGenerator'
 import { BlockType, ConstructionSite, Texture, TextureFeatureFlag } from './types'
 
 interface Region {

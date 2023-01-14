@@ -963,11 +963,13 @@ export class MapClass {
 		})
 
 		if (playerLandRegionIds.size === 0) {
-			const biggestLandRegion = allRegions.reduce((current, region) => {
+			const biggestLandRegion = allRegions.reduce<typeof allRegions[number] | null>((current, region) => {
+				if (region.type === 'water') return current
+				if (current == null) return region
 				return current.positions.size >= region.positions.size ? current : region
-			}, allRegions[0])
+			}, null)
 
-			playerLandRegionIds.add(biggestLandRegion.regionId)
+			if (biggestLandRegion) playerLandRegionIds.add(biggestLandRegion.regionId)
 		}
 
 		const regionMap = this.blocks[BlockType.RegionMap]
