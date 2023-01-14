@@ -28,7 +28,7 @@ function createTexturePaletteIndex(texture: SupportedTexture): Uint8Array {
 		if (gfx.paletteIndex != null) {
 			paletteIndex[i] = gfx.paletteIndex
 		} else {
-			const index = gfx.y * width + gfx.x + (gfx.width >>> 1)
+			const index = gfx.y * width + gfx.x + Math.floor(gfx.width / 2)
 			paletteIndex[i] = image[index]
 		}
 	}

@@ -243,7 +243,7 @@ export function blockadeMapEdges(map: MapClass) {
 			TextureFeatureFlag.Arid | TextureFeatureFlag.IsMountMeadow | TextureFeatureFlag.Rock
 		)
 	}
-	for (let y = 0; y < map.height - 1; y++) {
+	for (let y = 0; y < map.height; y++) {
 		const i = y * map.width
 		map.draw(i, Texture.UnbuildableWater, TextureFeatureFlag.IsWater)
 		map.draw(
