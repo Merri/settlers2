@@ -156,7 +156,7 @@ export function MapCanvas({ blockType, color1, color2, showPlayers = false, worl
 			const index = y * world.width + x
 			setInfo(index)
 		}
-	}, [])
+	}, [world.width, world.height])
 
 	const regionId = world.blocks[BlockType.RegionMap][info]
 	const regionType = world.regions[regionId]?.[0] ?? RegionType.Impassable
