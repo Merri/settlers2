@@ -19,9 +19,18 @@ const uint8ArrayLoader = {
 		if (query !== 'uint8array') return null
 
 		const data = fs.readFileSync(path)
-		const array = Array.from(deflate(new Uint8Array(data)))
+		const hex = deflate(new Uint8Array(data), { level: 9 }).reduce(
+			(chars, number) => chars + number.toString(16).padStart(2, '0'),
+			''
+		)
 
-		return `import { inflate } from 'pako';export default inflate(new Uint8Array(${JSON.stringify(array)}));`
+		return `import { inflate } from 'pako';
+const hex = '${hex}';
+const array = new Uint8Array(${hex.length / 2});
+for (let i = 0, j = 0; i < ${hex.length / 2}; i++, j+=2) {
+	array[i] = parseInt(hex.slice(j, j + 2), 16);
+}
+export default inflate(array);`
 	},
 }
 

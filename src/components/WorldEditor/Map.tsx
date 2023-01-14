@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef } from 'preact/compat'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/compat'
 
 import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '$/lib/MapClass'
 
 import styles from './Map.module.css'
-import { BlockType, TextureFlag, Trees } from '$/lib/types'
+import { BlockType, RegionType, TextureFlag, Trees } from '$/lib/types'
 import { palettes, texturePaletteIndex } from '$/lib/palette'
 import { Position } from '$/lib/PlayerBasedGenerator'
 
@@ -134,6 +134,8 @@ interface Props {
 
 export function MapCanvas({ blockType, color1, color2, showPlayers = false, world }: Props) {
 	const ref = useRef<HTMLCanvasElement>(null)
+	const [info, setInfo] = useState(0)
+	const [showInfo, setShowInfo] = useState(false)
 
 	useEffect(() => {
 		if (ref.current && world) drawToCanvas(ref.current, world, color1, color2, blockType)
@@ -146,14 +148,35 @@ export function MapCanvas({ blockType, color1, color2, showPlayers = false, worl
 			.filter((pos) => pos.x !== 0xffff && pos.y !== 0xffff)
 	}, [showPlayers, world.hqX, world.hqY])
 
+	const onMouseMove = useCallback((event: MouseEvent) => {
+		if (event.target instanceof HTMLCanvasElement) {
+			const rect = event.target.getBoundingClientRect()
+			const x = (Math.floor(event.clientX - rect.left) + world.width) % world.width
+			const y = (Math.floor(event.clientY - rect.top) + world.height) % world.height
+			const index = y * world.width + x
+			setInfo(index)
+		}
+	}, [])
+
+	const regionId = world.blocks[BlockType.RegionMap][info]
+	const regionType = world.regions[regionId]?.[0] ?? RegionType.Impassable
+	const harbours = world.getHarbourMap().get(regionId) || 'no'
+
+	const regionTypeText =
+		(regionType === RegionType.Impassable && 'Impassable') ||
+		(regionType === RegionType.Land && `Land #${regionId}, ${harbours} harbours`) ||
+		(regionType === RegionType.Water && `Water #${regionId}`) ||
+		'Unknown'
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.canvasWrapper}>
-				<canvas ref={ref} width={world.width} height={world.height} />
+				<canvas ref={ref} width={world.width} height={world.height} onMouseMove={onMouseMove} />
 				{positions.map((pos) => (
 					<span
 						style={{
 							border: '1px solid white',
+							pointerEvents: 'none',
 							position: 'absolute',
 							left: `${pos.x - 1}px`,
 							top: `${pos.y - 1}px`,
@@ -166,6 +189,7 @@ export function MapCanvas({ blockType, color1, color2, showPlayers = false, worl
 						}}
 					/>
 				))}
+				<div className={styles.info}>{regionTypeText}</div>
 			</div>
 		</div>
 	)

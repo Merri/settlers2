@@ -11,7 +11,7 @@ import {
 	updateHeightMapFromNoiseArray,
 	setHeight,
 } from '$/lib/PlayerBasedGenerator'
-import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types'
+import { BlockType, ConstructionSite, RegionType, Texture, TextureSet } from '$/lib/types'
 import { ChangeEventHandler } from 'preact/compat'
 import { useCallback, useEffect, useReducer, useState } from 'preact/hooks'
 import { XORShift } from 'random-seedable'
@@ -26,6 +26,7 @@ import { NumberInput } from '../MapGenerator/NumberInput'
 import Button from '../Button'
 import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
 import { sanitizeAsCp437 } from '$/lib/cp437'
+import { locateCoastalCastles } from '$/lib/mapRegions'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -384,6 +385,15 @@ export function Generator() {
 		world.map.updateBuildSiteMap()
 		world.map.updateRegions()
 
+		const seaRoutes = locateCoastalCastles(world.map)
+
+		seaRoutes.forEach((sea) => {
+			sea.connections.forEach((castle) => {
+				world.map.blocks[BlockType.Texture1][castle.index] =
+					world.map.blocks[BlockType.Texture1][castle.index] | 0x40
+			})
+		})
+
 		adjustPlayerLocations({ map: world.map })
 		addSubterrainResources({
 			...world,
@@ -421,9 +431,11 @@ export function Generator() {
 
 	const totalSize = rawRegions.reduce((total, { size }) => total + size, 0)
 
+	const harbours = world.map.getHarbourMap()
+
 	const regions = rawRegions
 		.map((region) => ({ ...region, pct: (region.size / totalSize) * 100 }))
-		.filter((region) => region.pct >= 1)
+		.filter((region) => region.pct >= 1 || harbours.get(region.index) > 0)
 
 	const validation = validateMapClass(world.map)
 
@@ -503,6 +515,7 @@ export function Generator() {
 						<tr>
 							<th>Land #</th>
 							<th>Size</th>
+							<th>Harbours</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -510,13 +523,14 @@ export function Generator() {
 							<tr key={region.index}>
 								<td>{region.index}</td>
 								<td>{region.pct.toFixed(2)} %</td>
+								<td>{harbours.get(region.index) || '-'}</td>
 							</tr>
 						))}
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colSpan={2}>
-								<small>+ {rawRegions.length - regions.length} small land regions</small>
+							<td colSpan={3}>
+								<small>And {rawRegions.length - regions.length} inaccessible land regions</small>
 							</td>
 						</tr>
 					</tfoot>

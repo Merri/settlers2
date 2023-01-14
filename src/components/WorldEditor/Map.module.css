@@ -1,10 +1,10 @@
 .container {
-	-webkit-overflow-scrolling: touch;
-	overflow: auto;
 	margin: auto;
 }
 
 button > .container {
+	-webkit-overflow-scrolling: touch;
+	overflow: auto;
 	max-height: 256px;
 	max-width: 256px;
 	pointer-events: none;
@@ -17,9 +17,31 @@ button > .container {
 }
 
 .canvasWrapper > canvas {
+	cursor: crosshair;
 	display: block;
 	image-rendering: crisp-edges;
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: pixelated;
 	margin: auto;
+}
+
+.info {
+	opacity: 0;
+	background: black;
+	color: white;
+	font-size: 0.75rem;
+	left: 50%;
+	line-height: 1.25;
+	padding: 0.25rem 0.5rem;
+	position: absolute;
+	transform: translateX(-50%);
+	transition: opacity 125ms ease-in-out;
+	top: 100%;
+	white-space: nowrap;
+}
+
+canvas:hover ~ .info,
+canvas:focus ~ .info,
+canvas:active ~ .info {
+	opacity: 1;
 }

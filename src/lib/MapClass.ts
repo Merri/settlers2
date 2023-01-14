@@ -717,7 +717,7 @@ export class MapClass {
 		}
 	}
 
-	private isEachTextureSame(index: number, texture: Texture) {
+	isEachTextureSame = (index: number, texture: Texture) => {
 		const t1 = this.blocks[BlockType.Texture1]
 		const t2 = this.blocks[BlockType.Texture2]
 		const nodes = getTextureNodesByIndex(index, this.width, this.height)
@@ -1348,6 +1348,17 @@ export class MapClass {
 		// mark end of file
 		view.setUint8(footerIndex + footerSize, 0xff)
 		return buffer
+	}
+
+	getHarbourMap = () => {
+		return this.blocks[BlockType.Texture1].reduce<Map<number, number>>((map, value, index) => {
+			if (value & 0x40) {
+				const regionId = this.blocks[BlockType.RegionMap][index]
+				const total = map.get(regionId) || 0
+				map.set(regionId, total + 1)
+			}
+			return map
+		}, new Map())
 	}
 
 	draw = (index: number, tex: Texture, flag?: TextureFeatureFlag) => {

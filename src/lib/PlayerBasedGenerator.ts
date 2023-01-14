@@ -708,6 +708,10 @@ function isBuildingSite(value: number) {
 	)
 }
 
+function isHarbour(value: number) {
+	return (value & 0x40) === 0x40
+}
+
 function isCastleSite(value: number) {
 	return value === ConstructionSite.Castle || value === ConstructionSite.OccupiedCastle
 }
@@ -719,6 +723,7 @@ interface AdjustPlayerLocationOptions {
 export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 	const maxRadius = (Math.min(map.width, map.height) - 4) >>> 1
 
+	const texture1 = map.blocks[BlockType.Texture1]
 	const objectIndex = map.blocks[BlockType.Object1]
 	const objectType = map.blocks[BlockType.Object2]
 	const buildSite = map.blocks[BlockType.BuildSite]
@@ -737,7 +742,7 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 	hq.forEach((item) => {
 		const playerIndex = item.player - 1
 
-		if (isCastleSite(buildSite[item.index])) {
+		if (isCastleSite(buildSite[item.index]) && !isHarbour(texture1[item.index])) {
 			objectType[item.index] = 0x80
 			objectIndex[item.index] = playerIndex
 			return
@@ -749,7 +754,7 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 			const nodes = getNodesAtRadius(item.index, radius, map.width, map.height)
 
 			for (let nodeIndex of nodes) {
-				if (isCastleSite(buildSite[nodeIndex])) {
+				if (isCastleSite(buildSite[nodeIndex]) && !isHarbour(texture1[nodeIndex])) {
 					newIndex = nodeIndex
 					break
 				}
