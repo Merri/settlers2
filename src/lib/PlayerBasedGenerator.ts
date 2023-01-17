@@ -845,12 +845,33 @@ export function addSubterrainResources({
 	for (let i = 0; i < size; i++) {
 		if (blocked.has(i)) continue
 
-		if ((tex1[i] & 0x40) === 0x40 || object2[i] === 0x80) {
-			const nodes = [i]
+		const isHQ = object2[i] === 0x80
+		const isHarbour = (tex1[i] & 0x40) === 0x40
+
+		if (isHarbour || isHQ) {
+			const mainPos = [i]
 				.concat(...getNodesAtRadius(i, 1, map.width, map.height))
 				.concat(...getNodesAtRadius(i, 2, map.width, map.height))
 
-			nodes.forEach((index) => blocked.add(index))
+			mainPos.forEach((index) => blocked.add(index))
+
+			// try to guarantee 5 construction sites free of objects
+			const furtherNodes = Array.from(getNodesAtRadius(i, 3, map.width, map.height))
+				.concat(...getNodesAtRadius(i, 4, map.width, map.height))
+				.concat(...getNodesAtRadius(i, 5, map.width, map.height))
+				.concat(...getNodesAtRadius(i, 6, map.width, map.height))
+				.filter((index) => {
+					const site = buildSite[index] | ConstructionSite.Occupied
+					return site >= ConstructionSite.OccupiedFlag && site <= ConstructionSite.OccupiedCastle
+				})
+				.sort((a, b) => (noiseArray[a] < noiseArray[b] ? -1 : noiseArray[a] > noiseArray[b] ? 1 : 0))
+				.slice(0, 5)
+
+			furtherNodes.forEach((index) => {
+				blocked.add(index)
+				const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+				nodes.forEach((index) => blocked.add(index))
+			})
 		}
 	}
 
