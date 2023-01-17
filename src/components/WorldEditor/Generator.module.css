@@ -32,6 +32,11 @@
 	position: sticky;
 	top: 5rem;
 	float: right;
+	z-index: 2;
+}
+
+.mapView canvas {
+	filter: brightness(1.025) contrast(1.15);
 }
 
 .resourcesList {

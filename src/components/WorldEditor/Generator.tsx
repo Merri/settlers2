@@ -11,7 +11,7 @@ import {
 	updateHeightMapFromNoiseArray,
 	setHeight,
 } from '$/lib/PlayerBasedGenerator'
-import { BlockType, ConstructionSite, RegionType, Texture, TextureSet } from '$/lib/types'
+import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types'
 import { ChangeEventHandler } from 'preact/compat'
 import { useCallback, useEffect, useReducer, useState } from 'preact/hooks'
 import { XORShift } from 'random-seedable'

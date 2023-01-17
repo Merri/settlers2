@@ -1,9 +1,18 @@
 import { XORShift } from 'random-seedable'
 
 import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
-import { allRegularDecoration } from './objects'
+import { allRegularDecoration, C8ObjectType } from './objects'
 import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
-import { BlockType, ConstructionSite, RegionType, ResourceFlag, Texture, TextureFeatureFlag, TextureSet } from './types'
+import {
+	BlockType,
+	ConstructionSite,
+	RegionType,
+	ResourceFlag,
+	SupportedTree,
+	Texture,
+	TextureFeatureFlag,
+	TextureSet,
+} from './types'
 
 interface SeedMapOptions {
 	random: XORShift
@@ -824,12 +833,32 @@ export function addSubterrainResources({
 	map,
 	noiseArray,
 }: AddSubterrainResourcesOptions) {
+	const tex1 = map.blocks[BlockType.Texture1]
+	const object1 = map.blocks[BlockType.Object1]
+	const object2 = map.blocks[BlockType.Object2]
 	const buildSite = map.blocks[BlockType.BuildSite]
 	const resource = map.blocks[BlockType.Resource]
+	const size = map.width * map.height
+
+	const blocked = new Set<number>()
+
+	for (let i = 0; i < size; i++) {
+		if (blocked.has(i)) continue
+
+		if ((tex1[i] & 0x40) === 0x40 || object2[i] === 0x80) {
+			const nodes = [i]
+				.concat(...getNodesAtRadius(i, 1, map.width, map.height))
+				.concat(...getNodesAtRadius(i, 2, map.width, map.height))
+
+			nodes.forEach((index) => blocked.add(index))
+		}
+	}
 
 	resource.fill(0)
 
-	resource.forEach((_, index) => {
+	resource.forEach((value, index) => {
+		if (value !== 0 || blocked.has(index)) return
+
 		if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.IsWater)) {
 			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
 			if (nodes.some((index) => buildSite[index] !== ConstructionSite.Impassable)) {
@@ -837,6 +866,45 @@ export function addSubterrainResources({
 			}
 		} else if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.Arable)) {
 			resource[index] = ResourceFlag.FreshWater
+			/*
+		} else if ((buildSite[index] | ConstructionSite.Occupied) === ConstructionSite.OccupiedMine) {
+			const nodes = [index]
+				.concat(...getNodesAtRadius(index, 1, map.width, map.height))
+				.concat(...getNodesAtRadius(index, 2, map.width, map.height))
+				.filter((index) => !blocked.has(index))
+
+			let coalBelow = 0
+			let goldBelow = 0
+			let graniteBelow = 0
+
+			if (coalRatio === goldRatio && goldRatio === graniteRatio && graniteRatio === ironOreRatio) {
+				graniteBelow = 0.25
+				coalBelow = 0.5
+				goldBelow = 0.75
+			} else {
+				const total = coalRatio + goldRatio + graniteRatio + ironOreRatio
+				graniteBelow = graniteRatio / total
+				coalBelow = coalRatio / total + graniteBelow
+				goldBelow = goldRatio / total + coalBelow
+			}
+
+			const mineral =
+				(noiseArray[index] < graniteBelow && ResourceFlag.Granite) ||
+				(noiseArray[index] < coalBelow && ResourceFlag.Coal) ||
+				(noiseArray[index] < goldBelow && ResourceFlag.Gold) ||
+				ResourceFlag.IronOre
+
+			const random = nodes[Math.floor(nodes.length * noiseArray[index])]
+
+			for (const index of nodes) {
+				if (resource[index] === 0) {
+					resource[index] =
+						mineral |
+						(mineralQuantity === 1 ? 7 : Math.floor(8 * (mineralQuantity + random * (1 - mineralQuantity))))
+				}
+			}
+		}
+		*/
 		} else if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.Rock)) {
 			if (noiseArray[index] < replicateMineral) {
 				const nodes = getNodesAtRadius(index, 1, map.width, map.height)
@@ -891,6 +959,99 @@ export function addSubterrainResources({
 				(mineralQuantity === 1 ? 7 : Math.floor(8 * (mineralQuantity + random * (1 - mineralQuantity))))
 		}
 	})
+
+	const treeSet = (map.terrain === 1 && [
+		SupportedTree.Pine_Spider,
+		SupportedTree.Birch_Marley,
+		SupportedTree.Cherry_Cherry_Fir,
+	]) ||
+		(map.terrain === 2 && [
+			SupportedTree.Pine_Spider,
+			SupportedTree.Birch_Marley,
+			SupportedTree.Oak_Spider_Fir,
+			SupportedTree.Cypress_Spider,
+		]) || [
+			SupportedTree.Pine_Spider,
+			SupportedTree.Birch_Marley,
+			SupportedTree.Oak_Spider_Fir,
+			SupportedTree.Cypress_Spider,
+			SupportedTree.Cherry_Cherry_Fir,
+			SupportedTree.Fir_Marley,
+		]
+
+	const freshWaterObjects = [
+		C8ObjectType.Berries,
+		C8ObjectType.Bush1,
+		C8ObjectType.Bush2,
+		C8ObjectType.Bush3,
+		C8ObjectType.Bush4,
+		C8ObjectType.Flowers,
+		C8ObjectType.Grass1,
+		C8ObjectType.Grass2,
+		C8ObjectType.Mushroom1,
+		C8ObjectType.Mushroom2,
+		C8ObjectType.Mushroom3,
+		C8ObjectType.Pebble1,
+		C8ObjectType.Pebble2,
+		C8ObjectType.Pebble3,
+		C8ObjectType.Shrub1,
+		C8ObjectType.Shrub2,
+		C8ObjectType.Shrub3,
+		C8ObjectType.Shrub4,
+		C8ObjectType.Stone1,
+		C8ObjectType.Stone2,
+		C8ObjectType.Stone3,
+		C8ObjectType.Stone4,
+		C8ObjectType.Stone5,
+	]
+
+	for (let i = 0; i < size; i++) {
+		if (blocked.has(i)) continue
+
+		if (resource[i] > 0) {
+			if (resource[i] === ResourceFlag.FreshWater) {
+				if (noiseArray[i] < 0.25) {
+					map.setTree(
+						i,
+						treeSet[Math.floor(treeSet.length * (noiseArray[i] / 0.25))],
+						(noiseArray[i] / 0.25) * 8
+					)
+				} else if (noiseArray[i] >= 0.75) {
+					object1[i] = freshWaterObjects[Math.floor(freshWaterObjects.length * ((1 - noiseArray[i]) / 0.25))]
+					object2[i] = 0xc8
+				}
+				continue
+			}
+
+			const mineral: ResourceFlag = resource[i] & 0xf8
+
+			switch (mineral) {
+				case ResourceFlag.Granite: {
+					continue
+				}
+
+				case ResourceFlag.Coal:
+				case ResourceFlag.IronOre: {
+					if (noiseArray[i] < 0.25) {
+						map.setTree(
+							i,
+							treeSet[Math.floor(treeSet.length * (noiseArray[i] / 0.25))],
+							(noiseArray[i] / 0.25) * 8
+						)
+					}
+					continue
+				}
+
+				case ResourceFlag.Gold: {
+					if (noiseArray[i] < 0.5) {
+						const quantity = Math.floor((noiseArray[i] / 0.5) * 12)
+						map.setGranite(i, quantity < 6 ? 0 : 1, (quantity % 6) + 2)
+					}
+					continue
+				}
+			}
+		}
+	}
 }
 
 interface CalculateResourceOptions {

@@ -11,6 +11,7 @@ import {
 	ObjectType,
 	ConstructionSite,
 	AnimalType,
+	SupportedTree,
 } from './types'
 
 type MapClassBlocks = Record<BlockType, Uint8Array>
@@ -1308,5 +1309,44 @@ export class MapClass {
 				tex2[nodes.bottom2Right] = tex
 			}
 		}
+	}
+
+	setTree = (index: number, tree: SupportedTree, frame: number = 0) => {
+		const buildSite = this.blocks[BlockType.BuildSite]
+		if (buildSite[index] === ConstructionSite.Impassable) return
+
+		const objIndex = ((tree & 3) << 6) | 0x30 | (frame & 7)
+		const objType = ObjectType.Tree | (tree >> 2)
+		this.blocks[BlockType.Object1][index] = objIndex
+		this.blocks[BlockType.Object2][index] = objType
+
+		buildSite[index] = ConstructionSite.Tree
+		const nodes = getNodesByIndex(index, this.width, this.height)
+		const site = buildSite[nodes.topLeft] | ConstructionSite.Occupied
+		if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
+			buildSite[nodes.topLeft] = ConstructionSite.Flag | (buildSite[nodes.topLeft] & ConstructionSite.Occupied)
+		}
+	}
+
+	setGranite = (index: number, type: 0 | 1, quantity: number = 7) => {
+		if (quantity === 0) return
+
+		const buildSite = this.blocks[BlockType.BuildSite]
+		if (buildSite[index] === ConstructionSite.Impassable) return
+
+		const objIndex = quantity & 7
+		const objType = ObjectType.Granite | (type & 1)
+		this.blocks[BlockType.Object1][index] = objIndex
+		this.blocks[BlockType.Object2][index] = objType
+
+		buildSite[index] = ConstructionSite.Impassable
+
+		const nodes = getNodesAtRadius(index, 1, this.width, this.height)
+		nodes.forEach((index) => {
+			const site = buildSite[index] | ConstructionSite.Occupied
+			if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
+				buildSite[index] = ConstructionSite.OccupiedFlag
+			}
+		})
 	}
 }

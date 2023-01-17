@@ -463,6 +463,30 @@ export const Textures = new Map<number, TextureData>([
 
 type RGBA = [red: number, green: number, blue: number, alpha: number]
 
+/** Names with logic Greenland_Wasteland_Winter, if winter is missing then it is same tree as Greenland */
+export const SupportedTree = {
+	Pine_Spider: 0,
+	Birch_Marley: 1,
+	Oak_Spider_Fir: 2,
+	Palm_Marley: 3,
+	Palm_Spider: 4,
+	/** Pine apple cannot be cut */
+	PineApple: 5,
+	Cypress_Spider: 6,
+	Cherry_Cherry_Fir: 7,
+	Fir_Marley: 8,
+	// Unofficial / unused extension
+	Cherry: 9, // to allow Cherry in winter
+	Spider: 10, // to allow Spider outside wasteland
+	Marley: 11, // to allow Marley outside wasteland
+	WinterPine: 12, // to allow snow pine outside winter
+	WinterBirch: 13, // to allow snow birch outside winter
+	WinterFir: 14, // to allow snow fir outside winter
+	WinterCypress: 15, // to allow snow cypress outside winter
+} as const
+
+export type SupportedTree = typeof SupportedTree[keyof typeof SupportedTree]
+
 interface Tree {
 	/** These are a set of customized colors for "prettier" rendering on minimap. */
 	color: [RGBA, RGBA, RGBA]

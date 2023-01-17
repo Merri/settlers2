@@ -16,6 +16,7 @@ interface DrawOptions {
 	color2: number
 	blockType?: BlockType
 	texture?: SupportedTexture
+	region?: number
 }
 
 function createTexturePaletteIndex(texture: SupportedTexture): Uint8Array {
@@ -36,7 +37,7 @@ function createTexturePaletteIndex(texture: SupportedTexture): Uint8Array {
 	return paletteIndex
 }
 
-function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, texture }: DrawOptions) {
+function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, region, texture }: DrawOptions) {
 	const buffer = canvas.getContext('2d')
 	if (!buffer) throw new Error('Could not get canvas')
 	const imageData = buffer.getImageData(0, 0, world.width, world.height)
@@ -64,6 +65,7 @@ function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, text
 	const t2 = world.blocks[BlockType.Texture2]
 	const o1 = world.blocks[BlockType.Object1]
 	const o2 = world.blocks[BlockType.Object2]
+	const regionMap = world.blocks[BlockType.RegionMap]
 
 	for (let i = 0; i < size; i++) {
 		const nodes = getNodesByIndex(i, world.width, world.height)
@@ -90,7 +92,7 @@ function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, text
 		const i5 = texPalette[t1[tNodes.bottom1] & TextureFlag.ToIdValue]
 		const i6 = texPalette[t2[tNodes.bottom2Right] & TextureFlag.ToIdValue]
 
-		const lightRatio = Math.abs(g - 128) / 224
+		const lightRatio = Math.abs(g - 128) / 384
 		const lightR = lightRatio * (g < 100 ? color1 : color2)
 		const lightG = lightRatio * (g < 128 ? color1 : color2)
 		const lightB = lightRatio * (g < 144 ? color1 : color2)
@@ -148,7 +150,8 @@ function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, text
 		image[i * 4] = red
 		image[i * 4 + 1] = green
 		image[i * 4 + 2] = blue
-		image[i * 4 + 3] = 255
+		image[i * 4 + 3] =
+			region == null || region < 0 || region >= size ? 255 : regionMap[i] === regionMap[region] ? 255 : 63
 	}
 
 	buffer.putImageData(imageData, 0, 0)
