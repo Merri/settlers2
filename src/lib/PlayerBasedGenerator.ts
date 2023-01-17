@@ -862,7 +862,7 @@ export function addSubterrainResources({
 				.concat(...getNodesAtRadius(i, 6, map.width, map.height))
 				.filter((index) => {
 					const site = buildSite[index] | ConstructionSite.Occupied
-					return site >= ConstructionSite.OccupiedFlag && site <= ConstructionSite.OccupiedCastle
+					return site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle
 				})
 				.sort((a, b) => (noiseArray[a] < noiseArray[b] ? -1 : noiseArray[a] > noiseArray[b] ? 1 : 0))
 				.slice(0, 5)
