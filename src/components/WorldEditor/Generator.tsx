@@ -26,7 +26,6 @@ import { NumberInput } from '../MapGenerator/NumberInput'
 import Button from '../Button'
 import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
 import { sanitizeAsCp437 } from '$/lib/cp437'
-import { locateCoastalCastles } from '$/lib/mapRegions'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -124,6 +123,7 @@ interface MapOptions {
 	distance: number
 	invertHeight: boolean
 	mirror: string
+	multiverse: number
 	noise: number
 	offsetX: number
 	offsetY: number
@@ -190,6 +190,7 @@ const emptyOptions: MapOptions = {
 	},
 	height: 192,
 	mirror: '',
+	multiverse: 0,
 	noise: 0.55,
 	offsetX: 0,
 	offsetY: 0,
@@ -319,6 +320,7 @@ export function Generator() {
 			distance,
 			invertHeight,
 			mirror,
+			multiverse,
 			noise,
 			offsetX,
 			offsetY,
@@ -327,6 +329,14 @@ export function Generator() {
 			options.elevationOptions
 		const { coal, gold, granite, ironOre, quantity, replicate } = options.minerals
 		const world = generateEmptyMap({ width, height, random })
+
+		if (multiverse > 0) {
+			const rotate = multiverse / 100000
+			world.noiseArray.forEach((value, index) => {
+				world.noiseArray[index] = (value + rotate) % 1
+			})
+		}
+
 		world.map.terrain = TerrainSets[brush].type
 
 		switch (mirror) {
@@ -568,6 +578,19 @@ export function Generator() {
 						<td>Seed</td>
 						<td>
 							<NumberInput onChange={setSeed} value={seed} />
+						</td>
+					</tr>
+					<tr>
+						<td>Multiverse</td>
+						<td>
+							<IncDec
+								delay={25}
+								onChange={(multiverse) => dispatchOptions({ type: 'options', payload: { multiverse } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={99999}
+								value={options.multiverse}
+							/>
 						</td>
 					</tr>
 					<tr>
