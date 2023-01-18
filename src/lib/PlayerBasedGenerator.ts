@@ -855,17 +855,18 @@ export function addSubterrainResources({
 
 			mainPos.forEach((index) => blocked.add(index))
 
-			// try to guarantee 5 construction sites free of objects
+			// try to guarantee 8 construction sites free of objects
 			const furtherNodes = Array.from(getNodesAtRadius(i, 3, map.width, map.height))
 				.concat(...getNodesAtRadius(i, 4, map.width, map.height))
 				.concat(...getNodesAtRadius(i, 5, map.width, map.height))
 				.concat(...getNodesAtRadius(i, 6, map.width, map.height))
 				.filter((index) => {
+					if (blocked.has(index)) return false
 					const site = buildSite[index] | ConstructionSite.Occupied
 					return site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle
 				})
 				.sort((a, b) => (noiseArray[a] < noiseArray[b] ? -1 : noiseArray[a] > noiseArray[b] ? 1 : 0))
-				.slice(0, 5)
+				.slice(0, 8)
 
 			furtherNodes.forEach((index) => {
 				blocked.add(index)
@@ -1026,17 +1027,53 @@ export function addSubterrainResources({
 		C8ObjectType.Stone5,
 	]
 
+	const treeLikelyhood = 0.0035
+	const graniteLikelyhood = 0.002
+	const treeOnMineLikelyhood = 0.5
+	const graniteOnGoldLikelyhood = 0.75
+
 	for (let i = 0; i < size; i++) {
 		if (blocked.has(i)) continue
 
 		if (resource[i] > 0) {
 			if (resource[i] === ResourceFlag.FreshWater) {
-				if (noiseArray[i] < 0.25) {
-					map.setTree(
-						i,
-						treeSet[Math.floor(treeSet.length * (noiseArray[i] / 0.25))],
-						(noiseArray[i] / 0.25) * 8
-					)
+				if (noiseArray[i] < treeLikelyhood) {
+					const tree = treeSet[Math.floor(treeSet.length * (noiseArray[i] / treeLikelyhood))]
+					map.setTree(i, tree, Math.floor((noiseArray[i] / treeLikelyhood) * 8))
+
+					for (let radius = Math.floor((noiseArray[i] / treeLikelyhood) * 12) + 1; radius > 0; radius--) {
+						const likelyhood = (15 - radius) / 15
+						const nodes = Array.from(getNodesAtRadius(i, radius, map.width, map.height)).filter(
+							(index) =>
+								!blocked.has(index) &&
+								resource[index] === ResourceFlag.FreshWater &&
+								noiseArray[index] < likelyhood
+						)
+						nodes.forEach((index) => {
+							const tree = treeSet[Math.floor(treeSet.length * (noiseArray[index] / likelyhood))]
+							map.setTree(index, tree, Math.floor((noiseArray[index] / likelyhood) * 8))
+						})
+					}
+				} else if (noiseArray[i] - treeLikelyhood < graniteLikelyhood) {
+					map.setGranite(i, 0, 7)
+
+					for (
+						let radius = Math.floor(((noiseArray[i] - treeLikelyhood) / graniteLikelyhood) * 7) + 1;
+						radius > 0;
+						radius--
+					) {
+						const likelyhood = (10 - radius) / 10
+						const nodes = Array.from(getNodesAtRadius(i, radius, map.width, map.height)).filter(
+							(index) =>
+								!blocked.has(index) &&
+								buildSite[index] !== ConstructionSite.Impassable &&
+								noiseArray[index] < likelyhood
+						)
+						nodes.forEach((index) => {
+							const quantity = Math.floor((noiseArray[index] / likelyhood) * 12)
+							map.setGranite(index, quantity < 6 ? 0 : 1, (quantity % 6) + 2)
+						})
+					}
 				} else if (noiseArray[i] >= 0.75) {
 					object1[i] = freshWaterObjects[Math.floor(freshWaterObjects.length * ((1 - noiseArray[i]) / 0.25))]
 					object2[i] = 0xc8
@@ -1053,19 +1090,19 @@ export function addSubterrainResources({
 
 				case ResourceFlag.Coal:
 				case ResourceFlag.IronOre: {
-					if (noiseArray[i] < 0.25) {
+					if (noiseArray[i] < treeOnMineLikelyhood) {
 						map.setTree(
 							i,
-							treeSet[Math.floor(treeSet.length * (noiseArray[i] / 0.25))],
-							(noiseArray[i] / 0.25) * 8
+							treeSet[Math.floor(treeSet.length * (noiseArray[i] / treeOnMineLikelyhood))],
+							(noiseArray[i] / treeOnMineLikelyhood) * 8
 						)
 					}
 					continue
 				}
 
 				case ResourceFlag.Gold: {
-					if (noiseArray[i] < 0.5) {
-						const quantity = Math.floor((noiseArray[i] / 0.5) * 12)
+					if (noiseArray[i] < graniteOnGoldLikelyhood) {
+						const quantity = Math.floor((noiseArray[i] / graniteOnGoldLikelyhood) * 12)
 						map.setGranite(i, quantity < 6 ? 0 : 1, (quantity % 6) + 2)
 					}
 					continue

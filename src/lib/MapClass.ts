@@ -1344,7 +1344,7 @@ export class MapClass {
 		const nodes = getNodesAtRadius(index, 1, this.width, this.height)
 		nodes.forEach((index) => {
 			const site = buildSite[index] | ConstructionSite.Occupied
-			if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
+			if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedMine) {
 				buildSite[index] = ConstructionSite.OccupiedFlag
 			}
 		})
