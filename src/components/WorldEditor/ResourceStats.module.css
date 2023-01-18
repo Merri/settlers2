@@ -1,0 +1,60 @@
+.resourceStats {
+	color: white;
+	display: inline-flex;
+	flex-direction: column;
+	gap: 0.625rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	vertical-align: top;
+	z-index: 1;
+}
+
+.resourceStats + * {
+	display: inline-block;
+	margin: 0 0.25rem;
+	vertical-align: top;
+}
+
+.resourceStats > li {
+	display: block;
+}
+
+.resourceStats > li > img {
+	background: white;
+	box-shadow: 0 0 0 4px var(--rating-color, currentColor);
+	display: block;
+}
+
+img[data-rating='none'] {
+	--rating-color: #931b1b;
+}
+
+img[data-rating='bad'] {
+	--rating-color: #c32323;
+}
+
+img[data-rating='poor'] {
+	--rating-color: #df6363;
+}
+
+img[data-rating='tolerable'] {
+	--rating-color: #db7f2b;
+}
+
+img[data-rating='good'] {
+	--rating-color: #fb9f4b;
+}
+
+img[data-rating='very-good'] {
+	--rating-color: #ffbf33;
+}
+
+img[data-rating='excellent'] {
+	--rating-color: #ffdb17;
+}
+
+img[data-rating='outstanding'] {
+	--rating-color: #cbeb73;
+}

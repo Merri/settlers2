@@ -3,7 +3,6 @@ import {
 	adjustPlayerLocations,
 	assignPlayerPositions,
 	blockadeMapEdges,
-	calculateResources,
 	ElevationBrush,
 	generateEmptyMap,
 	PlayerAssignment,
@@ -26,6 +25,8 @@ import { NumberInput } from '../MapGenerator/NumberInput'
 import Button from '../Button'
 import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
 import { sanitizeAsCp437 } from '$/lib/cp437'
+import { calculateResources } from '$/lib/resources'
+import { ResourceStats } from './ResourceStats'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -449,6 +450,37 @@ export function Generator() {
 
 	return (
 		<div>
+			<p>
+				<label>
+					Seed: <NumberInput onChange={setSeed} value={seed} />
+				</label>
+				&emsp;
+				<label>
+					Multiverse:{' '}
+					<IncDec
+						delay={25}
+						onChange={(multiverse) => dispatchOptions({ type: 'options', payload: { multiverse } })}
+						minimumValue={0}
+						step={1}
+						maximumValue={99999}
+						value={options.multiverse}
+					/>
+				</label>
+				&emsp;
+				<select onChange={handleMirror} name="mirror" value={options.mirror}>
+					<option value="">Mirror: off</option>
+					<option value="imperfect-horizontal">Mirror: imperfect horizontal</option>
+					<option value="imperfect-vertical">Mirror: Imperfect vertical</option>
+				</select>
+				<br />
+				<small>
+					Seed controls all randomness to generate the world. Switching multiverse will adjust to another
+					variation of that same world.
+				</small>
+			</p>
+			<ResourceStats map={world.map} resources={resources} />
+			<MapCanvas showPlayers world={world.map} color1={0} color2={255} texture={options.brush} />
+
 			<div className={styles.mapView}>
 				<dl className={styles.resourcesList}>
 					<div>
@@ -574,35 +606,6 @@ export function Generator() {
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>Seed</td>
-						<td>
-							<NumberInput onChange={setSeed} value={seed} />
-						</td>
-					</tr>
-					<tr>
-						<td>Multiverse</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(multiverse) => dispatchOptions({ type: 'options', payload: { multiverse } })}
-								minimumValue={0}
-								step={1}
-								maximumValue={99999}
-								value={options.multiverse}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Mirror</td>
-						<td>
-							<select onChange={handleMirror} name="mirror" value={options.mirror}>
-								<option value="">Off</option>
-								<option value="imperfect-horizontal">Imperfect horizontal</option>
-								<option value="imperfect-vertical">Imperfect vertical</option>
-							</select>
-						</td>
-					</tr>
 					<tr>
 						<td>Terrain set</td>
 						<td>

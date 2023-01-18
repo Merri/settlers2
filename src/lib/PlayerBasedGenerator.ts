@@ -33,37 +33,6 @@ function generateNoiseArray({ height, random, width }: SeedMapOptions) {
 	return new Float64Array(random.floatArray(width * height))
 }
 
-const TerrainBrush = {
-	greenlandSnow: 'Snow', // Snow
-
-	wastelandStones: 'Stones to lava',
-
-	winterIce: 'Ice to water',
-
-	greenlandDry: 'Dry', // Steppe + Desert (savannah post processing mix)
-	wastelandDry: 'Dry', // Light steppe + Desert (pasture #3 post processing mix)
-
-	greenlandSavannah: 'Savannah', // Steppe
-	wastelandSteppe: 'Steppe', // Dark steppe
-	winterTaiga: 'Taiga to snow', // Taiga/tundra + Taiga + Snow ("mountain meadow")
-
-	greenlandMeadow: 'Meadow',
-	wastelandPasture: 'Pasture',
-	winterTundra: 'Tundra',
-
-	greenlandRocky: 'Rocky',
-	wastelandRocky: 'Rocky',
-	winterRocky: 'Rocky',
-
-	greenlandSwamp: 'Swamp', // Snow + Impassable water
-
-	greenlandLava: 'Lava',
-	wastelandLava: 'Lava',
-	winterLava: 'Lava',
-} as const
-
-type TerrainBrush = typeof TerrainBrush[keyof typeof TerrainBrush]
-
 export interface Position {
 	x: number
 	y: number
@@ -1110,61 +1079,4 @@ export function addSubterrainResources({
 			}
 		}
 	}
-}
-
-interface CalculateResourceOptions {
-	map: MapClass
-}
-
-interface ResourceResult {
-	mineralCoal: number
-	mineralGold: number
-	mineralGranite: number
-	mineralIronOre: number
-	fish: number
-	granite: number
-	tree: number
-}
-
-export function calculateResources({ map }: CalculateResourceOptions) {
-	const resource = map.blocks[BlockType.Resource]
-
-	const result: ResourceResult = {
-		mineralCoal: 0,
-		mineralGold: 0,
-		mineralGranite: 0,
-		mineralIronOre: 0,
-		fish: 0,
-		granite: 0,
-		tree: 0,
-	}
-
-	resource.forEach((value) => {
-		const withoutQuantity: ResourceFlag = value & 0xf8
-
-		switch (withoutQuantity) {
-			case ResourceFlag.Fish: {
-				result.fish += value & 7
-				return
-			}
-			case ResourceFlag.Coal: {
-				result.mineralCoal += value & 7
-				return
-			}
-			case ResourceFlag.Gold: {
-				result.mineralGold += value & 7
-				return
-			}
-			case ResourceFlag.Granite: {
-				result.mineralGranite += value & 7
-				return
-			}
-			case ResourceFlag.IronOre: {
-				result.mineralIronOre += value & 7
-				return
-			}
-		}
-	})
-
-	return result
 }
