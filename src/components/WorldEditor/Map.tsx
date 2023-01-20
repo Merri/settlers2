@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/compat
 import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '$/lib/MapClass'
 
 import styles from './Map.module.css'
-import { BlockType, RegionType, TextureFlag, Trees } from '$/lib/types'
+import { BlockType, ConstructionSite, RegionType, Texture, TextureFlag, Trees } from '$/lib/types'
 import { palettes, texturePaletteIndex } from '$/lib/palette'
 import { Position } from '$/lib/PlayerBasedGenerator'
 import { SupportedTexture } from '$/lib/textures'
@@ -48,12 +48,27 @@ function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, regi
 	const texPalette = texture != null ? createTexturePaletteIndex(texture) : texturePaletteIndex[world.terrain]
 
 	if (blockType != null) {
-		for (let i = 0; i < size; i++) {
-			const index = world.blocks[blockType][i]
-			image[i * 4] = palette[index * paletteSize]
-			image[i * 4 + 1] = palette[index * paletteSize + 1]
-			image[i * 4 + 2] = palette[index * paletteSize + 2]
-			image[i * 4 + 3] = 255
+		if (blockType === BlockType.HeightMap) {
+			for (let i = 0; i < size; i++) {
+				const isImpassable = world.blocks[BlockType.BuildSite][i] === ConstructionSite.Impassable
+				const isSea = isImpassable && (world.blocks[BlockType.Texture1][i] & 0x3f) === Texture.UnbuildableWater
+				const colors = isSea ? 12 : 16
+				const paletteEntry = isImpassable ? (isSea ? 180 : 112) : 208
+
+				const index = Math.floor((Math.min(60, world.blocks[blockType][i]) / 60) * colors) + paletteEntry
+				image[i * 4] = palette[index * paletteSize]
+				image[i * 4 + 1] = palette[index * paletteSize + 1]
+				image[i * 4 + 2] = palette[index * paletteSize + 2]
+				image[i * 4 + 3] = 255
+			}
+		} else {
+			for (let i = 0; i < size; i++) {
+				const index = world.blocks[blockType][i]
+				image[i * 4] = palette[index * paletteSize]
+				image[i * 4 + 1] = palette[index * paletteSize + 1]
+				image[i * 4 + 2] = palette[index * paletteSize + 2]
+				image[i * 4 + 3] = 255
+			}
 		}
 
 		buffer.putImageData(imageData, 0, 0)
@@ -129,7 +144,7 @@ function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, regi
 				const treeIndex = ((o2[i] & 2) << 2) | ((o1[i] & 0xc0) >> 6)
 				const treeRnd = ((o1[i] & 7) + 1) / 7
 				const treeColors = Trees.get(treeIndex)!.color[world.terrain]
-				const treeAlpha = treeColors[3] * treeRnd + 0.2
+				const treeAlpha = Math.min(0.9, treeColors[3] * treeRnd + 0.5)
 				const colorAlpha = 1 - treeAlpha
 				red = Math.floor(red * colorAlpha + treeColors[0] * treeAlpha)
 				green = Math.floor(green * colorAlpha + treeColors[1] * treeAlpha)

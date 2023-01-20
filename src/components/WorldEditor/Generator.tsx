@@ -9,6 +9,9 @@ import {
 	elevationBasedTexturization,
 	updateHeightMapFromNoiseArray,
 	setHeight,
+	isCastleSite,
+	isHarbourSite,
+	isMiningSite,
 } from '$/lib/PlayerBasedGenerator'
 import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types'
 import { ChangeEventHandler } from 'preact/compat'
@@ -27,6 +30,7 @@ import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
 import { sanitizeAsCp437 } from '$/lib/cp437'
 import { calculateResources } from '$/lib/resources'
 import { ResourceStats } from './ResourceStats'
+import { MapClass } from '$/lib/MapClass'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -74,6 +78,11 @@ const defaultWinterWorld: ElevationBrush = {
 	default: Texture.Fertile1,
 	sea: [Texture.UnbuildableWater, Texture.Houseless, Texture.InaccessibleLava],
 	coast: [
+		Texture.Buildable,
+		Texture.Buildable,
+		Texture.Buildable,
+		Texture.Buildable,
+		Texture.Buildable,
 		Texture.Houseless,
 		Texture.Houseless,
 		Texture.Houseless,
@@ -388,6 +397,8 @@ export function Generator() {
 			})
 		}
 
+		world.rawHeightMap = new Uint8Array(world.map.blocks[BlockType.HeightMap])
+
 		elevationBasedTexturization({
 			...world,
 			brush: TerrainBrush[brush],
@@ -440,6 +451,34 @@ export function Generator() {
 
 	const totalSize = rawRegions.reduce((total, { size }) => total + size, 0)
 
+	const heightMapOnly = new MapClass({ width: world.map.width, height: world.map.height })
+	heightMapOnly.blocks[BlockType.Texture1].set(world.map.blocks[BlockType.Texture1])
+	heightMapOnly.blocks[BlockType.Texture2].set(world.map.blocks[BlockType.Texture2])
+	heightMapOnly.blocks[BlockType.HeightMap].set(world.map.blocks[BlockType.HeightMap])
+	heightMapOnly.blocks[BlockType.RegionMap].set(world.map.blocks[BlockType.RegionMap])
+	heightMapOnly.regions = world.map.regions
+	heightMapOnly.updateBuildSiteMap()
+	heightMapOnly.hqX = world.map.hqX
+	heightMapOnly.hqY = world.map.hqY
+	heightMapOnly.playerCount = world.map.playerCount
+
+	const { castleCount, harbourCount, mineCount } = heightMapOnly.blocks[BlockType.BuildSite].reduce(
+		(total, value, index) => {
+			const isCastle = isCastleSite(value)
+			const isHarbour = isHarbourSite(heightMapOnly.blocks[BlockType.Texture1][index])
+			if (isCastle) {
+				if (isHarbour) total.harbourCount++
+				else total.castleCount++
+			} else if (isMiningSite(value)) {
+				total.mineCount++
+			}
+			return total
+		},
+		{ castleCount: 0, harbourCount: 0, mineCount: 0 }
+	)
+
+	heightMapOnly.blocks[BlockType.HeightMap].set(world.rawHeightMap)
+
 	const harbours = world.map.getHarbourMap()
 
 	const regions = rawRegions
@@ -478,137 +517,200 @@ export function Generator() {
 					variation of that same world.
 				</small>
 			</p>
-			<ResourceStats map={world.map} resources={resources} />
-			<MapCanvas showPlayers world={world.map} color1={0} color2={255} texture={options.brush} />
-
-			<div className={styles.mapView}>
-				<dl className={styles.resourcesList}>
-					<div>
-						<dt>
-							<img alt="Coal" src="/assets/res/coal.png" height="24" width="24" />
-						</dt>
-						<dd>{resources.mineralCoal}</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Iron ore" src="/assets/res/iron-ore.png" height="24" width="24" />
-						</dt>
-						<dd>{resources.mineralIronOre}</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Gold" src="/assets/res/gold.png" height="24" width="24" />
-						</dt>
-						<dd>{resources.mineralGold}</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Granite" src="/assets/res/granite.png" height="24" width="24" />
-						</dt>
-						<dd>{resources.mineralGranite}</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Fish" src="/assets/res/fish.png" height="24" width="24" />
-						</dt>
-						<dd>{resources.fish}</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Iron" src="/assets/res/iron.png" height="24" width="24" />
-						</dt>
-						<dd>
-							Estimate:
-							<br />
-							{Math.min(Math.floor(resources.mineralCoal / 4), resources.mineralIronOre)}
-						</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Gold coin" src="/assets/res/gold-coin.png" height="24" width="24" />
-						</dt>
-						<dd>
-							Estimate:
-							<br />
-							{Math.min(Math.floor(resources.mineralCoal / 4), resources.mineralGold)}
-						</dd>
-					</div>
-					<div>
-						<dt>
-							<img alt="Sword" src="/assets/res/sword.png" height="24" width="24" />
-							+
-							<img alt="Shield" src="/assets/res/shield.png" height="24" width="24" />
-						</dt>
-						<dd>
-							Estimate:
-							<br />
-							{Math.min(
-								Math.floor(resources.mineralCoal / 8),
-								Math.floor(Math.min(resources.mineralIronOre / 3))
-							)}
-						</dd>
-					</div>
-				</dl>
-				<MapCanvas showPlayers world={world.map} color1={0} color2={255} texture={options.brush} />
-				<table>
-					<thead>
-						<tr>
-							<th>Land #</th>
-							<th>Size</th>
-							<th>Harbours</th>
-						</tr>
-					</thead>
-					<tbody>
-						{regions.map((region) => (
-							<tr key={region.index}>
-								<td>{region.index}</td>
-								<td>{region.pct.toFixed(2)} %</td>
-								<td>{harbours.get(region.index) || '-'}</td>
-							</tr>
-						))}
-					</tbody>
-					<tfoot>
-						<tr>
-							<td colSpan={3}>
-								<small>And {rawRegions.length - regions.length} inaccessible land regions</small>
-							</td>
-						</tr>
-					</tfoot>
-				</table>
-				<div>
+			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+				<div style="max-width: 52rem">
+					<strong style="font-size:1.5rem">Step 1: Random height map elevations</strong>
+					<p>
+						<label>
+							Width:{' '}
+							<IncDec
+								delay={25}
+								onChange={(width) => dispatchOptions({ type: 'options', payload: { width } })}
+								minimumValue={32}
+								step={2}
+								maximumValue={512}
+								value={options.width}
+							/>
+						</label>
+						&emsp;
+						<label>
+							Height:{' '}
+							<IncDec
+								delay={25}
+								onChange={(height) => dispatchOptions({ type: 'options', payload: { height } })}
+								minimumValue={32}
+								step={2}
+								maximumValue={512}
+								value={options.height}
+							/>
+						</label>
+						<br />
+						<label title="Protected region from hill generation around the map edges">
+							Border:{' '}
+							<IncDec
+								delay={25}
+								onChange={(border) =>
+									dispatchOptions({ type: 'elevationOptions', payload: { border } })
+								}
+								minimumValue={0}
+								step={1}
+								maximumValue={25}
+								value={options.elevationOptions.border}
+							/>
+						</label>
+					</p>
+					<p>
+						<label title="The bigger the value the more extreme the hills become">
+							Hills:{' '}
+							<IncDec
+								delay={25}
+								onChange={(peakBoost) =>
+									dispatchOptions({ type: 'elevationOptions', payload: { peakBoost } })
+								}
+								minimumValue={0}
+								step={1}
+								maximumValue={25}
+								value={options.elevationOptions.peakBoost}
+							/>
+						</label>
+						&emsp;
+						<label title="The biggest the value, the larger a generated hill can effect">
+							Hill size:{' '}
+							<IncDec
+								delay={25}
+								onChange={(peakRadius) =>
+									dispatchOptions({ type: 'elevationOptions', payload: { peakRadius } })
+								}
+								minimumValue={3}
+								step={1}
+								maximumValue={100}
+								value={options.elevationOptions.peakRadius}
+							/>
+						</label>
+						<br />
+						<label title="Higher values brings mountains down">
+							Erosion strength:{' '}
+							<IncDec
+								delay={25}
+								onChange={(heightLimit) =>
+									dispatchOptions({
+										type: 'elevationOptions',
+										payload: { heightLimit: 5 - heightLimit },
+									})
+								}
+								minimumValue={0}
+								step={1}
+								maximumValue={5}
+								value={5 - options.elevationOptions.heightLimit}
+							/>
+						</label>
+					</p>
+					<p>
+						<label title="Random is very random, so smooth it out more before applying erosion">
+							Soften before erosion:{' '}
+							<input
+								type="checkbox"
+								onChange={(event: Event) => {
+									if (event.target instanceof HTMLInputElement) {
+										dispatchOptions({
+											type: 'elevationOptions',
+											payload: { soften: event.target.checked },
+										})
+									}
+								}}
+								checked={options.elevationOptions.soften}
+							/>
+						</label>
+						<br />
+						<label title="Bottom of the sea becomes top of the mountain and vice versa">
+							Invert height map:{' '}
+							<input
+								type="checkbox"
+								onChange={(event: Event) => {
+									if (event.target instanceof HTMLInputElement) {
+										dispatchOptions({
+											type: 'options',
+											payload: { invertHeight: event.target.checked },
+										})
+									}
+								}}
+								checked={options.invertHeight}
+							/>
+						</label>
+						<br />
+						<label title="Removing flatness makes castle building sites less likely">
+							Remove flatness:{' '}
+							<select onChange={handleNoise} value={options.noise}>
+								<option value="0">Keep as-is</option>
+								<option value="0.55">Weak noise</option>
+								<option value="1">Light noise</option>
+								<option value="1.75">Medium noise</option>
+								<option value="2.25">Strong noise</option>
+							</select>
+						</label>
+					</p>
 					<label>
-						Map title:{' '}
-						<input onChange={handleTitle} type="text" name="title" value={title} maxLength={19} />
+						Offset X:{' '}
+						<IncDec
+							delay={25}
+							onChange={(offsetX) => dispatchOptions({ type: 'options', payload: { offsetX } })}
+							minimumValue={-world.map.width}
+							maximumValue={world.map.width}
+							step={1}
+							value={options.offsetX}
+						/>
 					</label>
-					<br />
+					&emsp;
 					<label>
-						Map author:{' '}
-						<input onChange={handleAuthor} type="text" name="author" value={author} maxLength={19} />
+						Offset Y:{' '}
+						<IncDec
+							delay={25}
+							onChange={(offsetY) => dispatchOptions({ type: 'options', payload: { offsetY } })}
+							minimumValue={-world.map.height}
+							maximumValue={world.map.height}
+							step={2}
+							value={options.offsetY}
+						/>
 					</label>
-					<br />
-					<small>
-						Valid characters, see{' '}
-						<a href="https://en.wikipedia.org/wiki/Code_page_437#Character_set" target="_blank">
-							Wikipedia: CP437 (new window)
-						</a>
-					</small>
 				</div>
-				<Button primary onClick={downloadSwd}>
-					Download!
-				</Button>
+				<div>
+					<MapCanvas
+						world={heightMapOnly}
+						color1={0}
+						color2={255}
+						blockType={BlockType.HeightMap}
+						texture={options.brush}
+					/>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Mining spots" src="/design/mine.png" width="24" height="29" />
+						</span>
+						&nbsp;
+						{mineCount} mines
+					</div>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Castle spots" src="/design/castle.png" width="31" height="31" />
+						</span>
+						&nbsp;
+						{castleCount} castles
+					</div>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Harbour spots" src="/design/coastal_castle.png" width="32" height="28" />
+						</span>
+						&nbsp;
+						{harbourCount} harbours
+					</div>
+				</div>
 			</div>
-
-			<table>
-				<thead>
-					<tr>
-						<th>Input</th>
-						<th>Value</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Terrain set</td>
-						<td>
+			<p />
+			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+				<div>
+					<strong style="font-size:1.5rem">Step 2: Elevation based texturization</strong>
+					<p>
+						<label>
+							Terrain set:{' '}
 							<select onChange={handleBrush} name="terrainSet" value={options.brush}>
 								{Array.from(terrainMap.entries()).map(([textureSet, textureGroup]) => (
 									<optgroup label={terrainType[textureSet]} key={textureSet}>
@@ -620,256 +722,94 @@ export function Generator() {
 									</optgroup>
 								))}
 							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>Map width</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(width) => dispatchOptions({ type: 'options', payload: { width } })}
-								minimumValue={32}
-								step={2}
-								maximumValue={512}
-								value={options.width}
+						</label>
+					</p>
+					<label>
+						Sea level:{' '}
+						<IncDec
+							delay={25}
+							onChange={(seaLevel) =>
+								dispatchOptions({ type: 'elevationOptions', payload: { seaLevel } })
+							}
+							minimumValue={0}
+							step={1}
+							maximumValue={75}
+							value={options.elevationOptions.seaLevel}
+						/>
+					</label>
+					<br />
+					<label>
+						Mount level:{' '}
+						<IncDec
+							delay={25}
+							onChange={(mountLevel) =>
+								dispatchOptions({ type: 'elevationOptions', payload: { mountLevel } })
+							}
+							minimumValue={0}
+							step={1}
+							maximumValue={100}
+							value={options.elevationOptions.mountLevel}
+						/>
+					</label>
+					<br />
+					<label>
+						Mount peak level:{' '}
+						<IncDec
+							delay={25}
+							onChange={(snowPeakLevel) =>
+								dispatchOptions({ type: 'elevationOptions', payload: { snowPeakLevel } })
+							}
+							minimumValue={options.elevationOptions.seaLevel + 1}
+							step={1}
+							maximumValue={100}
+							value={options.elevationOptions.snowPeakLevel}
+						/>
+					</label>
+					<p>
+						<label>
+							Allow crossing map edges:{' '}
+							<input
+								type="checkbox"
+								onChange={(event: Event) => {
+									if (event.target instanceof HTMLInputElement) {
+										dispatchOptions({
+											type: 'options',
+											payload: { continuous: event.target.checked },
+										})
+									}
+								}}
+								checked={options.continuous}
 							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Map height</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(height) => dispatchOptions({ type: 'options', payload: { height } })}
-								minimumValue={32}
-								step={2}
-								maximumValue={512}
-								value={options.height}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Booleans</td>
-						<td>
-							<label>
-								<input
-									type="checkbox"
-									onChange={(event: Event) => {
-										if (event.target instanceof HTMLInputElement) {
-											dispatchOptions({
-												type: 'options',
-												payload: { continuous: event.target.checked },
-											})
-										}
-									}}
-									checked={options.continuous}
-								/>{' '}
-								Continuous?
-							</label>
-							<br />
-							<label>
-								<input
-									type="checkbox"
-									onChange={(event: Event) => {
-										if (event.target instanceof HTMLInputElement) {
-											dispatchOptions({
-												type: 'options',
-												payload: { invertHeight: event.target.checked },
-											})
-										}
-									}}
-									checked={options.invertHeight}
-								/>{' '}
-								Invert height map?
-							</label>
-							<br />
-							<label>
-								<input
-									type="checkbox"
-									onChange={(event: Event) => {
-										if (event.target instanceof HTMLInputElement) {
-											dispatchOptions({
-												type: 'elevationOptions',
-												payload: { soften: event.target.checked },
-											})
-										}
-									}}
-									checked={options.elevationOptions.soften}
-								/>{' '}
-								Soften?
-							</label>
-						</td>
-					</tr>
-					{/*
-					<tr>
-						<td>Texturing</td>
-						<td>
-							<label className={styles.radio}>
-								<input type="radio" name="texturing" value="elevation" checked />
-								Elevation based
-							</label>
-							<p className={styles.description}>
-								Randomizes elevation level on each node. Final elevation level determines textures.
-								Players will always be guaranteed to be linked to nearest land mass and to be above sea
-								level. Players may be on various islands or continents.
-							</p>
-							<label className={styles.radio}>
-								<input type="radio" name="texturing" value="player" />
-								Player based (to be implemented)
-							</label>
-							<p className={styles.description}>
-								Player based texturing allows determining rules of ease of approach between players. You
-								may control the terrain type of each player. Players are guaranteed to be connected via
-								land route.
-							</p>
-						</td>
-					</tr>*/}
-					<tr>
-						<td>Elevation free border</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(border) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { border } })
-								}
-								minimumValue={0}
-								step={1}
-								maximumValue={25}
-								value={options.elevationOptions.border}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Peak boost</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(peakBoost) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { peakBoost } })
-								}
-								minimumValue={0}
-								step={1}
-								maximumValue={25}
-								value={options.elevationOptions.peakBoost}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Peak radius</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(peakRadius) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { peakRadius } })
-								}
-								minimumValue={3}
-								step={1}
-								maximumValue={100}
-								value={options.elevationOptions.peakRadius}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Height diff limit</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(heightLimit) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { heightLimit } })
-								}
-								minimumValue={0}
-								step={1}
-								maximumValue={5}
-								value={options.elevationOptions.heightLimit}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Sea level</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(seaLevel) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { seaLevel } })
-								}
-								minimumValue={0}
-								step={1}
-								maximumValue={75}
-								value={options.elevationOptions.seaLevel}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Mount level</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(mountLevel) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { mountLevel } })
-								}
-								minimumValue={0}
-								step={1}
-								maximumValue={100}
-								value={options.elevationOptions.mountLevel}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Mount peak level</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(snowPeakLevel) =>
-									dispatchOptions({ type: 'elevationOptions', payload: { snowPeakLevel } })
-								}
-								minimumValue={options.elevationOptions.seaLevel + 1}
-								step={1}
-								maximumValue={100}
-								value={options.elevationOptions.snowPeakLevel}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Post-processing</td>
-						<td>
-							<select onChange={handleNoise} value={options.noise}>
-								<option value="0">No post-processing</option>
-								<option value="0.55">Weak noise</option>
-								<option value="1">Light noise</option>
-								<option value="1.75">Medium noise</option>
-								<option value="2.25">Strong noise</option>
-							</select>
-							<br />
-							<label>
-								Offset X:
-								<br />
-								<IncDec
-									delay={25}
-									onChange={(offsetX) => dispatchOptions({ type: 'options', payload: { offsetX } })}
-									minimumValue={-world.map.width}
-									maximumValue={world.map.width}
-									step={1}
-									value={options.offsetX}
-								/>
-							</label>
-							<br />
-							<label>
-								Offset Y:
-								<br />
-								<IncDec
-									delay={25}
-									onChange={(offsetY) => dispatchOptions({ type: 'options', payload: { offsetY } })}
-									minimumValue={-world.map.height}
-									maximumValue={world.map.height}
-									step={2}
-									value={options.offsetY}
-								/>
-							</label>
-						</td>
-					</tr>
-					<tr>
-						<td>Player assignment</td>
-						<td>
+						</label>
+						<br />
+						<small>RttR is fine either way, but original The Settlers II may crash when allowed.</small>
+					</p>
+				</div>
+				<div>
+					<MapCanvas world={heightMapOnly} color1={0} color2={255} texture={options.brush} />
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Fish" src="/assets/res/fish.png" height="24" width="24" />
+						</span>
+						&nbsp;
+						{resources.fish} fishes
+					</div>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Fresh water" src="/assets/res/fresh-water.png" height="24" width="24" />
+						</span>
+						&nbsp;
+						{resources.freshWater} well sites
+					</div>
+				</div>
+			</div>
+			<p />
+			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+				<div>
+					<strong style="font-size:1.5rem">Step 3: Player placement</strong>
+					<p>
+						<label>
+							Auto-assignment:{' '}
 							<select onChange={handleAssignment} value={options.assignment}>
 								<optgroup label="One player">
 									<option value={PlayerAssignment.center}>Center</option>
@@ -900,11 +840,16 @@ export function Generator() {
 									<option value={PlayerAssignment.hexCenter7}>Seven players</option>
 								</optgroup>
 							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>Player distance</td>
-						<td>
+						</label>
+						<br />
+						<small>
+							Assigns player position to a hexagon corners. Locations are adjusted to closest available
+							castle size building spot.
+						</small>
+					</p>
+					<p>
+						<label>
+							Distance from map center:{' '}
 							<IncDec
 								delay={25}
 								onChange={(distance) => dispatchOptions({ type: 'options', payload: { distance } })}
@@ -913,22 +858,32 @@ export function Generator() {
 								maximumValue={100}
 								value={options.distance}
 							/>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<table>
-				<thead>
-					<tr>
-						<th>Mineral</th>
-						<th>Ratio</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Coal</td>
-						<td>
+						</label>
+						<br />
+						<small>However middle player is always placed to near the middle of the map.</small>
+					</p>
+				</div>
+				<div>
+					<MapCanvas showPlayers world={heightMapOnly} color1={0} color2={255} texture={options.brush} />
+					<small>
+						{regions.map((region) => (
+							<div key={region.index}>
+								Land #{region.index} ({region.pct.toFixed(2)} %)
+								{harbours.get(region.index) && ` has harbours`}
+							</div>
+						))}
+					</small>
+				</div>
+			</div>
+			<p />
+			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+				<div>
+					<strong style="font-size:1.5rem">Step 4: Resources</strong>
+					<br />
+					<strong>Mining resources</strong>
+					<p>
+						<label>
+							Coal:{' '}
 							<IncDec
 								delay={25}
 								onChange={(coal) => dispatchOptions({ type: 'minerals', payload: { coal } })}
@@ -937,11 +892,10 @@ export function Generator() {
 								maximumValue={100}
 								value={options.minerals.coal}
 							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Iron ore</td>
-						<td>
+						</label>
+						&emsp;
+						<label>
+							Iron ore:{' '}
 							<IncDec
 								delay={25}
 								onChange={(ironOre) => dispatchOptions({ type: 'minerals', payload: { ironOre } })}
@@ -950,24 +904,10 @@ export function Generator() {
 								maximumValue={100}
 								value={options.minerals.ironOre}
 							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Gold</td>
-						<td>
-							<IncDec
-								delay={25}
-								onChange={(gold) => dispatchOptions({ type: 'minerals', payload: { gold } })}
-								minimumValue={0}
-								step={1}
-								maximumValue={100}
-								value={options.minerals.gold}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>Granite</td>
-						<td>
+						</label>
+						<br />
+						<label>
+							Granite:{' '}
 							<IncDec
 								delay={25}
 								onChange={(granite) => dispatchOptions({ type: 'minerals', payload: { granite } })}
@@ -976,15 +916,23 @@ export function Generator() {
 								maximumValue={100}
 								value={options.minerals.granite}
 							/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							Replication likelyhood
-							<br />
-							<small>of same mineral nearby</small>
-						</td>
-						<td>
+						</label>
+						&emsp;
+						<label>
+							Gold:{' '}
+							<IncDec
+								delay={25}
+								onChange={(gold) => dispatchOptions({ type: 'minerals', payload: { gold } })}
+								minimumValue={0}
+								step={1}
+								maximumValue={100}
+								value={options.minerals.gold}
+							/>
+						</label>
+					</p>
+					<p>
+						<label>
+							Mining resource uniformity:{' '}
 							<IncDec
 								delay={25}
 								onChange={(replicate) => dispatchOptions({ type: 'minerals', payload: { replicate } })}
@@ -993,15 +941,13 @@ export function Generator() {
 								maximumValue={100}
 								value={options.minerals.replicate}
 							/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							Mineral quantity
-							<br />
-							<small>smaller value = less likely max quantity</small>
-						</td>
-						<td>
+						</label>
+						<br />
+						<small>Higher value = more likely a mineral repeats continuously</small>
+					</p>
+					<p>
+						<label>
+							Mining resource quantity:{' '}
 							<IncDec
 								delay={25}
 								onChange={(quantity) => dispatchOptions({ type: 'minerals', payload: { quantity } })}
@@ -1010,20 +956,96 @@ export function Generator() {
 								maximumValue={100}
 								value={options.minerals.quantity}
 							/>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+						</label>
+						<br />
+						<small>Smaller value = less full mineral deposits in mountains</small>
+					</p>
+				</div>
+				<div>
+					<MapCanvas world={world.map} color1={0} color2={255} texture={options.brush} />
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Coal" src="/assets/res/coal.png" height="24" width="24" />
+						</span>
+						&nbsp;
+						{resources.mineralCoal} coal
+					</div>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Iron ore" src="/assets/res/iron-ore.png" height="24" width="24" />
+						</span>
+						&nbsp;
+						{resources.mineralIronOre} iron ore
+					</div>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Gold" src="/assets/res/gold.png" height="24" width="24" />
+						</span>
+						&nbsp;
+						{resources.mineralGold} gold
+					</div>
+					<div>
+						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
+							<img alt="Granite" src="/assets/res/granite.png" height="24" width="24" />
+						</span>
+						&nbsp;
+						{resources.mineralGranite} granite
+					</div>
+				</div>
+			</div>
+			<p />
+			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+				<div>
+					<strong style="font-size:1.5rem">Step 5: Complete the map</strong>
+					<p>
+						<label>
+							Map title:
+							<br />
+							<input
+								onChange={handleTitle}
+								type="text"
+								name="title"
+								value={title}
+								maxLength={19}
+								style="font-size:1.25rem"
+							/>
+						</label>
+					</p>
+					<p>
+						<label>
+							Map author:
+							<br />
+							<input
+								onChange={handleAuthor}
+								type="text"
+								name="author"
+								value={author}
+								maxLength={19}
+								style="font-size:1.25rem"
+							/>
+						</label>
+					</p>
+					<p>
+						<small>
+							For complete list of valid characters, see{' '}
+							<a href="https://en.wikipedia.org/wiki/Code_page_437#Character_set" target="_blank">
+								Wikipedia: CP437 (opens a new window)
+							</a>
+							<br />
+							However The Settlers II font supports only a sub-set of these.
+						</small>
+					</p>
+				</div>
+				<div>
+					<MapCanvas world={world.map} color1={0} color2={255} texture={options.brush} showPlayers />
+				</div>
+			</div>
 
-			{/*
-			<small className={styles.bars}>
-				{calculateHeightElevations(world.map.blocks[BlockType.HeightMap]).elevations.map((value, elevation) => (
-					<span key={elevation} title={`Elevation ${elevation} total: ${value}`}>
-						{value}
-					</span>
-				))}
-			</small>
-			*/}
+			<div style="display: flex; justify-content: center; padding: 1rem">
+				<Button primary onClick={downloadSwd}>
+					Download!
+				</Button>
+			</div>
 
 			{validation.length > 0 && (
 				<div>
@@ -1032,11 +1054,7 @@ export function Generator() {
 				</div>
 			)}
 
-			{/*
-			<div>
-				<h4>Regions</h4>
-				<pre>{JSON.stringify(regions, null, '\t')}</pre>
-			</div>*/}
+			<ResourceStats map={world.map} resources={resources} />
 		</div>
 	)
 }

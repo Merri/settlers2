@@ -1,5 +1,6 @@
 import { cp437ToString, stringToCp437 } from './cp437'
 import { getAllMapRegions, locateCoastalCastles } from './mapRegions'
+import { C8ObjectType } from './objects'
 import { TextureBuildFeature } from './textures'
 import {
 	BlockType,
@@ -1348,5 +1349,50 @@ export class MapClass {
 				buildSite[index] = ConstructionSite.OccupiedFlag
 			}
 		})
+	}
+
+	/** Warning: incomplete method. You should re-calculate building sites */
+	setDecorativeObject = (index: number, objectType: C8ObjectType) => {
+		const buildSite = this.blocks[BlockType.BuildSite]
+
+		switch (objectType) {
+			case C8ObjectType.BigStone:
+			case C8ObjectType.ClosedGateway:
+			case C8ObjectType.OpenGateway:
+			case C8ObjectType.Snowman:
+			case C8ObjectType.GFX1:
+			case C8ObjectType.GFX1_clone:
+			case C8ObjectType.GFX1_extra:
+			case C8ObjectType.GFX2:
+			case C8ObjectType.GFX2_extra:
+			case C8ObjectType.GFX3:
+			case C8ObjectType.GFX3_extra:
+			case C8ObjectType.GFX4:
+			case C8ObjectType.GFX4_extra:
+			case C8ObjectType.GFX5:
+			case C8ObjectType.GFX5_extra:
+			case C8ObjectType.GFX6:
+			case C8ObjectType.GFX7:
+			case C8ObjectType.GFX8:
+			case C8ObjectType.GFX9:
+			case C8ObjectType.GFX10: {
+				buildSite[index] = ConstructionSite.Impassable
+
+				const nodes = getNodesByIndex(index, this.width, this.height)
+				const site = buildSite[nodes.topLeft] | ConstructionSite.Occupied
+				if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
+					buildSite[nodes.topLeft] =
+						ConstructionSite.Flag | (buildSite[nodes.topLeft] & ConstructionSite.Occupied)
+				}
+				break
+			}
+
+			// TODO: write a proper construction site logic that works on a per node basis
+			default: {
+			}
+		}
+
+		this.blocks[BlockType.Object1][index] = objectType
+		this.blocks[BlockType.Object2][index] = 0xc8
 	}
 }

@@ -13,6 +13,7 @@ export interface ResourceResult {
 	fish: number
 	granite: number
 	tree: number
+	freshWater: number
 }
 
 export function calculateResources({ map }: CalculateResourceOptions) {
@@ -30,6 +31,7 @@ export function calculateResources({ map }: CalculateResourceOptions) {
 		fish: 0,
 		granite: 0,
 		tree: 0,
+		freshWater: 0,
 	}
 
 	resource.forEach((value, index) => {
@@ -38,6 +40,11 @@ export function calculateResources({ map }: CalculateResourceOptions) {
 
 		if (hasTree) result.tree++
 		if (hasGranite) result.granite += object1[index] & 7
+
+		if (value === ResourceFlag.FreshWater) {
+			result.freshWater++
+			return
+		}
 
 		const withoutQuantity: ResourceFlag = value & 0xf8
 

@@ -41,7 +41,8 @@ export interface Position {
 export function generateEmptyMap({ width, height, random }: SeedMapOptions) {
 	const map = new MapClass({ height, width })
 	const noiseArray = generateNoiseArray({ height, width, random })
-	return { noiseArray, map }
+	const rawHeightMap = new Uint8Array(map.blocks[BlockType.HeightMap])
+	return { noiseArray, map, rawHeightMap }
 }
 
 const MAX_HEIGHT = 57
@@ -555,7 +556,6 @@ export function elevationBasedTexturization({
 
 			const isWater = looksLikeWaterTexture(texture)
 			const isLava = isLavaTexture(texture)
-			const isLavaOrWater = isWater || isLava
 			const useLavaBrush = brush.lavaEdge.length > 0 && isLava
 			const useLowLandBrush = brush.lowLandEdge.length > 0
 
@@ -563,12 +563,6 @@ export function elevationBasedTexturization({
 				const index = queue.shift()!
 				if (isWater) heightMap[index] = seaBelow - 1
 				map.draw(index, texture, TextureFeatureFlag.Useless)
-
-				if (!isLavaOrWater && noiseArray[index] < 0.25) {
-					// TODO: do objects "a bit better"
-					objectIndex[index] = allRegularDecoration[heightMap[index] % allRegularDecoration.length]
-					objectType[index] = 0xc8
-				}
 
 				const around = getNodesAtRadius(index, 1, map.width, map.height)
 
@@ -702,12 +696,16 @@ function isBuildingSite(value: number) {
 	)
 }
 
-function isHarbour(value: number) {
+export function isHarbourSite(value: number) {
 	return (value & 0x40) === 0x40
 }
 
-function isCastleSite(value: number) {
+export function isCastleSite(value: number) {
 	return value === ConstructionSite.Castle || value === ConstructionSite.OccupiedCastle
+}
+
+export function isMiningSite(value: number) {
+	return value === ConstructionSite.Mine || value === ConstructionSite.OccupiedMine
 }
 
 interface AdjustPlayerLocationOptions {
@@ -745,7 +743,7 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 		if (
 			validPlayerRegions.has(regionMap[item.index]) &&
 			isCastleSite(buildSite[item.index]) &&
-			!isHarbour(texture1[item.index])
+			!isHarbourSite(texture1[item.index])
 		) {
 			objectType[item.index] = 0x80
 			objectIndex[item.index] = playerIndex
@@ -761,7 +759,7 @@ export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
 				if (
 					validPlayerRegions.has(regionMap[nodeIndex]) &&
 					isCastleSite(buildSite[nodeIndex]) &&
-					!isHarbour(texture1[nodeIndex])
+					!isHarbourSite(texture1[nodeIndex])
 				) {
 					newIndex = nodeIndex
 					break
@@ -848,7 +846,7 @@ export function addSubterrainResources({
 	resource.fill(0)
 
 	resource.forEach((value, index) => {
-		if (value !== 0 || blocked.has(index)) return
+		if (value !== 0) return
 
 		if (map.isEachTextureWithAnyOfFlags(index, TextureFeatureFlag.IsWater)) {
 			const nodes = getNodesAtRadius(index, 1, map.width, map.height)
@@ -951,12 +949,12 @@ export function addSubterrainResources({
 		}
 	})
 
-	const treeSet = (map.terrain === 1 && [
+	const treeSet = (map.terrain === TextureSet.Wasteland && [
 		SupportedTree.Pine_Spider,
 		SupportedTree.Birch_Marley,
 		SupportedTree.Cherry_Cherry_Fir,
 	]) ||
-		(map.terrain === 2 && [
+		(map.terrain === TextureSet.WinterWorld && [
 			SupportedTree.Pine_Spider,
 			SupportedTree.Birch_Marley,
 			SupportedTree.Oak_Spider_Fir,
@@ -970,7 +968,7 @@ export function addSubterrainResources({
 			SupportedTree.Fir_Marley,
 		]
 
-	const freshWaterObjects = [
+	const freshWaterObjects: C8ObjectType[] = [
 		C8ObjectType.Berries,
 		C8ObjectType.Bush1,
 		C8ObjectType.Bush2,
@@ -995,6 +993,33 @@ export function addSubterrainResources({
 		C8ObjectType.Stone4,
 		C8ObjectType.Stone5,
 	]
+
+	if (map.terrain === TextureSet.WinterWorld) {
+		freshWaterObjects.push(C8ObjectType.Snowman)
+	}
+
+	const roughObjects: C8ObjectType[] = [
+		C8ObjectType.BigStone,
+		C8ObjectType.DeadTreeTrunk,
+		C8ObjectType.DeadTree,
+		C8ObjectType.Bone1,
+		C8ObjectType.Bone2,
+		C8ObjectType.Flowers,
+		C8ObjectType.Grass1,
+		C8ObjectType.Grass2,
+		C8ObjectType.Pebble1,
+		C8ObjectType.Pebble2,
+		C8ObjectType.Pebble3,
+		C8ObjectType.Stone1,
+		C8ObjectType.Stone2,
+		C8ObjectType.Stone3,
+		C8ObjectType.Stone4,
+		C8ObjectType.Stone5,
+	]
+
+	if (map.terrain === TextureSet.Greenland) {
+		roughObjects.push(C8ObjectType.BigCactus, C8ObjectType.MediumCactus)
+	}
 
 	const treeLikelyhood = 0.0035
 	const graniteLikelyhood = 0.002
@@ -1044,8 +1069,8 @@ export function addSubterrainResources({
 						})
 					}
 				} else if (noiseArray[i] >= 0.75) {
-					object1[i] = freshWaterObjects[Math.floor(freshWaterObjects.length * ((1 - noiseArray[i]) / 0.25))]
-					object2[i] = 0xc8
+					const objIndex = Math.floor(freshWaterObjects.length * ((1 - noiseArray[i]) / 0.25))
+					map.setDecorativeObject(i, freshWaterObjects[objIndex])
 				}
 				continue
 			}
@@ -1076,6 +1101,11 @@ export function addSubterrainResources({
 					}
 					continue
 				}
+			}
+		} else if (map.isEachTextureWithAnyOfFlags(i, TextureFeatureFlag.Arid)) {
+			if (noiseArray[i] >= 0.75) {
+				const objIndex = Math.floor(roughObjects.length * ((1 - noiseArray[i]) / 0.25))
+				map.setDecorativeObject(i, roughObjects[objIndex])
 			}
 		}
 	}
