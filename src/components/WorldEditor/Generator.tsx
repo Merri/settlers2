@@ -209,7 +209,7 @@ const emptyOptions: MapOptions = {
 
 export function Generator() {
 	const [title, setTitle] = useState('Generated map')
-	const [author, setAuthor] = useState(`║${new Date().getUTCFullYear()}║settlers2.net`)
+	const [author, setAuthor] = useState(`MapGen@Settlers2Net`)
 
 	const [seed, setSeed] = useState(() => {
 		if (typeof window === 'undefined') return BigInt(1337)
@@ -451,21 +451,28 @@ export function Generator() {
 
 	const totalSize = rawRegions.reduce((total, { size }) => total + size, 0)
 
-	const heightMapOnly = new MapClass({ width: world.map.width, height: world.map.height })
-	heightMapOnly.blocks[BlockType.Texture1].set(world.map.blocks[BlockType.Texture1])
-	heightMapOnly.blocks[BlockType.Texture2].set(world.map.blocks[BlockType.Texture2])
-	heightMapOnly.blocks[BlockType.HeightMap].set(world.map.blocks[BlockType.HeightMap])
-	heightMapOnly.blocks[BlockType.RegionMap].set(world.map.blocks[BlockType.RegionMap])
-	heightMapOnly.regions = world.map.regions
-	heightMapOnly.updateBuildSiteMap()
-	heightMapOnly.hqX = world.map.hqX
-	heightMapOnly.hqY = world.map.hqY
-	heightMapOnly.playerCount = world.map.playerCount
+	/** This lets us know the true number of possible construction sites */
+	const objectlessMap = world.map.getNewMap([
+		BlockType.HeightMap,
+		BlockType.RegionMap,
+		BlockType.Texture1,
+		BlockType.Texture2,
+	])
+	objectlessMap.updateBuildSiteMap()
+	/** This shows what the true depths of the ocean is */
+	const fullElevationMap = objectlessMap.getNewMap([
+		BlockType.HeightMap,
+		BlockType.RegionMap,
+		BlockType.Texture1,
+		BlockType.Texture2,
+		BlockType.BuildSite,
+	])
+	fullElevationMap.blocks[BlockType.HeightMap].set(world.rawHeightMap)
 
-	const { castleCount, harbourCount, mineCount } = heightMapOnly.blocks[BlockType.BuildSite].reduce(
+	const { castleCount, harbourCount, mineCount } = objectlessMap.blocks[BlockType.BuildSite].reduce(
 		(total, value, index) => {
 			const isCastle = isCastleSite(value)
-			const isHarbour = isHarbourSite(heightMapOnly.blocks[BlockType.Texture1][index])
+			const isHarbour = isHarbourSite(objectlessMap.blocks[BlockType.Texture1][index])
 			if (isCastle) {
 				if (isHarbour) total.harbourCount++
 				else total.castleCount++
@@ -477,14 +484,13 @@ export function Generator() {
 		{ castleCount: 0, harbourCount: 0, mineCount: 0 }
 	)
 
-	heightMapOnly.blocks[BlockType.HeightMap].set(world.rawHeightMap)
-
 	const harbours = world.map.getHarbourMap()
 
 	const regions = rawRegions
 		.map((region) => ({ ...region, pct: (region.size / totalSize) * 100 }))
 		.filter((region) => region.pct >= 1 || (harbours.get(region.index) ?? 0 > 0))
 
+	world.map.title = title
 	const validation = validateMapClass(world.map)
 
 	return (
@@ -519,7 +525,12 @@ export function Generator() {
 			</p>
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div style="max-width: 52rem">
-					<strong style="font-size:1.5rem">Step 1: Random height map elevations</strong>
+					<strong style="font-size:1.5rem">Step 1: Choose a height map</strong>
+					<p>
+						A random height map is generated based on the given seed and it's multiverse. Controls below
+						allow you to adjust the shape of the world. Note that water areas are decided in the next step
+						by the sea level control!
+					</p>
 					<p>
 						<label>
 							Width:{' '}
@@ -649,33 +660,35 @@ export function Generator() {
 							</select>
 						</label>
 					</p>
-					<label>
-						Offset X:{' '}
-						<IncDec
-							delay={25}
-							onChange={(offsetX) => dispatchOptions({ type: 'options', payload: { offsetX } })}
-							minimumValue={-world.map.width}
-							maximumValue={world.map.width}
-							step={1}
-							value={options.offsetX}
-						/>
-					</label>
-					&emsp;
-					<label>
-						Offset Y:{' '}
-						<IncDec
-							delay={25}
-							onChange={(offsetY) => dispatchOptions({ type: 'options', payload: { offsetY } })}
-							minimumValue={-world.map.height}
-							maximumValue={world.map.height}
-							step={2}
-							value={options.offsetY}
-						/>
-					</label>
+					<p>
+						<label>
+							Offset X:{' '}
+							<IncDec
+								delay={25}
+								onChange={(offsetX) => dispatchOptions({ type: 'options', payload: { offsetX } })}
+								minimumValue={-world.map.width}
+								maximumValue={world.map.width}
+								step={1}
+								value={options.offsetX}
+							/>
+						</label>
+						&emsp;
+						<label>
+							Offset Y:{' '}
+							<IncDec
+								delay={25}
+								onChange={(offsetY) => dispatchOptions({ type: 'options', payload: { offsetY } })}
+								minimumValue={-world.map.height}
+								maximumValue={world.map.height}
+								step={2}
+								value={options.offsetY}
+							/>
+						</label>
+					</p>
 				</div>
-				<div>
+				<div style="margin-left:1rem">
 					<MapCanvas
-						world={heightMapOnly}
+						world={fullElevationMap}
 						color1={0}
 						color2={255}
 						blockType={BlockType.HeightMap}
@@ -704,10 +717,21 @@ export function Generator() {
 					</div>
 				</div>
 			</div>
-			<p />
+			<p>
+				<small>
+					<em>
+						Future features: import height map from images and other maps. Generate mirrored maps for
+						multiplayer.
+					</em>
+				</small>
+			</p>
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div>
-					<strong style="font-size:1.5rem">Step 2: Elevation based texturization</strong>
+					<strong style="font-size:1.5rem">Step 2: Choose textures</strong>
+					<p>
+						Textures are generated based on height map elevation. You can choose the level of elevation that
+						decides when a particular set of textures are used.
+					</p>
 					<p>
 						<label>
 							Terrain set:{' '}
@@ -785,8 +809,8 @@ export function Generator() {
 						<small>RttR is fine either way, but original The Settlers II may crash when allowed.</small>
 					</p>
 				</div>
-				<div>
-					<MapCanvas world={heightMapOnly} color1={0} color2={255} texture={options.brush} />
+				<div style="margin-left:1rem">
+					<MapCanvas world={fullElevationMap} color1={0} color2={255} texture={options.brush} />
 					<div>
 						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
 							<img alt="Fish" src="/assets/res/fish.png" height="24" width="24" />
@@ -803,10 +827,17 @@ export function Generator() {
 					</div>
 				</div>
 			</div>
-			<p />
+			<p>
+				<small>
+					<em>
+						Future features: allow visual selection of textures to use per elevation level rule. Add option
+						for river generation.
+					</em>
+				</small>
+			</p>
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div>
-					<strong style="font-size:1.5rem">Step 3: Player placement</strong>
+					<strong style="font-size:1.5rem">Step 3: Set player placement</strong>
 					<p>
 						<label>
 							Auto-assignment:{' '}
@@ -863,8 +894,8 @@ export function Generator() {
 						<small>However middle player is always placed to near the middle of the map.</small>
 					</p>
 				</div>
-				<div>
-					<MapCanvas showPlayers world={heightMapOnly} color1={0} color2={255} texture={options.brush} />
+				<div style="margin-left:1rem">
+					<MapCanvas showPlayers world={objectlessMap} color1={0} color2={255} texture={options.brush} />
 					<small>
 						{regions.map((region) => (
 							<div key={region.index}>
@@ -875,12 +906,24 @@ export function Generator() {
 					</small>
 				</div>
 			</div>
-			<p />
+			<p>
+				<small>
+					<em>
+						Future features: allow custom placement of players. Allow adding up to 10 players. Report on
+						player balance level. Check if each player can truly reach other players.
+					</em>
+				</small>
+			</p>
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div>
-					<strong style="font-size:1.5rem">Step 4: Resources</strong>
-					<br />
-					<strong>Mining resources</strong>
+					<strong style="font-size:1.5rem">Step 4: Choose resource levels</strong>
+					<p>
+						Forests and granite deposits are generated so that they do not disturb player starting locations
+						or harbours.
+					</p>
+					<p>
+						<strong>Mining resources</strong>
+					</p>
 					<p>
 						<label>
 							Coal:{' '}
@@ -961,7 +1004,7 @@ export function Generator() {
 						<small>Smaller value = less full mineral deposits in mountains</small>
 					</p>
 				</div>
-				<div>
+				<div style="margin-left:1rem">
 					<MapCanvas world={world.map} color1={0} color2={255} texture={options.brush} />
 					<div>
 						<span style="vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;height:36px;width:36px">
@@ -993,7 +1036,14 @@ export function Generator() {
 					</div>
 				</div>
 			</div>
-			<p />
+			<p>
+				<small>
+					<em>
+						Future features: allow controlling forests and granite deposits. Allow generating player
+						balanced resources (current is random).
+					</em>
+				</small>
+			</p>
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div>
 					<strong style="font-size:1.5rem">Step 5: Complete the map</strong>
@@ -1007,7 +1057,7 @@ export function Generator() {
 								name="title"
 								value={title}
 								maxLength={19}
-								style="font-size:1.25rem"
+								style="font-family:var(--font-mono);font-size:1.25rem"
 							/>
 						</label>
 					</p>
@@ -1021,7 +1071,7 @@ export function Generator() {
 								name="author"
 								value={author}
 								maxLength={19}
-								style="font-size:1.25rem"
+								style="font-family:var(--font-mono);font-size:1.25rem"
 							/>
 						</label>
 					</p>
@@ -1036,7 +1086,7 @@ export function Generator() {
 						</small>
 					</p>
 				</div>
-				<div>
+				<div style="margin-left:1rem">
 					<MapCanvas world={world.map} color1={0} color2={255} texture={options.brush} showPlayers />
 				</div>
 			</div>

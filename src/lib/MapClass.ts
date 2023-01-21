@@ -1395,4 +1395,25 @@ export class MapClass {
 		this.blocks[BlockType.Object1][index] = objectType
 		this.blocks[BlockType.Object2][index] = 0xc8
 	}
+
+	getNewMap = (blocks: BlockType[]) => {
+		const cloneMap = new MapClass({ width: this.width, height: this.height })
+		blocks.forEach((blockType) => {
+			cloneMap.blocks[blockType].set(this.blocks[blockType])
+		})
+
+		if (blocks.includes(BlockType.RegionMap)) {
+			cloneMap.regions = this.regions.slice()
+		}
+
+		cloneMap.hqX = this.hqX.slice()
+		cloneMap.hqY = this.hqY.slice()
+		cloneMap.leader = this.leader.slice()
+		cloneMap.playerCount = this.playerCount
+		cloneMap.terrain = this.terrain
+		cloneMap.title = this.title
+		cloneMap.author = this.author
+
+		return cloneMap
+	}
 }
