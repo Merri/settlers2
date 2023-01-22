@@ -369,6 +369,7 @@ export function Generator() {
 			compatibility,
 			distance,
 			invertHeight,
+			limitToOneLand,
 			mirror,
 			multiverse,
 			noise,
@@ -456,7 +457,7 @@ export function Generator() {
 		world.map.updateBuildSiteMap()
 		world.map.updateRegions()
 
-		adjustPlayerLocations({ map: world.map })
+		adjustPlayerLocations({ limitToOneLand, map: world.map })
 		addSubterrainResources({
 			...world,
 			coalRatio: coal / 100,
@@ -1154,7 +1155,7 @@ export function Generator() {
 					{settings.maxTitle == null && (
 						<p>
 							<label>
-								Enable Campaign save mode:{' '}
+								Save as Campaign map:{' '}
 								<input
 									type="checkbox"
 									onChange={(event: Event) => {

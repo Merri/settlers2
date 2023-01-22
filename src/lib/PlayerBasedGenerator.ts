@@ -710,14 +710,25 @@ export function isMiningSite(value: number) {
 
 interface AdjustPlayerLocationOptions {
 	map: MapClass
+	limitToOneLand?: boolean
 }
 
-export function adjustPlayerLocations({ map }: AdjustPlayerLocationOptions) {
+export function adjustPlayerLocations({ limitToOneLand, map }: AdjustPlayerLocationOptions) {
 	const maxRadius = (Math.min(map.width, map.height) - 4) >>> 1
 
-	const harbours = map.getHarbourMap()
+	const harbours = limitToOneLand ? new Map<number, number>() : map.getHarbourMap()
 	const validPlayerRegions = new Set(
-		harbours.size === 0 ? [map.regions.findIndex((item) => item[0] === RegionType.Land)] : harbours.keys()
+		harbours.size === 0
+			? [
+					map.regions.reduce((index, item, currentIndex) => {
+						const isLand = item[0] === RegionType.Land
+						if (!isLand) return index
+						if (index === -1) return currentIndex
+						if (item[3] > map.regions[index][3]) return currentIndex
+						return index
+					}, -1),
+			  ]
+			: harbours.keys()
 	)
 
 	const texture1 = map.blocks[BlockType.Texture1]
