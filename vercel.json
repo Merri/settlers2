@@ -19,5 +19,12 @@
 				}
 			]
 		}
+	],
+	"redirects": [
+		{
+			"source": "/world-editor/generator",
+			"destination": "https://settlers2.net/map-generator",
+			"permanent": true
+		}
 	]
 }

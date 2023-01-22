@@ -1,10 +1,10 @@
 ---
 import BaseHead from '../../components/BaseHead.astro'
 import BlogHeader from '../../components/BlogHeader.astro'
-import { MapGenerator } from '../../components/MapGenerator'
+import { Generator } from '../../components/WorldEditor/Generator'
 
 const title = 'The Settlers II.net Map Generator'
-const description = 'Generate maps for The Settlers II Gold Edition and Return to the Roots'
+const description = 'Generate maps for The Settlers II Gold Edition or Return to the Roots!'
 const permalink = 'https://settlers2.net/map-generator'
 ---
 
@@ -13,16 +13,30 @@ const permalink = 'https://settlers2.net/map-generator'
 		<BaseHead title={title} description={description} permalink={permalink} />
 		<link rel="stylesheet" href="/blog.css" />
 		<style>
+			.editor {
+				margin: 0 4rem;
+			}
 			.content {
 				padding-bottom: 8rem;
+			}
+			.header {
+				align-items: center;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				white-space: nowrap;
 			}
 		</style>
 	</head>
 	<body>
 		<BlogHeader />
-		<main class="layout" id="main">
+		<main class="editor" id="main">
 			<article class="content">
-				<MapGenerator client:only />
+				<div class="header">
+					<h1>Map Generator</h1>
+					<a href="/map-generator/legacy">Old map generator</a>
+				</div>
+				<Generator client:load />
 			</article>
 		</main>
 		<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>

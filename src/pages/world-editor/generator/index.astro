@@ -1,31 +1,14 @@
 ---
-import BaseHead from '../../../components/BaseHead.astro';
-import BlogHeader from '../../../components/BlogHeader.astro';
-import { Generator } from '../../../components/WorldEditor/Generator';
-
-const title = 'The Settlers II.net World Editor: Generator';
-const description = 'Generator maps for The Settlers II Gold Edition or Return to the Roots';
-const permalink = 'https://settlers2.net/world-editor/generator'
-
 ---
+
+<!DOCTYPE html>
 <html lang="en">
-  	<head>
-    	<BaseHead title={title} description={description} permalink={permalink} />
-		<link rel="stylesheet" href="/blog.css" />
-		<style>
-		.editor { margin: 0 4rem; }
-		.content { padding-bottom: 8rem; }
-		</style>
+	<head>
+		<meta charset="UTF-8" />
+		<title>World Editor: Generator</title>
+		<meta http-equiv="refresh" content="0;url=https://settlers2.net/map-generator" />
 	</head>
 	<body>
-		<BlogHeader />
-		<main class="editor" id="main">
-      		<article class="content">
-				<h1>World Editor: Generator</h1>
-				<Generator client:load />
-			</article>
-		</main>
-		<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-        <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""/></noscript>
+		<p>Moved permanently to <a href="https://settlers2.net/map-generator">/map-generator</a></p>
 	</body>
 </html>
