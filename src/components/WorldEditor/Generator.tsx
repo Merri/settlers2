@@ -124,12 +124,41 @@ function download(filename: string, contents: BlobPart, mimeType = 'application/
 	//requestAnimationFrame(() => URL.revokeObjectURL(url))
 }
 
+const compatibilitySettings = {
+	balanced: {
+		maxTitle: 19,
+		maxAuthor: 19,
+		maxWidth: 256,
+		maxHeight: 256,
+		showCampaignMode: true,
+		continuous: false,
+	},
+	rttr: {
+		maxTitle: 20,
+		maxAuthor: 20,
+		maxWidth: 512,
+		maxHeight: 512,
+		showCampaignMode: false,
+		continuous: true,
+	},
+	s2: {
+		/** Max campaign title length: 24 (greenland), 23 (waste/winter), otherwise 19 */
+		maxTitle: null,
+		maxAuthor: 19,
+		maxWidth: 256,
+		maxHeight: 256,
+		showCampaignMode: true,
+		continuous: false,
+	},
+}
+
 interface MapOptions {
 	width: number
 	height: number
 	assignment: PlayerAssignment
+	limitToOneLand: boolean
 	brush: SupportedTexture
-	continuous: boolean
+	compatibility: 'balanced' | 'rttr' | 's2'
 	distance: number
 	invertHeight: boolean
 	mirror: string
@@ -155,6 +184,7 @@ interface MapOptions {
 		quantity: number
 		replicate: number
 	}
+	WLD: boolean
 }
 
 interface MapOptionsPayload {
@@ -176,8 +206,9 @@ type MapOptionsAction = MapOptionsPayload | MapElevationOptionsPayload | MapMine
 
 const emptyOptions: MapOptions = {
 	assignment: PlayerAssignment.hexCenter7,
+	limitToOneLand: false,
 	brush: 'Greenland',
-	continuous: false,
+	compatibility: 'balanced',
 	distance: 60,
 	invertHeight: false,
 	elevationOptions: {
@@ -205,11 +236,18 @@ const emptyOptions: MapOptions = {
 	offsetX: 0,
 	offsetY: 0,
 	width: 192,
+	WLD: false,
+}
+
+function getCompatibility(value: string | null) {
+	if (value === 'rttr') return 'rttr'
+	if (value === 's2') return 's2'
+	return 'balanced'
 }
 
 export function Generator() {
-	const [title, setTitle] = useState('Generated map')
-	const [author, setAuthor] = useState(`MapGen@Settlers2Net`)
+	const [title, setTitle] = useState('')
+	const [author, setAuthor] = useState('')
 
 	const [seed, setSeed] = useState(() => {
 		if (typeof window === 'undefined') return BigInt(1337)
@@ -224,8 +262,9 @@ export function Generator() {
 
 		const assignment = params.get('assignment') as PlayerAssignment | null
 		const brush = params.get('brush') ?? SupportedTexture.Greenland
-		options.continuous = params.has('continuous')
+		options.compatibility = getCompatibility(params.get('compatibility'))
 		options.invertHeight = params.has('invertHeight')
+		options.WLD = params.has('WLD') && options.compatibility === 's2'
 		const mirror = params.get('mirror')
 		const opts = params.get('options')
 		if (assignment) options.assignment = assignment
@@ -308,11 +347,12 @@ export function Generator() {
 	useEffect(() => {
 		const params = new URLSearchParams()
 		params.set('seed', `${seed}`)
-		const { assignment, brush, continuous, invertHeight, minerals, mirror, ...limitedOptions } = options
+		const { assignment, brush, compatibility, invertHeight, minerals, mirror, WLD, ...limitedOptions } = options
 		params.set('assignment', assignment)
 		if (brush !== SupportedTexture.Greenland) params.set('brush', brush)
-		if (continuous) params.set('continuous', '')
+		if (compatibility !== 'balanced') params.set('compatibility', compatibility)
 		if (invertHeight) params.set('invertHeight', '')
+		if (WLD && compatibility === 's2') params.set('WLD', '')
 		mirror && params.set('mirror', mirror)
 		params.set('minerals', JSON.stringify(minerals))
 		params.set('options', JSON.stringify(limitedOptions))
@@ -326,7 +366,7 @@ export function Generator() {
 			height,
 			assignment,
 			brush,
-			continuous,
+			compatibility,
 			distance,
 			invertHeight,
 			mirror,
@@ -407,7 +447,9 @@ export function Generator() {
 			snowPeakLevel: snowPeakLevel / 100,
 		})
 
-		if (!continuous) {
+		const settings = compatibilitySettings[compatibility]
+
+		if (!settings.continuous) {
 			blockadeMapEdges(world.map)
 		}
 
@@ -433,16 +475,26 @@ export function Generator() {
 	const downloadSwd = useCallback(
 		function downloadSwd(event: Event) {
 			if (!(event.target instanceof HTMLButtonElement)) return
-			world.map.title = title
-			world.map.author = author
+			const format = options.WLD && options.compatibility === 's2' ? 'WLD' : 'SWD'
+			world.map.title = title || `Generated map`
+			world.map.author = author || (options.compatibility === 'rttr' ? 'MapGen@settlers2.net' : '')
 			world.map.updateLightMap()
 			const filename = 'UNTITLED'
-			const buffer = world.map.getFileBuffer({ format: 'SWD' })
-			const name = filename.replace(/(\.WLD|\.DAT|\b)$/i, '.SWD')
+			const buffer = world.map.getFileBuffer({ format })
+			const name = filename.replace(/(\.WLD|\.DAT|\b)$/i, `.${format}`)
 			download(name, buffer)
 		},
-		[world.map, title, author]
+		[world.map, options.compatibility, options.WLD, title, author]
 	)
+
+	const setCompatibility = useCallback((event: Event) => {
+		if (event.target instanceof HTMLInputElement) {
+			dispatchOptions({
+				type: 'options',
+				payload: { compatibility: event.target.value as MapOptions['compatibility'] },
+			})
+		}
+	}, [])
 
 	const rawRegions = world.map.regions
 		.map(([type, _x, _y, size], index) => ({ index, size, type }))
@@ -490,11 +542,58 @@ export function Generator() {
 		.map((region) => ({ ...region, pct: (region.size / totalSize) * 100 }))
 		.filter((region) => region.pct >= 1 || (harbours.get(region.index) ?? 0 > 0))
 
-	world.map.title = title
+	world.map.title = title || 'Generated map'
 	const validation = validateMapClass(world.map)
+
+	const playersOnMultipleContinents = new Set(world.map.getPlayerData().map(({ region }) => region)).size > 1
+	const settings = compatibilitySettings[options.compatibility]
+	const maxTitleLength =
+		settings.maxTitle ?? (options.WLD && options.compatibility === 's2' ? (world.map.terrain === 0 ? 24 : 23) : 19)
 
 	return (
 		<div>
+			<div style="max-width: 50rem;margin:1rem 0">
+				<strong>Game compatibility target</strong>
+				<p style="margin:0.5rem 0">
+					<label>
+						<input
+							type="radio"
+							name="compatibility"
+							value="balanced"
+							onChange={setCompatibility}
+							checked={options.compatibility !== 'rttr' && options.compatibility !== 's2'}
+						/>{' '}
+						Balanced
+					</label>
+					&emsp;
+					<label>
+						<input
+							type="radio"
+							name="compatibility"
+							value="rttr"
+							onChange={setCompatibility}
+							checked={options.compatibility === 'rttr'}
+						/>{' '}
+						Return to the Roots
+					</label>
+					&emsp;
+					<label>
+						<input
+							type="radio"
+							name="compatibility"
+							value="s2"
+							onChange={setCompatibility}
+							checked={options.compatibility === 's2'}
+						/>{' '}
+						The Settlers II
+					</label>
+				</p>
+				<small style="display:inline-block;line-height:1.5">
+					Balanced limits options so that resulting maps will work with both games. RttR allows large maps,
+					you can build through map edges, and supports more decorative objects by default. S2 can support
+					longer map titles than RttR when creating maps optimized for campaigns.
+				</small>
+			</div>
 			<p>
 				<label>
 					Seed: <NumberInput onChange={setSeed} value={seed} />
@@ -539,7 +638,7 @@ export function Generator() {
 								onChange={(width) => dispatchOptions({ type: 'options', payload: { width } })}
 								minimumValue={32}
 								step={2}
-								maximumValue={512}
+								maximumValue={settings.maxWidth}
 								value={options.width}
 							/>
 						</label>
@@ -551,7 +650,7 @@ export function Generator() {
 								onChange={(height) => dispatchOptions({ type: 'options', payload: { height } })}
 								minimumValue={32}
 								step={2}
-								maximumValue={512}
+								maximumValue={settings.maxHeight}
 								value={options.height}
 							/>
 						</label>
@@ -789,25 +888,6 @@ export function Generator() {
 							value={options.elevationOptions.snowPeakLevel}
 						/>
 					</label>
-					<p>
-						<label>
-							Allow crossing map edges:{' '}
-							<input
-								type="checkbox"
-								onChange={(event: Event) => {
-									if (event.target instanceof HTMLInputElement) {
-										dispatchOptions({
-											type: 'options',
-											payload: { continuous: event.target.checked },
-										})
-									}
-								}}
-								checked={options.continuous}
-							/>
-						</label>
-						<br />
-						<small>RttR is fine either way, but original The Settlers II may crash when allowed.</small>
-					</p>
 				</div>
 				<div style="margin-left:1rem">
 					<MapCanvas world={fullElevationMap} color1={0} color2={255} texture={options.brush} />
@@ -838,6 +918,23 @@ export function Generator() {
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div>
 					<strong style="font-size:1.5rem">Step 3: Set player placement</strong>
+					<p>
+						<label>
+							Force everyone to same land area:{' '}
+							<input
+								type="checkbox"
+								onChange={(event: Event) => {
+									if (event.target instanceof HTMLInputElement) {
+										dispatchOptions({
+											type: 'options',
+											payload: { limitToOneLand: event.target.checked },
+										})
+									}
+								}}
+								checked={options.limitToOneLand}
+							/>
+						</label>
+					</p>
 					<p>
 						<label>
 							Auto-assignment:{' '}
@@ -1047,18 +1144,51 @@ export function Generator() {
 			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
 				<div>
 					<strong style="font-size:1.5rem">Step 5: Complete the map</strong>
+					{settings.showCampaignMode && playersOnMultipleContinents && (
+						<p>
+							Ships are required for players to be able to reach each other as they are located on
+							multiple continents. In Return to the Roots this is fine, but in The Settlers II this map
+							only works as a replacement mission for the Roman Campaign.
+						</p>
+					)}
+					{settings.maxTitle == null && (
+						<p>
+							<label>
+								Enable Campaign save mode:{' '}
+								<input
+									type="checkbox"
+									onChange={(event: Event) => {
+										if (event.target instanceof HTMLInputElement) {
+											dispatchOptions({
+												type: 'options',
+												payload: { WLD: event.target.checked },
+											})
+										}
+									}}
+									checked={options.WLD}
+								/>
+							</label>
+							<br />
+							<small>
+								Allows longer map title in The Settlers II, but the map will not work in free play mode.
+								Map works in RttR but the title will cut down to a max of 20 characters.
+							</small>
+						</p>
+					)}
 					<p>
 						<label>
 							Map title:
 							<br />
 							<input
 								onChange={handleTitle}
+								placeholder="Generated map"
 								type="text"
 								name="title"
 								value={title}
-								maxLength={19}
+								maxLength={maxTitleLength}
 								style="font-family:var(--font-mono);font-size:1.25rem"
-							/>
+							/>{' '}
+							({title.length} / {maxTitleLength})
 						</label>
 					</p>
 					<p>
@@ -1067,12 +1197,14 @@ export function Generator() {
 							<br />
 							<input
 								onChange={handleAuthor}
+								placeholder="MapGen@Settlers2Net"
 								type="text"
 								name="author"
 								value={author}
-								maxLength={19}
+								maxLength={settings.maxAuthor}
 								style="font-family:var(--font-mono);font-size:1.25rem"
-							/>
+							/>{' '}
+							({author.length} / {settings.maxAuthor})
 						</label>
 					</p>
 					<p>

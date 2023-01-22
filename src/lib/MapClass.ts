@@ -1213,7 +1213,7 @@ export class MapClass {
 		view.setUint8(10 + maxTitleLength, 0)
 
 		const authorBuffer = new Uint8Array(buffer, 36, 19)
-		authorBuffer.set(stringToCp437(this.author || `Merri║settlers2.net`))
+		authorBuffer.set(stringToCp437(this.author || `MapGen@Settlers2Net`))
 		view.setUint8(55, 0)
 
 		const hqX = new Uint16Array(buffer, 56, 7)
@@ -1415,5 +1415,15 @@ export class MapClass {
 		cloneMap.author = this.author
 
 		return cloneMap
+	}
+
+	getPlayerData = () => {
+		return this.hqX
+			.map((x, index) => ({ player: index + 1, x, y: this.hqY[index] }))
+			.filter((item) => item.x !== 0xffff && item.y !== 0xffff)
+			.map((item) => {
+				const index = item.y * this.width + item.x
+				return { ...item, index, region: this.blocks[BlockType.RegionMap][index] }
+			})
 	}
 }

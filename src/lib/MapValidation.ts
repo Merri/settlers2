@@ -26,17 +26,12 @@ export function validateMapClass(world: MapClass) {
 	) {
 		issues.push(`A player's headquarters is out of bounds`)
 	} else {
-		const hq = world.hqX
-			.map((x, index) => ({ player: index + 1, x, y: world.hqY[index] }))
-			.filter((item) => item.x !== 0xffff && item.y !== 0xffff)
-			.map((item) => ({ ...item, index: item.y * world.width + item.x }))
-
+		const hq = world.getPlayerData()
 		const hqRegions = new Set<number>()
-		const regionMap = world.blocks[BlockType.RegionMap]
 		const buildSite = world.blocks[BlockType.BuildSite]
 
-		hq.forEach(({ index, player }) => {
-			hqRegions.add(regionMap[index])
+		hq.forEach(({ index, player, region }) => {
+			hqRegions.add(region)
 
 			switch (buildSite[index]) {
 				case ConstructionSite.OccupiedHouse:
