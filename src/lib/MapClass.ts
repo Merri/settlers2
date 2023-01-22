@@ -574,10 +574,11 @@ export class MapClass {
 			this.terrain = Math.min(2, view.getUint8(34))
 			this.playerCount = view.getUint8(35)
 			const isGreenland = this.terrain === 0
-			// normal title maximum length is 19, but the game reads bytes until it finds a null character
-			const maxTitleLength = 19 + (isLongTitle ? (isGreenland ? 5 : 4) : 0)
+			// RttR allows for 20 chars
+			// For S2 normal title maximum length is 19, but the game reads bytes until it finds a null character so you can abuse it
+			const maxTitleLength = 20 + (isLongTitle ? (isGreenland ? 4 : 3) : 0)
 			this.title = cp437ToString(new Uint8Array(view.buffer, 10, maxTitleLength))
-			this.author = cp437ToString(new Uint8Array(view.buffer, 36, 19))
+			this.author = cp437ToString(new Uint8Array(view.buffer, 36, 20))
 			this.hqX = Array.from(new Uint16Array(view.buffer, 56, 7))
 			this.hqY = Array.from(new Uint16Array(view.buffer, 70, 7))
 			this.validationFlag = view.getUint8(84)
@@ -1205,16 +1206,16 @@ export class MapClass {
 		view.setUint8(34, this.terrain)
 		view.setUint8(35, this.playerCount)
 
-		// allow title to be 19, 23, or 24 bytes long depending on conditions
-		const maxTitleLength = format === 'WLD' ? 23 + (this.terrain === 0 ? 1 : 0) : 19
+		// allow title to be 20, 23, or 24 bytes long depending on conditions
+		const maxTitleLength = format === 'WLD' ? 23 + (this.terrain === 0 ? 1 : 0) : 20
 		const titleBuffer = new Uint8Array(buffer, 0, 10 + maxTitleLength)
 		titleBuffer.set(stringToCp437(`WORLD_V1.0${this.title || 'Untitled'}`))
 		// ensure NULL character to indicate end of string for the original game
-		view.setUint8(10 + maxTitleLength, 0)
+		// view.setUint8(10 + maxTitleLength, 0)
 
-		const authorBuffer = new Uint8Array(buffer, 36, 19)
+		const authorBuffer = new Uint8Array(buffer, 36, 20)
 		authorBuffer.set(stringToCp437(this.author || `MapGen@Settlers2Net`))
-		view.setUint8(55, 0)
+		// view.setUint8(55, 0)
 
 		const hqX = new Uint16Array(buffer, 56, 7)
 		hqX.set(this.hqX)
