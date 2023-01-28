@@ -50,7 +50,7 @@ Split land regions to multiple specialized sub areas.
 - Wet swampy areas
 - Cold areas
 
-The possibilities depend on 
+The possibilities depend on chosen terrain set.
 
 ### ⬜ Rivers
 
