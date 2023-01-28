@@ -1328,6 +1328,12 @@ export class MapClass {
 		if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
 			buildSite[nodes.topLeft] = ConstructionSite.Flag | (buildSite[nodes.topLeft] & ConstructionSite.Occupied)
 		}
+		[nodes.topRight, nodes.right, nodes.bottomRight, nodes.bottomLeft, nodes.left].forEach(index => {
+			const site = buildSite[index] | ConstructionSite.Occupied
+			if (site > ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
+				buildSite[index] = ConstructionSite.Hut | (buildSite[index] & ConstructionSite.Occupied)
+			}
+		})
 	}
 
 	setGranite = (index: number, type: 0 | 1, quantity: number = 7) => {
