@@ -383,9 +383,9 @@ export function WorldEditor() {
 								Square map rotate
 							</button>
 							<form onSubmit={handleMapSize}>
-								<input type="number" name="width" min={32} max={768} step={16} value={world.width} />{' '}
+								<input type="number" name="width" min={32} max={768} step={2} value={world.width} />{' '}
 								&times;{' '}
-								<input type="number" name="height" min={32} max={768} step={16} value={world.height} />{' '}
+								<input type="number" name="height" min={32} max={768} step={2} value={world.height} />{' '}
 								<label>
 									Align:{' '}
 									<select name="align">
