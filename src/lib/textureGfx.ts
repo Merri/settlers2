@@ -216,7 +216,7 @@ const highRes1: TextureGfx = {
 	renderWidth: 54,
 	renderHeight: 27,
 	type: 'high-res',
-	paletteIndex: 240
+	paletteIndex: 240,
 }
 const highRes2: TextureGfx = {
 	x: 193,
@@ -226,11 +226,29 @@ const highRes2: TextureGfx = {
 	renderWidth: 54,
 	renderHeight: 27,
 	type: 'high-res',
-	paletteIndex: 57
+	paletteIndex: 57,
 }
 // lava + lava + lava
-const lowRes1: TextureGfx = { x: 66, y: 222, height: 33, width: 31, renderWidth: 32, renderHeight: 16, type: 'low-res', paletteIndex: 57 }
-const lowRes2: TextureGfx = { x: 99, y: 222, height: 33, width: 31, renderWidth: 32, renderHeight: 16, type: 'low-res', paletteIndex: 57 }
+const lowRes1: TextureGfx = {
+	x: 66,
+	y: 222,
+	height: 33,
+	width: 31,
+	renderWidth: 32,
+	renderHeight: 16,
+	type: 'low-res',
+	paletteIndex: 57,
+}
+const lowRes2: TextureGfx = {
+	x: 99,
+	y: 222,
+	height: 33,
+	width: 31,
+	renderWidth: 32,
+	renderHeight: 16,
+	type: 'low-res',
+	paletteIndex: 57,
+}
 const lowRes3: TextureGfx = {
 	x: 132,
 	y: 222,
@@ -239,10 +257,12 @@ const lowRes3: TextureGfx = {
 	renderWidth: 32,
 	renderHeight: 16,
 	type: 'low-res',
-	paletteIndex: 57
+	paletteIndex: 57,
 }
 
-export const texturePos: Map<Exclude<Texture, Texture.HouselessAlt>, TextureGfx> = new Map([
+export type TexturePos = Exclude<Texture, Texture.HouselessAlt>
+
+export const texturePos: Map<TexturePos, TextureGfx> = new Map([
 	[Texture.UnbuildableWater, highRes1],
 	[Texture.Houseless, normal2],
 	[Texture.Fertile5, normalD],
@@ -272,8 +292,8 @@ export const texturePos: Map<Exclude<Texture, Texture.HouselessAlt>, TextureGfx>
 type TextureEdge = 'A' | 'B' | 'C' | 'D' | 'E' | null
 
 type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N
-  ? Acc[number]
-  : Enumerate<N, [...Acc, Acc['length']]>
+	? Acc[number]
+	: Enumerate<N, [...Acc, Acc['length']]>
 
 type Range<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>
 
@@ -281,7 +301,10 @@ export type UniqueTextureId = Range<0x00, 0x40>
 
 // TODO: texture priorities, which draw textures over which, which are equal?
 // FIXME: edges need to be validated against s2 & s2edit - ideally every texture against each other one... much boring
-export const TextureData: Record<UniqueTextureId, { gfx: TextureGfx, edge0: TextureEdge, edge1: TextureEdge, edge2: TextureEdge }> = {
+export const TextureData: Record<
+	UniqueTextureId,
+	{ gfx: TextureGfx; edge0: TextureEdge; edge1: TextureEdge; edge2: TextureEdge }
+> = {
 	0x00: { gfx: normal9, edge0: 'D', edge1: 'D', edge2: 'D' },
 	0x01: { gfx: normal5, edge0: 'B', edge1: 'D', edge2: 'B' },
 	0x02: { gfx: normal1, edge0: 'A', edge1: null, edge2: 'E' },
@@ -309,12 +332,12 @@ export const TextureData: Record<UniqueTextureId, { gfx: TextureGfx, edge0: Text
 	0x17: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
 	0x18: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
 	0x19: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x1A: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x1B: { gfx: normal6, edge0: 'A', edge1: null, edge2: 'E' },
-	0x1C: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x1D: { gfx: normal6, edge0: 'A', edge1: null, edge2: 'E' },
-	0x1E: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x1F: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x1a: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x1b: { gfx: normal6, edge0: 'A', edge1: null, edge2: 'E' },
+	0x1c: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x1d: { gfx: normal6, edge0: 'A', edge1: null, edge2: 'E' },
+	0x1e: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x1f: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
 	0x20: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
 	0x21: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
 	// Supported
@@ -327,12 +350,12 @@ export const TextureData: Record<UniqueTextureId, { gfx: TextureGfx, edge0: Text
 	0x27: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
 	0x28: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
 	0x29: { gfx: normal6, edge0: 'A', edge1: null, edge2: 'E' },
-	0x2A: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x2B: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x2C: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x2D: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x2E: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x2F: { gfx: normal5, edge0: 'B', edge1: 'D', edge2: 'B' },
+	0x2a: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x2b: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x2c: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x2d: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x2e: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x2f: { gfx: normal5, edge0: 'B', edge1: 'D', edge2: 'B' },
 	0x30: { gfx: normal6, edge0: 'B', edge1: 'D', edge2: 'B' },
 	0x31: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
 	0x32: { gfx: normal6, edge0: 'A', edge1: null, edge2: 'E' },
@@ -343,12 +366,12 @@ export const TextureData: Record<UniqueTextureId, { gfx: TextureGfx, edge0: Text
 	0x37: { gfx: normal6, edge0: 'B', edge1: 'D', edge2: 'B' },
 	0x38: { gfx: normal6, edge0: 'B', edge1: 'D', edge2: 'B' },
 	0x39: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x3A: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x3B: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x3C: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
-	0x3D: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x3E: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
-	0x3F: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x3a: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x3b: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x3c: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
+	0x3d: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x3e: { gfx: garbageGfx, edge0: null, edge1: null, edge2: null },
+	0x3f: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
 } as const
 
 export type TextureData = typeof TextureData[keyof typeof TextureData]

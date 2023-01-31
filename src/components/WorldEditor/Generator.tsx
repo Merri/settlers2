@@ -30,7 +30,7 @@ import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
 import { sanitizeAsCp437 } from '$/lib/cp437'
 import { calculateResources } from '$/lib/resources'
 import { ResourceStats } from './ResourceStats'
-import { MapClass } from '$/lib/MapClass'
+import { TextureBrushConfig } from './TextureBrushConfig'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -44,7 +44,7 @@ const terrainType = ['Greenland', 'Wasteland', 'Winter World']
 
 const defaultGreenland: ElevationBrush = {
 	default: Texture.Fertile1,
-	sea: [Texture.UnbuildableWater, Texture.UnbuildableLand, Texture.InaccessibleLava],
+	sea: Texture.UnbuildableWater,
 	coast: [Texture.Houseless, Texture.Fertile5],
 	meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile6],
 	mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
@@ -60,7 +60,7 @@ const defaultGreenland: ElevationBrush = {
 
 const defaultWasteland: ElevationBrush = {
 	default: Texture.Buildable,
-	sea: [Texture.UnbuildableWater, Texture.Houseless, Texture.InaccessibleLava],
+	sea: Texture.UnbuildableWater,
 	coast: [Texture.Fertile4, Texture.Fertile5],
 	meadow: [Texture.Fertile3, Texture.Fertile6],
 	mining: [Texture.Mining1, Texture.Mining2, Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
@@ -76,7 +76,7 @@ const defaultWasteland: ElevationBrush = {
 
 const defaultWinterWorld: ElevationBrush = {
 	default: Texture.Fertile1,
-	sea: [Texture.UnbuildableWater, Texture.Houseless, Texture.InaccessibleLava],
+	sea: Texture.UnbuildableWater,
 	coast: [
 		Texture.Buildable,
 		Texture.Buildable,
@@ -849,7 +849,7 @@ export function Generator() {
 						</label>
 					</p>
 					<label>
-						Sea level:{' '}
+						Lowlands level:{' '}
 						<IncDec
 							delay={25}
 							onChange={(seaLevel) =>
@@ -863,7 +863,7 @@ export function Generator() {
 					</label>
 					<br />
 					<label>
-						Mount level:{' '}
+						Hill level:{' '}
 						<IncDec
 							delay={25}
 							onChange={(mountLevel) =>
@@ -877,7 +877,7 @@ export function Generator() {
 					</label>
 					<br />
 					<label>
-						Mount peak level:{' '}
+						Highlands level:{' '}
 						<IncDec
 							delay={25}
 							onChange={(snowPeakLevel) =>
@@ -889,6 +889,7 @@ export function Generator() {
 							value={options.elevationOptions.snowPeakLevel}
 						/>
 					</label>
+					<TextureBrushConfig brush={options.brush} elevationBrush={TerrainBrush[options.brush]} />
 				</div>
 				<div style="margin-left:1rem">
 					<MapCanvas world={fullElevationMap} color1={0} color2={255} texture={options.brush} />

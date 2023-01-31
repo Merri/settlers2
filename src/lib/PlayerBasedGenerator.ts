@@ -1,7 +1,7 @@
 import { XORShift } from 'random-seedable'
 
 import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
-import { allRegularDecoration, C8ObjectType } from './objects'
+import { C8ObjectType } from './objects'
 import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
 import {
 	BlockType,
@@ -240,7 +240,7 @@ export function blockadeMapEdges(map: MapClass) {
 
 export interface ElevationBrush {
 	default: Texture
-	sea: Texture[]
+	sea: Texture
 	coast: Texture[]
 	meadow: Texture[]
 	mining: Texture[]
@@ -488,7 +488,7 @@ interface HeightElevationTextureOptions {
 export function elevationBasedTexturization({
 	brush = {
 		default: Texture.Fertile1,
-		sea: [Texture.UnbuildableWater, Texture.UnbuildableLand, Texture.InaccessibleLava],
+		sea: Texture.UnbuildableWater,
 		coast: [Texture.Houseless, Texture.Fertile5],
 		meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile6],
 		mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
@@ -525,8 +525,6 @@ export function elevationBasedTexturization({
 	const peakAbove = Math.round((maxHeight - minHeight) * snowPeakLevel) + minHeight
 	const painted = new Set<number>()
 
-	const objectIndex = map.blocks[BlockType.Object1]
-	const objectType = map.blocks[BlockType.Object2]
 	const tex1 = map.blocks[BlockType.Texture1]
 	const tex2 = map.blocks[BlockType.Texture2]
 	// The least useful texture: 0x07 is a clone of 0x04
@@ -534,25 +532,13 @@ export function elevationBasedTexturization({
 	tex2.fill(Texture.HouselessAlt)
 
 	heightMap.forEach((value, index) => {
-		if (value < seaBelow && brush.sea.length) {
+		if (value < seaBelow) {
 			if (painted.has(index)) return
 			const queue: number[] = []
 			queue.push(index)
 			painted.add(index)
 
-			let texture = brush.sea[0]
-
-			if (brush.sea.length > 1) {
-				const nodes = getTextureNodesByIndex(index, map.width, map.height)
-				texture =
-					(brush.sea.includes(tex1[nodes.top1Left]) && tex1[nodes.top1Left]) ||
-					(brush.sea.includes(tex1[nodes.top1Right]) && tex1[nodes.top1Right]) ||
-					(brush.sea.includes(tex2[nodes.top2]) && tex2[nodes.top2]) ||
-					(brush.sea.includes(tex2[nodes.bottom2Left]) && tex2[nodes.bottom2Left]) ||
-					(brush.sea.includes(tex2[nodes.bottom2Right]) && tex2[nodes.bottom2Right]) ||
-					(brush.sea.includes(tex1[nodes.bottom1]) && tex1[nodes.bottom1]) ||
-					brush.sea[Math.floor(noiseArray[index] * brush.sea.length)]
-			}
+			const texture = brush.sea
 
 			const isWater = looksLikeWaterTexture(texture)
 			const isLava = isLavaTexture(texture)
@@ -660,6 +646,57 @@ export function elevationBasedTexturization({
 			map.draw(index, brush.meadow[value % brush.meadow.length], TextureFeatureFlag.Useless)
 		}
 	})
+
+	// FIXME: this is in the wrong place at the moment, needs to be abstracted out
+	const mounts: number[][] = []
+	painted.clear()
+
+	heightMap.forEach((value, index) => {
+		if (painted.has(index)) return
+
+		if (value > mountAbove) {
+			const mount: number[] = []
+			let queuePos = 0
+			mount.push(index)
+			painted.add(index)
+
+			while (mount.length > queuePos) {
+				const around = getNodesAtRadius(mount[queuePos], 1, map.width, map.height)
+				queuePos++
+
+				around.forEach((index) => {
+					if (painted.has(index)) return
+					painted.add(index)
+
+					if (heightMap[index] > mountAbove) {
+						mount.push(index)
+					}
+				})
+			}
+
+			mounts.push(mount)
+		}
+	})
+
+	heightMap.forEach((value, index) => {
+		if (value < mountAbove) {
+			heightMap[index] = mountAbove - Math.round((mountAbove - value) / 2.5)
+		}
+	})
+
+	for (let index = 2; index < mounts.length; index += 3) {
+		mounts[index].forEach((index) => {
+			heightMap[index] = Math.min(MAX_HEIGHT, Math.abs(mountAbove - (heightMap[index] - mountAbove)))
+		})
+	}
+
+	const smallest = heightMap.reduce((smallest, current) => Math.min(smallest, current), MAX_HEIGHT)
+
+	if (smallest) {
+		heightMap.forEach((value, index) => {
+			heightMap[index] = value - smallest
+		})
+	}
 
 	// Now we can get rid of the least useful texture
 	tex1.forEach((value, index) => {
