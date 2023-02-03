@@ -1,6 +1,142 @@
 import { getNodesAtRadius, getNodesByIndex, MapClass } from './MapClass'
 import { BlockType, ConstructionSite, Texture, TextureFeatureFlag } from './types'
 
+const NodeDir = {
+	left: 0x01,
+	topLeft: 0x02,
+	topRight: 0x04,
+	right: 0x08,
+	bottomRight: 0x10,
+	bottomLeft: 0x20,
+} as const
+
+type NodeDir = typeof NodeDir[keyof typeof NodeDir]
+
+/**
+ * When filling region these are the next directions that can be checked based on from the direction that this node was expanded to.
+ * In other words: the filling has been optimized to do as little work as possible.
+ */
+const NextFillFlags = {
+	left: NodeDir.left | NodeDir.topLeft | NodeDir.bottomLeft,
+	topLeft: NodeDir.left | NodeDir.topLeft | NodeDir.topRight,
+	topRight: NodeDir.topLeft | NodeDir.topRight | NodeDir.right,
+	right: NodeDir.topRight | NodeDir.right | NodeDir.bottomRight,
+	bottomRight: NodeDir.right | NodeDir.bottomRight | NodeDir.bottomLeft,
+	bottomLeft: NodeDir.bottomRight | NodeDir.bottomLeft | NodeDir.left,
+} as const
+
+type NextFillFlags = typeof NextFillFlags[keyof typeof NextFillFlags]
+
+interface HeightRegion {
+	borders: number[][]
+	isBelow: boolean
+	positions: Set<number>
+	heightRegionId: number
+	posIndex: number
+}
+
+interface GetMapHeightRegionsOptions {
+	seaLevel: number
+	map: MapClass
+}
+
+export function getMapHeightRegions({ map, seaLevel }: GetMapHeightRegionsOptions) {
+	const heightMap = map.blocks[BlockType.HeightMap]
+
+	let minHeight = Number.POSITIVE_INFINITY
+	let maxHeight = Number.NEGATIVE_INFINITY
+
+	heightMap.forEach((value) => {
+		if (value > maxHeight) maxHeight = value
+		if (value < minHeight) minHeight = value
+	})
+
+	const seaBelow = Math.round((maxHeight - minHeight) * seaLevel) + minHeight
+
+	const size = map.width * map.height
+	const indexToRegionId = new Map<number, number>()
+
+	const regions: HeightRegion[] = []
+	let heightRegionId = 0
+
+	for (let i = 0; i < size; i++) {
+		if (indexToRegionId.has(i)) continue
+
+		const isBelow = heightMap[i] < seaBelow
+
+		indexToRegionId.set(i, heightRegionId)
+		regions.unshift({ borders: [], isBelow, positions: new Set([i]), heightRegionId, posIndex: i })
+
+		// nodeFlags tells which of six directions is possible to check
+		const stack = [{ index: i, nodeFlags: 0x3f }]
+		const edges = new Set<number>()
+
+		while (stack.length) {
+			const item = stack.shift()!
+			const nodes = getNodesByIndex(item.index, map.width, map.height)
+
+			Object.entries(nodes).forEach(([key, index]) => {
+				const direction = key as keyof typeof nodes
+				const nodeFlag = NodeDir[direction]
+
+				if (heightMap[index] < seaBelow === isBelow) {
+					if ((item.nodeFlags & nodeFlag) === nodeFlag && !indexToRegionId.has(index)) {
+						indexToRegionId.set(index, heightRegionId)
+						regions[0].positions.add(index)
+						stack.push({ index, nodeFlags: NextFillFlags[direction] })
+					}
+				} else {
+					edges.add(index)
+				}
+			})
+		}
+
+		for (
+			let edgeStack = Array.from(edges);
+			edgeStack.length;
+			edgeStack = edgeStack.filter((index) => edges.has(index))
+		) {
+			const startIndex = edgeStack.shift()!
+			edges.delete(startIndex)
+			const border = [startIndex]
+			const nodes = getNodesAtRadius(startIndex, 1, map.width, map.height).filter((index) => edges.has(index))
+
+			if (nodes.length) {
+				let [index, ...delayed] = nodes
+				edges.delete(index)
+
+				while (true) {
+					const nodes = getNodesAtRadius(index, 1, map.width, map.height).filter((index) => edges.has(index))
+					if (nodes.length) {
+						if (nodes.length > 1) delayed.push(...nodes.slice(1))
+						index = nodes[0]
+						edges.delete(index)
+						border.push(index)
+					} else if (delayed.length) {
+						delayed = delayed.filter((index) => edges.has(index))
+						if (delayed.length === 0) break
+						index = delayed.shift()!
+						edges.delete(index)
+						border.push(index)
+					} else {
+						break
+					}
+				}
+			}
+
+			regions[0].borders.push(border)
+		}
+
+		regions[0].borders.sort((a, b) => b.length - a.length)
+
+		heightRegionId++
+	}
+
+	return regions.sort(
+		(a, b) => b.positions.size - a.positions.size || b.borders.length - a.borders.length || a.posIndex - b.posIndex
+	)
+}
+
 interface Region {
 	type: 'water' | 'ground'
 	positions: Set<number>

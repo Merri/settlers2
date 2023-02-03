@@ -318,7 +318,7 @@ export function getNodesByIndex(index: number, width: number, height: number) {
 				topRight: yT + xR,
 				bottomLeft: yB + x,
 				bottomRight: yB + xR,
-		  }
+		  } as const
 		: {
 				left: y + xL,
 				right: y + xR,
@@ -326,7 +326,7 @@ export function getNodesByIndex(index: number, width: number, height: number) {
 				topRight: yT + x,
 				bottomLeft: yB + xL,
 				bottomRight: yB + x,
-		  }
+		  } as const
 }
 
 export function getNodesAtRadius(index: number, radius: number, width: number, height: number) {

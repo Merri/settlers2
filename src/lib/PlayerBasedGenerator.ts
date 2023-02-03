@@ -1,6 +1,7 @@
 import { XORShift } from 'random-seedable'
 
 import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
+import { getMapHeightRegions } from './mapRegions'
 import { C8ObjectType } from './objects'
 import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
 import {
@@ -531,6 +532,10 @@ export function elevationBasedTexturization({
 	tex1.fill(Texture.HouselessAlt)
 	tex2.fill(Texture.HouselessAlt)
 
+	const grounds = getMapHeightRegions({ map, seaLevel }).filter(
+		(item) => item.isBelow === false && item.positions.size >= 48
+	)
+
 	heightMap.forEach((value, index) => {
 		if (value < seaBelow) {
 			if (painted.has(index)) return
@@ -557,13 +562,13 @@ export function elevationBasedTexturization({
 					painted.add(index)
 					if (heightMap[index] < seaBelow) {
 						queue.push(index)
-					} else if (isWater) {
+					} /* else if (isWater) {
 						map.draw(index, brush.coast[Math.floor(noiseArray[index] * brush.coast.length)])
 					} else if (useLavaBrush) {
 						map.draw(index, brush.lavaEdge[Math.floor(noiseArray[index] * brush.lavaEdge.length)])
 					} else if (useLowLandBrush) {
 						map.draw(index, brush.lowLandEdge[Math.floor(noiseArray[index] * brush.lowLandEdge.length)])
-					}
+					}*/
 				})
 			}
 		} else if (value > peakAbove && brush.peak.length) {
@@ -647,6 +652,133 @@ export function elevationBasedTexturization({
 		}
 	})
 
+	const mountTopTexture =
+		(map.terrain === TextureSet.Greenland && Texture.Inaccessible) ||
+		(map.terrain === TextureSet.WinterWorld && Texture.Buildable) ||
+		Texture.Fertile1
+
+	const mountEndTexture =
+		(map.terrain === TextureSet.Greenland && Texture.Buildable) ||
+		(map.terrain === TextureSet.Wasteland && Texture.Buildable) ||
+		(map.terrain === TextureSet.WinterWorld && Texture.Houseless) ||
+		Texture.Buildable
+
+	const coasts = grounds.reduce<number[][]>((coasts, ground) => {
+		return coasts.concat(ground.borders.filter((array) => array.length > 8))
+	}, [])
+
+	coasts.forEach((coastBorder) => {
+		const allCoast = coastBorder.slice(0)
+
+		while (allCoast.length) {
+			const sizeRnd = noiseArray[allCoast.at(0) ?? 0]
+			let coastSize = Math.min(32 * sizeRnd + 8, allCoast.length)
+
+			const coast = allCoast.splice(0, coastSize)
+			const coastRnd = noiseArray[coast.at(1) ?? 0]
+
+			const pick = Math.floor(coastRnd * 24)
+
+			switch (pick) {
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7: {
+					brush.coast.forEach((texture, index) => {
+						const radius = index + 1
+						coast.forEach((index) => {
+							const nodes = getNodesAtRadius(index, radius, map.width, map.height)
+							nodes.forEach((index) =>
+								map.draw(index, texture, TextureFeatureFlag.Useless | TextureFeatureFlag.IsMeadow)
+							)
+						})
+					})
+					break
+				}
+
+				case 8:
+				case 9: {
+					coast.forEach((index) => {
+						heightMap[index] = Math.min(heightMap[index] + 5, MAX_HEIGHT)
+
+						const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+						nodes.forEach((index) => {
+							heightMap[index] = Math.min(heightMap[index] + 3, MAX_HEIGHT)
+							map.draw(index, Texture.Mining1)
+						})
+
+						const waterNodes = getNodesAtRadius(index, 3, map.width, map.height)
+						waterNodes.forEach((index) => {
+							heightMap[index] = Math.min(heightMap[index] + 1, MAX_HEIGHT)
+							map.draw(index, mountEndTexture, TextureFeatureFlag.IsWater)
+						})
+					})
+					break
+				}
+
+				case 10: {
+					coast.forEach((index) => {
+						heightMap[index] = Math.min(heightMap[index] + 4, MAX_HEIGHT)
+
+						const nodes = getNodesAtRadius(index, 1, map.width, map.height)
+						nodes.forEach((index) => {
+							heightMap[index] = Math.min(heightMap[index] + 3, MAX_HEIGHT)
+							map.draw(index, mountTopTexture)
+						})
+
+						const n1 = getNodesAtRadius(index, 3, map.width, map.height)
+						n1.forEach((index) => {
+							heightMap[index] = Math.min(heightMap[index] + 2, MAX_HEIGHT)
+							map.draw(
+								index,
+								Texture.Mining2,
+								TextureFeatureFlag.IsWater | TextureFeatureFlag.Useless | TextureFeatureFlag.Arid
+							)
+						})
+
+						const n2 = getNodesAtRadius(index, 4, map.width, map.height)
+						n2.forEach((index) => {
+							heightMap[index] = Math.min(heightMap[index] + 1, MAX_HEIGHT)
+							map.draw(
+								index,
+								Texture.Mining3,
+								TextureFeatureFlag.IsWater | TextureFeatureFlag.Useless | TextureFeatureFlag.Arid
+							)
+						})
+
+						const n3 = getNodesAtRadius(index, 6, map.width, map.height)
+						n3.forEach((index) => {
+							heightMap[index] = Math.min(heightMap[index] + 1, MAX_HEIGHT)
+							map.draw(
+								index,
+								Texture.Mining4,
+								TextureFeatureFlag.IsWater | TextureFeatureFlag.Useless | TextureFeatureFlag.Arid
+							)
+						})
+
+						const n4 = getNodesAtRadius(index, 7, map.width, map.height)
+						n4.forEach((index) => {
+							map.draw(
+								index,
+								mountEndTexture,
+								TextureFeatureFlag.IsWater | TextureFeatureFlag.Useless | TextureFeatureFlag.Arid
+							)
+						})
+					})
+					break
+				}
+
+				default: {
+					// do nothing
+				}
+			}
+		}
+	})
+
 	// FIXME: this is in the wrong place at the moment, needs to be abstracted out
 	const mounts: number[][] = []
 	painted.clear()
@@ -707,16 +839,17 @@ export function elevationBasedTexturization({
 
 		if (map.terrain === TextureSet.WinterWorld) {
 			if (value === Texture.Inaccessible) {
-				if (heightMap[index] & 1) tex1[index] = Texture.UnbuildableWater
-				else tex1[index] = Texture.Houseless
+				tex1[index] = Texture.UnbuildableWater
 			} else if (value === Texture.UnbuildableLand) {
 				if (noiseArray[index] < 0.25) tex1[index] = Texture.UnbuildableWater
-				else if (noiseArray[index] < 0.5) tex1[index] = Texture.Houseless
+				else if (noiseArray[index] < 0.75) tex1[index] = Texture.Houseless
 			}
 
-			if (tex2[index] === Texture.Inaccessible || tex2[index] === Texture.UnbuildableLand) {
-				if ((heightMap[index] & 3) === 0) tex2[index] = Texture.UnbuildableWater
-				else if ((heightMap[index] & 3) === 2) tex2[index] = Texture.Houseless
+			if (tex2[index] === Texture.Inaccessible) {
+				if (noiseArray[index] >= 0.125) tex2[index] = Texture.UnbuildableWater
+			} else if (tex2[index] === Texture.UnbuildableLand) {
+				if (noiseArray[index] >= 0.75) tex2[index] = Texture.UnbuildableWater
+				else if (noiseArray[index] >= 0.5) tex2[index] = Texture.Houseless
 			}
 		}
 	})
@@ -1069,10 +1202,10 @@ export function addSubterrainResources({
 		roughObjects.push(C8ObjectType.BigCactus, C8ObjectType.MediumCactus)
 	}
 
-	const treeLikelyhood = 0.0035
-	const graniteLikelyhood = 0.002
-	const treeOnMineLikelyhood = 0.5
-	const graniteOnGoldLikelyhood = 0.75
+	const treeLikelyhood = 0.007
+	const graniteLikelyhood = 0.005
+	const treeOnMineLikelyhood = 0.333
+	const graniteOnGoldLikelyhood = 0.666
 
 	for (let i = 0; i < size; i++) {
 		if (blocked.has(i)) continue
@@ -1083,7 +1216,7 @@ export function addSubterrainResources({
 					const tree = treeSet[Math.floor(treeSet.length * (noiseArray[i] / treeLikelyhood))]
 					map.setTree(i, tree, Math.floor((noiseArray[i] / treeLikelyhood) * 8))
 
-					for (let radius = Math.floor((noiseArray[i] / treeLikelyhood) * 12) + 1; radius > 0; radius--) {
+					for (let radius = Math.floor((noiseArray[i] / treeLikelyhood) * 7) + 1; radius > 0; radius--) {
 						const likelyhood = (15 - radius) / 15
 						const nodes = Array.from(getNodesAtRadius(i, radius, map.width, map.height)).filter(
 							(index) =>
@@ -1100,7 +1233,7 @@ export function addSubterrainResources({
 					map.setGranite(i, 0, 7)
 
 					for (
-						let radius = Math.floor(((noiseArray[i] - treeLikelyhood) / graniteLikelyhood) * 7) + 1;
+						let radius = Math.floor(((noiseArray[i] - treeLikelyhood) / graniteLikelyhood) * 4) + 1;
 						radius > 0;
 						radius--
 					) {
