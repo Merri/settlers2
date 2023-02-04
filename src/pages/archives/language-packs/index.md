@@ -40,5 +40,8 @@ To make things easier there is a TextEditor tool made by The Settlers II.5 Retur
 
 The tool itself requires launching a command prompt, but I've made things a little bit easier and have made a ready-to-go package to get you started. It includes two executable batch files: `eng_to_xml.bat` and `xml_to_eng.bat`. You only launch a batch file and all the files are converted. The file also includes both English XML & ENG files, so it is very easy to get started!
 
-1. Download #1: [TextEditor](/downloads/tools/TextEditor.zip "TextEditor")
-2. Download #2: [Ingame Strings Editor](/downloads/tools/instr212_2009-05-24.zip)
+Download [TextEditor](/downloads/tools/TextEditor.zip "TextEditor")
+
+#### 2023 update!
+
+[Online text editor](https://codesandbox-astro-solidjs-playground.vercel.app/settlers2Text) is a tool I wrote around April 2022. It provides a more convenient translation experience by keeping original text visible on the right so you can compare as you go. It also should be able to read fan-made files, even some which report incorrect number of items.
