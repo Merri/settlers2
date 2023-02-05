@@ -77,13 +77,7 @@ const defaultWasteland: ElevationBrush = {
 const defaultWinterWorld: ElevationBrush = {
 	default: Texture.Fertile1,
 	sea: Texture.UnbuildableWater,
-	coast: [
-		Texture.Inaccessible,
-		Texture.UnbuildableLand,
-		Texture.Houseless,
-		Texture.Houseless,
-		Texture.Houseless,
-	],
+	coast: [Texture.Inaccessible, Texture.UnbuildableLand, Texture.Houseless, Texture.Houseless, Texture.Houseless],
 	meadow: [Texture.Fertile2, Texture.Fertile3, Texture.Fertile4, Texture.Fertile5],
 	mining: [Texture.Mining1, Texture.Mining2, Texture.Mining3, Texture.Mining4],
 	peak: [Texture.Buildable, Texture.FertileMining],
@@ -260,15 +254,22 @@ export function Generator() {
 		options.WLD = params.has('WLD') && options.compatibility === 's2'
 		const mirror = params.get('mirror')
 		const opts = params.get('options')
+		const mnrls = params.get('minerals')
 		if (assignment) options.assignment = assignment
 		if (brush && brush in TerrainBrush) options.brush = brush as SupportedTexture
 		if (mirror) options.mirror = mirror
 
 		if (opts) {
 			try {
-				const { elevationOptions = {}, minerals = {}, ...rest } = JSON.parse(opts)
+				const { elevationOptions = {}, ...rest } = JSON.parse(opts)
 				Object.assign(options, rest)
 				options.elevationOptions = { ...options.elevationOptions, ...elevationOptions }
+			} catch (e) {}
+		}
+
+		if (mnrls) {
+			try {
+				const minerals = JSON.parse(mnrls)
 				options.minerals = { ...options.minerals, ...minerals }
 			} catch (e) {}
 		}
