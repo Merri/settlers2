@@ -5,6 +5,87 @@ layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 253
 ---
 
+<style>
+.terrains td:nth-child(2) img {
+	background: url('/assets/docs/terrain0.png') no-repeat;
+}
+.terrains td:nth-child(3) img {
+	background: url('/assets/docs/terrain1.png') no-repeat;
+}
+.terrains td:nth-child(4) img {
+	background: url('/assets/docs/terrain2.png') no-repeat;
+}
+.terrains tr:nth-child(2) img {
+	background-position: 0 -3rem;
+}
+.terrains tr:nth-child(3) img {
+	background-position: 0 -6rem;
+}
+.terrains tr:nth-child(4) img {
+	background-position: 0 -9rem;
+}
+.terrains tr:nth-child(5) img {
+	background-position: 0 -12rem;
+}
+.terrains tr:nth-child(6) img {
+	background-position: 0 -15rem;
+}
+.terrains tr:nth-child(7) img {
+	background-position: 0 -18rem;
+}
+.terrains tr:nth-child(8) img {
+	background-position: 0 -21rem;
+}
+.terrains tr:nth-child(9) img {
+	background-position: 0 -24rem;
+}
+.terrains tr:nth-child(10) img {
+	background-position: 0 -27rem;
+}
+.terrains tr:nth-child(11) img {
+	background-position: 0 -30rem;
+}
+.terrains tr:nth-child(12) img {
+	background-position: 0 -33rem;
+}
+.terrains tr:nth-child(13) img {
+	background-position: 0 -36rem;
+}
+.terrains tr:nth-child(14) img {
+	background-position: 0 -39rem;
+}
+.terrains tr:nth-child(15) img {
+	background-position: 0 -42rem;
+}
+.terrains tr:nth-child(16) img {
+	background-position: 0 -45rem;
+}
+.terrains tr:nth-child(17) img {
+	background-position: 0 -48rem;
+}
+.terrains tr:nth-child(18) img {
+	background-position: 0 -51rem;
+}
+.terrains tr:nth-child(19) img {
+	background-position: 0 -54rem;
+}
+.terrains tr:nth-child(20) img {
+	background-position: 0 -57rem;
+}
+.terrains tr:nth-child(21) img {
+	background-position: 0 -51rem;
+}
+.terrains tr:nth-child(22) img {
+	background-position: 0 -51rem;
+}
+.terrains tr:nth-child(23) img {
+	background-position: 0 -51rem;
+}
+.terrains tr:nth-child(24) img {
+	background-position: 0 -33rem;
+}
+</style>
+
 The documentation is still incomplete. If you know more or find incorrect information why not [contribute changes via GitHub](https://github.com/Merri/settlers2)?
 
 Total header size for WLD/SWD files is 2352 bytes. Total header size for `WORLD###.DAT` files is 14 bytes or 18 bytes.
