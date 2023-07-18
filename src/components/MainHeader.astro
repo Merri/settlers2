@@ -50,7 +50,7 @@ import Icon from '$/components/Icon.astro'
 	</nav>
 </header>
 <style>
-	:where(nav > ul[role='list']) {
+	nav > ul[role='list'] {
 		--icon-shade-color: color-mix(in lch, var(--color-yellow), transparent 50%);
 		align-items: center;
 		display: flex;
@@ -156,7 +156,7 @@ import Icon from '$/components/Icon.astro'
 			padding-right: 2.5rem;
 		}
 
-		:where(nav > ul[role='list']) {
+		nav > ul[role='list'] {
 			justify-content: flex-start;
 			margin: auto;
 			max-width: 65rem;
