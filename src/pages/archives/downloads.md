@@ -4,7 +4,7 @@ pubDate: 2012-09-02
 layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 752
 disqusCanonical: 'https://settlers2.net/the-settlers-2/downloads'
-permalink: https://settlers2.net/downloads
+permalink: https://settlers2.net/download
 ---
 
 Original files mostly retrieved from BlueByte FTP server back when it was still online. Special thanks to German fans providing Erste Demo versions, and Hallfiry from 0.15 beta!

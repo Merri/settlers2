@@ -4,7 +4,7 @@ pubDate: 2011-07-18
 layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 218
 disqusCanonical: 'https://settlers2.net/the-settlers-2/map-generators'
-permalink: https://settlers2.net/downloads
+permalink: https://settlers2.net/download
 ---
 
 There are a few map generators made for the game.

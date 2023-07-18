@@ -2,7 +2,7 @@
 title: "Texture pack: Rusty Polar"
 pubDate: 2022-03-26
 layout: '$layouts/BlogEnglish.astro'
-permalink: https://settlers2.net/downloads
+permalink: https://settlers2.net/download
 ---
 
 ## Rusty Polar Release Candidate 2 now available!

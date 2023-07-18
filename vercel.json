@@ -28,32 +28,32 @@
 		},
 		{
 			"source": "/archives/downloads",
-			"destination": "https://settlers2.net/downloads",
+			"destination": "https://settlers2.net/download",
 			"permanent": true
 		},
 		{
 			"source": "/archives/language-packs",
-			"destination": "https://settlers2.net/downloads",
+			"destination": "https://settlers2.net/download",
 			"permanent": true
 		},
 		{
 			"source": "/archives/map-generators",
-			"destination": "https://settlers2.net/downloads",
+			"destination": "https://settlers2.net/download",
 			"permanent": true
 		},
 		{
 			"source": "/archives/texture-pack-rusty-polar",
-			"destination": "https://settlers2.net/downloads",
+			"destination": "https://settlers2.net/download",
 			"permanent": true
 		},
 		{
 			"source": "/archives/texture-set-new-greenland",
-			"destination": "https://settlers2.net/downloads",
+			"destination": "https://settlers2.net/download",
 			"permanent": true
 		},
 		{
 			"source": "/archives",
-			"destination": "https://settlers2.net/downloads",
+			"destination": "https://settlers2.net/download",
 			"permanent": true
 		}
 	]

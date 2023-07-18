@@ -4,7 +4,7 @@ pubDate: 2021-09-06
 layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: "429 http://settlers2.net/?page_id=42"
 disqusCanonical: 'https://settlers2.net/the-settlers-2'
-permalink: https://settlers2.net/downloads
+permalink: https://settlers2.net/download
 ---
 
 Welcome to the Archives! Here you can find all sorts of preserved content you can download.
