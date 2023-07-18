@@ -1,9 +1,10 @@
 ---
-title: "BuddyPress removed"
-publishDate: "2012-07-07"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'BuddyPress removed'
+description: Removed a WordPress plugin.
+pubDate: 2012-07-07
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 I decided to drop BuddyPress as it invited a ton of spambot posters to the site. So for now we are back to a more basic WordPress installation with no real community features.

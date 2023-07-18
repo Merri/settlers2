@@ -1,7 +1,7 @@
 ---
 title: "World Map File Format (WLD/SWD)"
-publishDate: "2011-07-23"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2011-07-23
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 253
 ---
 

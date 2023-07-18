@@ -3,6 +3,9 @@ import { MarkdownInstance } from 'astro'
 import { format } from 'date-fns'
 
 import { Props as Post } from '$/components/BlogPost.astro'
+import Icon from './Icon.astro'
+import { inlineFlex } from './inlineFlex.module.css'
+import Tags from './Tags.astro'
 
 export interface Props {
 	post: MarkdownInstance<Post>
@@ -11,20 +14,36 @@ export interface Props {
 const { post } = Astro.props
 
 const url = (post.url || '').replace(/\/index$/, '')
-const date = new Date(post.frontmatter.publishDate)
+const date = new Date(post.frontmatter.pubDate)
 const published = format(date, 'PPP')
 const ymd = format(date, 'yyyy-MM-dd')
 ---
 
 <article class="post-preview">
+	<nav>
+		<Tags tags={post.frontmatter.tags ?? []} />
+	</nav>
 	<header>
 		<time datetime={ymd} class="publish-date">{published}</time>
 		<a href={url}><h2 class="title">{post.frontmatter.title}</h2></a>
 	</header>
-	<section set:html={post.compiledContent()} />
+	<section set:html={`<p>${post.frontmatter.description}</p>`} />
+	<p>
+		<a href={url} class={inlineFlex}>
+			<strong>Continue reading</strong>
+			<Icon href="/icons/arrow-right.svg" />
+		</a>
+	</p>
 </article>
 
 <style>
+	nav:not(:empty) {
+		font-size: 1rem;
+		margin-bottom: 0.75rem;
+		text-align: right;
+		width: 100%;
+	}
+
 	.post-preview :global(img) {
 		max-width: 100%;
 		height: auto;
@@ -35,9 +54,10 @@ const ymd = format(date, 'yyyy-MM-dd')
 	}
 
 	.post-preview {
-		padding-bottom: 2rem;
-		margin-bottom: 2rem;
-		border-bottom: 4px solid var(--theme-divider);
+		background: var(--shadow-bg);
+		border-radius: 1rem;
+		margin-block: 1rem;
+		padding: 1rem 2rem;
 	}
 
 	header {
@@ -46,8 +66,7 @@ const ymd = format(date, 'yyyy-MM-dd')
 		text-align: left;
 		align-items: flex-start;
 		justify-content: center;
-
-		padding-bottom: 2rem;
+		padding-bottom: 1rem;
 	}
 
 	.title,
@@ -59,12 +78,6 @@ const ymd = format(date, 'yyyy-MM-dd')
 	.publish-date,
 	.author {
 		font-size: 1.25rem;
-		color: var(--theme-text-lighter);
-	}
-
-	.title {
-		font-size: 2.25rem;
-		font-weight: 700;
-		color: var(--theme-text);
+		color: var(--fg);
 	}
 </style>

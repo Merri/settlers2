@@ -1,9 +1,10 @@
 ---
-title: "Thoughts on maps, PNG & JavaScript"
-publishDate: "2012-07-31"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Thoughts on maps, PNG & JavaScript'
+description: Have been working with the map stuff again after a while of hiatus.
+pubDate: 2012-07-31
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 It's been a while since I last spent time on The Settlers II maps. This is a return of a programmer so expect a lot of technical stuff that interests only few!

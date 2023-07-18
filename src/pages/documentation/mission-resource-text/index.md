@@ -1,7 +1,7 @@
 ---
 title: "Mission Resource Text"
-publishDate: "2011-07-17"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2011-07-17
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 210
 ---
 

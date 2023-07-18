@@ -1,10 +1,10 @@
 ---
-title: "The Wooden Fortress"
-publishDate: "2011-08-18"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "buildings"
-  - "communities"
+title: 'The Wooden Fortress'
+description: Drew pixel art based on an old pre-release screenshot.
+pubDate: 2011-08-18
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - communities
 ---
 
 Following the IRC channel pays off. Yesterday Parasit posted this image:

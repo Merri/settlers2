@@ -1,17 +1,18 @@
 ---
-title: "The missing pieces of map file format"
-publishDate: "2011-08-09"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "tools"
+title: 'The missing pieces of map file format'
+description: I've been looking further into the map files and now also RttR documentation to figure out the remaining pieces of the puzzle.
+pubDate: 2011-08-09
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - tools
 ---
 
 After finding out about RttR documentation and having a look at some of the source code we now have gathered a great deal of information about The Settlers II WLD/SWD file format. Yet there is still things that need further investigation:
 
-- The single unknown byte in file header, what is it for? A wild guess at this point without testing: maybe it could set the MISS#BOB graphics? That is a feature that could've been added from RTX files just like the leaders...
-- Block 8: being always just full of NULL this probably needs a look from savegame files. We haven't had a proper look at the savegame files yet!
-- Block 10: this is always full of 7. Since there is a maximum of seven players in the game maybe values 0 to 6 could indicate the player who owns that spot? So an ownership block. But this can only be verified by having a look at the savegame files.
-- Block 11: I can hardly believe this would be used only for Map Editor's cursor position. So I throw a wild guess: maybe it is the highlighted icons map! This would be internal game use only, and the Map Editor simply saves memory as it is at that very moment, explaining why we appear to get the "cursor position".
+-   The single unknown byte in file header, what is it for? A wild guess at this point without testing: maybe it could set the MISS#BOB graphics? That is a feature that could've been added from RTX files just like the leaders...
+-   Block 8: being always just full of NULL this probably needs a look from savegame files. We haven't had a proper look at the savegame files yet!
+-   Block 10: this is always full of 7. Since there is a maximum of seven players in the game maybe values 0 to 6 could indicate the player who owns that spot? So an ownership block. But this can only be verified by having a look at the savegame files.
+-   Block 11: I can hardly believe this would be used only for Map Editor's cursor position. So I throw a wild guess: maybe it is the highlighted icons map! This would be internal game use only, and the Map Editor simply saves memory as it is at that very moment, explaining why we appear to get the "cursor position".
 
 Return to the Roots project has done some job in other areas. A simple thing they've done with the RttR Map Editor is to allow for bigger maps, up to 1024 x 1024 (which is way bigger than the maximum of 256 x 256 the original game can handle). The problem is that this breaks backwards compatibility!
 

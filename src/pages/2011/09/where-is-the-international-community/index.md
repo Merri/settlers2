@@ -1,12 +1,12 @@
 ---
-title: "Where is the international community?"
-publishDate: "2011-09-08"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "communities"
-  - "return-to-the-roots"
-  - "site-news"
-coverImage: "2011-09-08-The-Settlers-II.net_.jpg"
+title: 'Where is the international community?'
+pubDate: 2011-09-08
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - communities
+    - RttR
+    - news
+heroImage: '/wp-content/uploads/2011/09/2011-09-08-The-Settlers-II.net_.jpg'
 ---
 
 One of the things that I think is surprisingly missing is the international community for the classic Settlers games, meaning the first two games in the series. These were very different from the games that followed, The Settlers III abandoning the core road feature and everything going pretty much in the way I didn't want things to go based on the first two games (and in my case especially the second game).

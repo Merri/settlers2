@@ -1,7 +1,7 @@
 ---
 title: "Objects: landscape table"
-publishDate: "2012-08-29"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2012-08-29
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 702
 ---
 

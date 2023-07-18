@@ -1,11 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
 import deno from '@astrojs/deno'
+import mdx from '@astrojs/mdx'
 import node from '@astrojs/node'
 import preact from '@astrojs/preact'
+import sitemap from '@astrojs/sitemap'
+import vercel from '@astrojs/vercel/serverless'
 import fs from 'node:fs'
 import { deflate } from 'pako'
-//import vercel from '@astrojs/vercel/static'
 
 const isDeno = process.argv.includes('--deno')
 const isNode = !isDeno && process.argv.includes('--node')
@@ -35,9 +37,15 @@ export default inflate(array);`
 }
 
 export default defineConfig({
-	adapter: (isDeno && deno()) || (isNode && node({ mode: 'standalone' })) || undefined /*vercel()*/,
-	integrations: [preact()],
-	//output: 'static',
+	adapter: (isDeno && deno()) || (isNode && node({ mode: 'standalone' })) || vercel(),
+	integrations: [
+		preact(),
+		mdx(),
+		sitemap({
+			filter: (page) => !page.includes('rss.xml'),
+		}),
+	],
+	output: 'server',
 	site: 'https://settlers2.net',
 	vite: {
 		optimizeDeps: {

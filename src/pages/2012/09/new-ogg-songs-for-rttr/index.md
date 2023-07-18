@@ -1,9 +1,10 @@
 ---
-title: "New OGG songs (for RttR)"
-publishDate: "2012-09-22"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "return-to-the-roots"
+title: 'New OGG songs (for RttR)'
+description: Game songs in OGG file format.
+pubDate: 2012-09-22
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - RttR
 ---
 
 [Download OGG songs](/wp-content/uploads/2012/09/SOUNDDAT.zip)

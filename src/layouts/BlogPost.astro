@@ -1,7 +1,7 @@
 ---
 import BaseHead from '$/components/BaseHead.astro'
 import BlogHeader from '$/components/BlogHeader.astro'
-import BlogPost from '$/components/BlogPost.astro'
+import { default as BlogLayout } from '$/components/BlogPost.astro'
 
 import { Props as Post } from '$/components/BlogPost.astro'
 import { MarkdownContent } from 'astro'
@@ -14,8 +14,10 @@ const {
 	permalink = new URL(Astro.url.pathname, Astro.site).toString(),
 	lang = 'en',
 	title,
+	seriesTitle,
 	description,
-	publishDate,
+	pubDate,
+	modDate,
 	author,
 	heroImage,
 	alt,
@@ -26,22 +28,28 @@ const {
 
 <html lang={lang}>
 	<head>
-		<BaseHead title={title} description={description} permalink={permalink} />
+		<BaseHead
+			title={seriesTitle ? `${title} | ${seriesTitle}` : title}
+			description={description}
+			permalink={permalink}
+		/>
 		<link rel="stylesheet" href="/blog.css" />
 	</head>
 
 	<body>
 		<BlogHeader />
-		<BlogPost
+		<BlogLayout
 			title={title}
+			seriesTitle={seriesTitle}
 			description={description}
 			author={author}
 			heroImage={heroImage}
-			publishDate={publishDate}
+			pubDate={pubDate}
+			modDate={modDate}
 			alt={alt}
 		>
 			<slot />
-		</BlogPost>
+		</BlogLayout>
 		<div class="layout">
 			<article id="disqus-comments" data-identifier={disqusIdentifier} data-url={disqusCanonical ?? permalink}>
 				<header>
@@ -79,7 +87,5 @@ const {
 				document.head.appendChild(s)
 			})()
 		</script>
-		<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-		<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" /></noscript>
 	</body>
 </html>

@@ -1,10 +1,11 @@
 ---
-title: "Early version of Online Editor"
-publishDate: "2012-08-12"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
-  - "tools"
+title: 'Early version of Online Editor'
+description: Created a new tool, Online Editor.
+pubDate: 2012-08-12
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
+    - tools
 ---
 
 You can now upload, change and download maps at [Online Editor](/editor/). It is still very far from complete, but enough to do some minor tweaks easily, like changing the world type from Greenland to Winter World. It also does some hidden magic behind the scenes, fixing a few things that can cause crashes or buggy behavior in The Settlers II.

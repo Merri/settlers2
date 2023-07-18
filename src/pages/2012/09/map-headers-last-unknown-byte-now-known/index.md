@@ -1,10 +1,11 @@
 ---
 title: "Map header's last unknown byte now known!"
-publishDate: "2012-09-08"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "return-to-the-roots"
-  - "site-news"
+description: Knowledge of map file format is again one step closer to being complete.
+pubDate: 2012-09-08
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - RttR
+    - docs
 ---
 
 Earlier all documentation has stated one unknown byte in a map file header that is between player HQ locations and leaders. I now know the meaning of this byte: Map Editor sets it to 1 if the map is invalid, in it's terms meaning there are no players set. The game reads this byte when selecting a map in Unlimited Play and ranks the map as Invalid Map. It however also shows map title and size.

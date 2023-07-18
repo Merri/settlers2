@@ -1,9 +1,10 @@
 ---
-title: "Site updates"
-publishDate: "2011-07-14"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Site updates'
+description: New content on the site such as a page for DOSBox.
+pubDate: 2011-07-14
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 There is finally a page about DOSbox! Screenshots included. It doesn't go into depth, but should be a nice quick start. I guess it would still need some more information on how to actually use DOS, it isn't that common knowledge these days.

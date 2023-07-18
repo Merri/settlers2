@@ -1,9 +1,10 @@
 ---
-title: "Reorganization"
-publishDate: "2011-07-10"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Reorganization'
+description: Organic growth of a site results into need of moving things around to make things clearer.
+pubDate: 2011-07-10
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 I think I'll need to simplify the existing pages and organize everything again. I guess it would be an idea to add a page for some other downloads as well, such as maps and make it somehow possible to let users post their maps to me or the site. E-mail would be easy, but registrations should be open too.

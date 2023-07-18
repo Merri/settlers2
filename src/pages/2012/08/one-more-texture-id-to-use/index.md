@@ -1,9 +1,11 @@
 ---
-title: "One more texture ID to use"
-publishDate: "2012-08-19"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "textures"
+title: 'One more texture ID to use'
+description: Reverse engineering discovery when analyzing the map files.
+pubDate: 2012-08-19
+layout: '$layouts/BlogEnglish.astro'
+tags:
+		- docs
+    - textures
 ---
 
 I found one more texture that is usable in the game! With usable I have the following requirements:

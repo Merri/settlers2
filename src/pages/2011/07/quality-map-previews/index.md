@@ -1,9 +1,10 @@
 ---
-title: "Quality map previews"
-publishDate: "2011-07-27"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Quality map previews'
+description: A look into results of generating map thumbnails with higher detail level than the original The Settlers II did.
+pubDate: 2011-07-27
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 **The Roman Campaign maps.**

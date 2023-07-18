@@ -1,7 +1,10 @@
 ---
 title: 'A new tool under construction'
-publishDate: '2022-03-02'
-layout: '$layouts/BlogPost.astro'
+description: World Editor utility is now under construction.
+pubDate: 2022-03-02
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 Recently I've been continuing my work on porting the old JavaScript code to TypeScript. There has been some nice

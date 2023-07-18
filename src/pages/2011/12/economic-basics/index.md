@@ -1,9 +1,10 @@
 ---
-title: "Economic Basics"
-publishDate: "2011-12-30"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "buildings"
+title: 'Economic Basics'
+description: Short article on some basics for managing your economy in The Settlers II.
+pubDate: 2011-12-30
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - docs
 ---
 
 **Preface**

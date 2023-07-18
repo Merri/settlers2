@@ -1,0 +1,38 @@
+---
+title: 'Welcome Astro, goodbye WordPress!'
+description: A new site engine to replace the old one.
+pubDate: 2021-10-10
+layout: '$layouts/BlogEnglish.astro'
+---
+
+import Link from '$/components/Link.astro'
+
+Time flies they say. And so it does! I've had this site for over 12 years by now, and even before that I spent time
+doing stuff with The Settlers II. And here we are, with a refreshed look using a new site building tool,<Link href="https://astro.build">Astro</Link>! It lets me build a mostly static website using whatever frontend tooling I want.
+
+Ten years ago I switched many of my sites to WordPress in hope that it would let me provide more content. In hindsight
+it seems it did the opposite: I lost some of my interest working on my sites. WordPress never felt good to use for me
+and using it feels a bit like fighting against things. It just doesn't work for me as a tool. I am more of a programmer
+type of person so I like to have control over things.
+
+So now I have Astro here. I love it! It is very much a delight after so many years of tools that force bundling big
+JavaScript on all pages, even static ones that don't need JS at all. Astro provides snappy and lightweight by default
+while also providing developer conveniences that have emerged during the past few years. This flexibility made it easy
+for me to convert the [Map Generator project](/map-generator/) from being a legacy React project into a Preact one, with
+TypeScript goodness (which fits with a complex map generator type of project; I'm not always pro-TypeScript).
+
+With this renewed site I have worked on rearranging content as well as adding some new stuff. And I've also done some
+little work with the map generator so it has a few new tricks. But admittedly it is still a bit of a mess: UI isn't
+fully intuitive yet, I could provide more options to internal features of the generator, and the generator code itself
+is in a big need of cleaning up to better coding style.
+
+The site UI is also still in need of some polish. The main menu doesn't work in mobile, at least in iOS. That is sad.
+But I think right now it is much more important just to get the new site released, because it always motivates a bit
+better when something is out in the wild.
+
+### New Map Generator features
+
+-   You can use a seed value: given seed provides always the same results with the given input values.
+-   There can now be snow peak mountains
+-   You can find some small swamp areas on the map
+-   Palm trees have been allowed to be generated in coasts

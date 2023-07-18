@@ -1,10 +1,10 @@
 ---
-title: "New Babylonian building"
-publishDate: "2012-09-11"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "buildings"
-  - "return-to-the-roots"
+title: 'New Babylonian building'
+description: More pixel art work.
+pubDate: 2012-09-11
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - RttR
 ---
 
 Spike asked to do something. I did something. First I did this:

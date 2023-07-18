@@ -1,10 +1,11 @@
 ---
-title: "Texture and palette differences"
-publishDate: "2011-08-28"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "textures"
-coverImage: "Textures.png"
+title: 'Texture and palette differences'
+description: I have been analyzing the textures and palettes between the various game versions.
+pubDate: 2011-08-28
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - textures
+heroImage: '/wp-content/uploads/2011/08/Textures.png'
 ---
 
 Here comes my first attempt at making a complete summary of textures, palettes and gouraud shading in The Settlers II.
@@ -17,28 +18,28 @@ There are three versions of the game that matter to us:
 
 0.16 and 1.01 have textures, palettes and gouraud shadings in files:
 
-- GOURAUD.DAT (0.16) Greenland
-- GOURAUD0.DAT (1.01) Greenland / palette mismatch!
-- GOURAUD1.DAT (1.01) Wasteland / palette mismatch!
-- PALETTI0.BBM (0.16) Greenland
-- PALETTI0.BBM (1.01) Greenland
-- PALETTI1.BBM (1.01) Wasteland
-- TEXTUR\_0.LBM (0.16) Greenland
-- TEXTUR\_0.LBM (1.01) Greenland
-- TEXTUR\_3.LBM (0.16) Wasteland
-- TEXTUR\_3.LBM (1.01) Wasteland
+-   GOURAUD.DAT (0.16) Greenland
+-   GOURAUD0.DAT (1.01) Greenland / palette mismatch!
+-   GOURAUD1.DAT (1.01) Wasteland / palette mismatch!
+-   PALETTI0.BBM (0.16) Greenland
+-   PALETTI0.BBM (1.01) Greenland
+-   PALETTI1.BBM (1.01) Wasteland
+-   TEXTUR_0.LBM (0.16) Greenland
+-   TEXTUR_0.LBM (1.01) Greenland
+-   TEXTUR_3.LBM (0.16) Wasteland
+-   TEXTUR_3.LBM (1.01) Wasteland
 
 While version 1.51 uses shorter and different filenames:
 
-- GOU5.DAT Greenland
-- GOU6.DAT Wasteland
-- GOU7.DAT Winter World
-- PAL5.BBM Greenland
-- PAL6.BBM Wasteland
-- PAL7.BBM Winter World
-- TEX5.LBM Greenland
-- TEX6.LBM Wasteland
-- TEX7.LBM Winter World
+-   GOU5.DAT Greenland
+-   GOU6.DAT Wasteland
+-   GOU7.DAT Winter World
+-   PAL5.BBM Greenland
+-   PAL6.BBM Wasteland
+-   PAL7.BBM Winter World
+-   TEX5.LBM Greenland
+-   TEX6.LBM Wasteland
+-   TEX7.LBM Winter World
 
 Version 1.51 is the definitive version that we all know and love. The older versions however all contain some mysteries to be unveiled! Unused textures, gouraud shading bugs revealed in version 1.01... have a look!
 

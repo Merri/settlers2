@@ -1,126 +1,108 @@
 ---
-// Component Imports
-import BaseHead from '$/components/BaseHead.astro'
-import BlogHeader from '$/components/BlogHeader.astro'
-import BlogArchive from '$/components/BlogArchive.astro'
-import BlogPostPreview from '$/components/BlogPostPreview.astro'
-import Logo from '$/components/Logo.astro'
+import Layout from '$/layouts/Layout.astro'
+import Link from '$/components/Link.astro'
 
-import { Props as Post } from '../components/BlogPost.astro'
-
-const title = 'Settlers II.net'
+const title = 'Settlers 2.net'
 const description =
 	'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community'
 const permalink = 'https://settlers2.net/'
-
-const allPosts = await Astro.glob<Post>('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/*/index.md')
-
-allPosts.sort((a, b) => +new Date(b.frontmatter.publishDate) - +new Date(a.frontmatter.publishDate))
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} permalink={permalink} />
-		<link rel="stylesheet" href="/blog.css" />
-
-		<style>
-			body {
-				--gutter: 0.5rem;
-				--doc-padding: 2rem;
-			}
-
-			.content {
-				margin-top: 1rem;
-				margin-bottom: 8rem;
-			}
-
-			.content :global(main > * + *) {
-				margin-top: 1rem;
-			}
-
-			.intro {
-				font-size: 1.125em;
-				margin-left: 1.25rem;
-				margin-right: 1.25rem;
-				padding-bottom: 4rem;
-				margin-bottom: 2rem;
-				border-bottom: 4px solid var(--theme-divider);
-			}
-
-			.intro > * {
-				margin: 0;
-			}
-
-			footer a {
-				font-weight: inherit;
-			}
-
-			footer {
-				align-items: center;
-				display: flex;
-				justify-content: center;
-				line-height: 1.25;
-				padding: 0 3rem 1.5rem;
-				text-align: center;
-			}
-
-			footer small,
-			footer a {
-				display: inline-block;
-			}
-
-			footer small {
-				margin-top: 0.5rem;
-			}
-
-			footer dd a {
-				color: inherit;
-			}
-
-			footer dl,
-			footer dd {
-				margin: 0;
-			}
-
-			footer dt {
-				font-size: 1.25rem;
-				font-weight: 600;
-			}
-			footer dd {
-				display: inline-block;
-				padding: 0.5rem;
-			}
-		</style>
-	</head>
-
-	<body>
-		<BlogHeader />
-		<main class="layout" id="main">
-			<article class="content">
-				<header class="intro">
-					<p>{description}</p>
-				</header>
-				{allPosts.slice(0, 5).map((post) => <BlogPostPreview post={post} />)}
-				<BlogArchive posts={allPosts} />
-			</article>
-		</main>
-		<footer>
-			<dl>
-				<dt>
-					Settlers II.net by <a href="https://twitter.com/merrinen">Vesa Piittinen</a> 2009 &ndash; {
-						new Date().getFullYear()
-					}<br />
-					<small>The Settlers II: Veni Vidi Vici, Mission CD, and Gold Edition by BlueByte 1996</small>
-				</dt>
-				<dd>
-					<a href="https://astro.build">Built with <span class="visually-hidden">Astro</span><Logo /></a>
-				</dd>
-				<dd>
-					<a href="https://github.com/Merri/settlers2">Site sources at GitHub</a>
-				</dd>
-			</dl>
-		</footer>
-		<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-		<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" /></noscript>
-	</body>
-</html>
+<Layout lang="en" title={title} description={description} permalink={permalink}>
+	<div id="pronounced-name" hidden>The Settlers 2 dot net</div>
+	<main id="main">
+		<article>
+			<hgroup >
+				<h1 aria-labelledby="pronounced-name">The Settlers II.net</h1>
+				<p>An online encyclopedia on <em>The Settlers II Gold Edition</em> and <em>Return to the Roots</em></p>
+			</hgroup>
+			<figure style="text-align: center;">
+				<img alt="The Settlers II Gold Edition screenshot" src="/assets/docs/settlers2-gold-edition.png" height="480" width="640" loading="lazy" />
+				<figcaption>Wonderful pixel art game from the 90s!</figcaption>
+			</figure>
+			<div class="cards">
+				<div class="card">
+					<h2>New to the game?</h2>
+					<p>Have a look at our <a href="/guides/">game guide</a> on how to get started and to learn about the options!</p>
+					<img alt="" src="/assets/bluebyte/jump2.gif" width="50" height="54" loading="lazy" />
+				</div>
+				<div class="card">
+					<h2>Online play!</h2>
+					<p><a href="/return-to-the-roots">Return to the Roots</a> is a remake/add-on for multiplayer action over the Internet.</p>
+					<img alt="" src="/assets/webkit1/animations/cart.gif" width="58" height="52" loading="lazy" style="height: 52px; image-rendering: pixelated;" />
+				</div>
+				<div class="card">
+					<h2>Looking for something?</h2>
+					<p>Our <a href="/downloads/">downloads</a> has updates, language packs and new textures. On <a href="/utilities/">utilities</a> section you find tools such as a random map generator!</p>
+				</div>
+				<div class="card">
+					<h2>Want to see under the hood?</h2>
+					<p>Our <a href="/documentation/">technical documentation</a> covers most of the game files so you can learn to modify the game.</p>
+				</div>
+			</div>
+			<h2>Join the community!</h2>
+			<p>
+				<img alt="" src="/assets/bluebyte/read2.gif" width="30" height="40" loading="lazy" />
+			</p>
+			<ul>
+				<li>Chat on <Link href="https://discord.gg/kyTQsSx">Return to the Roots Discord</Link></li>
+				<li>Discuss on <Link href="https://www.siedler25.org/index.php?com=forum">Return to the Roots forums</Link></li>
+				<li>Use <code>#RttR</code> and <code>#settlers2</code> on social media sites such as Mastodon to find other fans!</li>
+			</ul>
+			<blockquote>
+				<small>
+					<em>Some of the art and animations on this site are from the removed BlueByte site dedicated for promoting the game, and from a "webkit#1" package freely distributed by BlueByte in 2006.</em>
+				</small>
+			</blockquote>
+		</article>
+	</main>
+</Layout>
+<style>
+	article {
+		container-type: inline-size;
+	}
+	hgroup {
+		display: grid;
+		font-weight: 600;
+		font-size: 1.5rem;
+		place-content: center;
+		text-align: center;
+	}
+	hgroup p {
+		margin: 0;
+	}
+	hgroup em {
+		display: inline-block;
+	}
+	.cards {
+		display: grid;
+		grid-auto-flow: row;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		margin-block: 3rem;
+	}
+	@container (width < 40rem) {
+		.cards {
+			grid-template-columns: 1fr;
+		}
+	}
+	@container (width < 45rem) {
+		.cards {
+			gap: 1rem;
+		}
+	}
+	.card {
+		background: var(--shadow-bg);
+		border: thin solid var(--line-color);
+		border-radius: 1rem;
+		display: grid;
+		gap: 1rem;
+		padding: 2rem;
+	}
+	.card > * {
+		margin-block: 0;
+	}
+	.card h2 {
+		font-size: 1.625rem;
+	}
+</style>

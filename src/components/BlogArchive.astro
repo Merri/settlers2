@@ -11,7 +11,7 @@ export interface Props {
 interface ExtendedPost extends MarkdownInstance<Post> {
 	date: Date
 	published: string
-	publishDate: string
+	pubDate: string
 	url: string
 }
 
@@ -19,15 +19,16 @@ const postsByYear = new Map<string, ExtendedPost[]>()
 
 Astro.props.posts.forEach((post) => {
 	const url = (post.url || '').replace(/\/index$/, '')
-	const date = new Date(post.frontmatter.publishDate)
+	const date = new Date(post.frontmatter.pubDate)
 	const published = format(date, 'MMM dd')
-	const publishDate = format(date, 'yyyy-MM-dd')
+	const pubDate = format(date, 'yyyy-MM-dd')
 	const year = format(date, 'yyyy')
 
-	const item = { ...post, date, publishDate, published, url }
+	const item = { ...post, date, pubDate, published, url }
 	const yearGroup = postsByYear.get(year)?.push(item)
 	if (yearGroup == null) postsByYear.set(year, [item])
 })
+
 ---
 
 <h2>Post Archive</h2>
@@ -41,7 +42,7 @@ Astro.props.posts.forEach((post) => {
 					<ul>
 						{posts.map((post) => (
 							<li>
-								<time datetime={post.frontmatter.publishDate}>{post.published}</time>:{' '}
+								<time datetime={post.frontmatter.pubDate}>{post.published}</time>:{' '}
 								<a href={post.url}>{post.frontmatter.title}</a>
 							</li>
 						))}

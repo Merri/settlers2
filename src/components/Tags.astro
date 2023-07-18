@@ -1,0 +1,37 @@
+---
+export interface Props {
+	tags: string[]
+}
+
+const { tags } = Astro.props
+---
+
+{
+	tags.length > 0 && (
+		<ul class="tags" role="list">
+			{tags.map((tag) => (
+				<li>
+					<code>
+						<a href={`/blog/?tags=${tag}`}>#{tag}</a>
+					</code>
+				</li>
+			))}
+		</ul>
+	)
+}
+<style>
+	.tags {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.tags > li {
+		display: inline-block;
+		padding-right: 0.5ch;
+	}
+
+	.tags > li:not(:last-child) code::after {
+		content: ',';
+		float: right;
+	}
+</style>

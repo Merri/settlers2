@@ -1,7 +1,7 @@
 ---
 title: "Objects"
-publishDate: "2012-08-28"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2012-08-28
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 637
 ---
 

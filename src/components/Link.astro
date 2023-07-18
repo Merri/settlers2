@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+export interface Props extends HTMLAttributes<'a'> {
+	href: string
+}
+
+const { href, ...rest } = Astro.props
+
+const props = /^http/.test(href)
+	? {
+			...rest,
+			'aria-describedby': 'link-to-external-site',
+			rel: [...new Set(`${rest.rel || ''} noopener noreferrer`.trim().split(/\s/))].join(' '),
+			target: '_blank',
+	  }
+	: rest
+---
+
+<a href={href} {...props}><slot /></a>

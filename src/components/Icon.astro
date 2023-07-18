@@ -1,0 +1,40 @@
+---
+export interface Props {
+	color?: string
+	darkColor?: string
+	href: string
+	lightColor?: string
+	size?: number
+	shadeColor?: string
+	strokeColor?: string
+	style?: string
+	title?: string
+}
+
+const { color, darkColor, href, lightColor, shadeColor, size = 1.5, strokeColor, title } = Astro.props
+
+let style = Astro.props.style || ''
+if (color) style += `--icon-color:${color};`
+if (darkColor) style += `--icon-dark-color:${darkColor};`
+if (lightColor) style += `--icon-light-color:${lightColor};`
+if (shadeColor) style += `--icon-shade-color:${shadeColor};`
+if (strokeColor) style += `--icon-stroke-color:${strokeColor};`
+---
+
+{
+	title ? (
+		<span aria-hidden="false" hidden>
+			{title}
+		</span>
+	) : null
+}
+<svg aria-hidden="true" class="icon" width={size * 16} height={size * 16} style={style || undefined}>
+	<use href={`${href}#icon`}></use>
+</svg>
+<style>
+	.icon {
+		filter: drop-shadow(-2px 0 0 var(--shadow-bg)) drop-shadow(2px 0 0 var(--shadow-bg))
+			drop-shadow(0 -2px 0 var(--shadow-bg)) drop-shadow(0 2px 0 var(--shadow-bg))
+			drop-shadow(0 0 2px var(--shadow-bg));
+	}
+</style>

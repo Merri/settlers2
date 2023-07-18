@@ -617,7 +617,7 @@ export function Generator() {
 					variation of that same world.
 				</small>
 			</p>
-			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+			<div class={styles.section}>
 				<div style="max-width: 52rem">
 					<strong style="font-size:1.5rem">Step 1: Choose a height map</strong>
 					<p>
@@ -819,7 +819,7 @@ export function Generator() {
 					</em>
 				</small>
 			</p>
-			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+			<div class={styles.section}>
 				<div>
 					<strong style="font-size:1.5rem">Step 2: Choose textures</strong>
 					<p>
@@ -911,7 +911,7 @@ export function Generator() {
 					</em>
 				</small>
 			</p>
-			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+			<div class={styles.section}>
 				<div>
 					<strong style="font-size:1.5rem">Step 3: Set player placement</strong>
 					<p>
@@ -1007,7 +1007,7 @@ export function Generator() {
 					</em>
 				</small>
 			</p>
-			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+			<div class={styles.section}>
 				<div>
 					<strong style="font-size:1.5rem">Step 4: Choose resource levels</strong>
 					<p>
@@ -1137,7 +1137,7 @@ export function Generator() {
 					</em>
 				</small>
 			</p>
-			<div style="background:white;padding:1rem;display:flex;align-items:center;justify-content:space-between">
+			<div class={styles.section}>
 				<div>
 					<strong style="font-size:1.5rem">Step 5: Complete the map</strong>
 					{settings.showCampaignMode && playersOnMultipleContinents && (

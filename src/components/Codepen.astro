@@ -1,0 +1,32 @@
+---
+export interface Props {
+	id: string
+	title: string
+	user?: string
+}
+
+const { id, title, user = 'Merri' } = Astro.props
+
+const name = `cp_embed_${id}`
+const src = `https://codepen.io/${user}/embed/${id}?height=375&theme-id=dark&default-tab=html,result&user=${user}&slug-hash=${id}&pen-title=${encodeURIComponent(
+	title
+)}&name=${name}`
+---
+
+<iframe
+	allowfullscreen="true"
+	allow="payment"
+	allowtransparency="true"
+	name={name}
+	src={src}
+	style="width: 100%; content: contain;"
+	title={title}
+	loading="lazy"
+	id={name}
+	width="100%"
+	height="375"></iframe>
+<style>
+	iframe {
+		height: 375px;
+	}
+</style>

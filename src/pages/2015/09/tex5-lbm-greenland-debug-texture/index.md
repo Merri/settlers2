@@ -1,9 +1,10 @@
 ---
-title: "TEX5.LBM Greenland Debug Texture"
-publishDate: "2015-09-05"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "textures"
+title: 'TEX5.LBM Greenland Debug Texture'
+description: Another debugging tool for figuring things out.
+pubDate: 2015-09-05
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - tools
 ---
 
 If you ever want to consider drawing your own texture for the game then this information here will be quite useful! Download can be found at the end of this post.
@@ -46,9 +47,9 @@ There is a lone pixel at the bottom left corner in position 0 x 254. This will r
 
 ### Other things to note
 
-- Magenta pixels around the textures are never drawn. If you use this debug texture and see magenta somewhere then please report it to me so I can adjust and fix the debug texture file!
-- I drew a dotted line near each road texture. I think this is the point where going much further makes the edge look a bit "off". At least if you attempt to make a smooth transition.
-- You can see a single pixel extending off water and lava textures. It is actually a lone pixel that can get drawn outside of the triangle area probably due to a small calculation error within the game.
+-   Magenta pixels around the textures are never drawn. If you use this debug texture and see magenta somewhere then please report it to me so I can adjust and fix the debug texture file!
+-   I drew a dotted line near each road texture. I think this is the point where going much further makes the edge look a bit "off". At least if you attempt to make a smooth transition.
+-   You can see a single pixel extending off water and lava textures. It is actually a lone pixel that can get drawn outside of the triangle area probably due to a small calculation error within the game.
 
 ![2015-09-06 Greenland Debug Texture Preview](/wp-content/uploads/2015/09/2015-09-06-Greenland-Debug-Texture-Preview-1024x768.png)
 

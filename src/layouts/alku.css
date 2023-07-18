@@ -1,0 +1,559 @@
+@font-face {
+	font-family: 'Rockwell';
+	src: local('Rockwell');
+	ascent-override: 100%;
+}
+
+/* TODO: does this do the desired thing? @see https://github.com/system-fonts/modern-font-stacks/blob/e566f38736e759e868cb0ce3661b99d650285ed8/site/src/_styles.css#L756 */
+@font-face {
+	font-family: 'Didot';
+	src: local('Didot');
+	-webkit-font-smoothing: auto;
+	-moz-osx-font-smoothing: auto;
+}
+
+:where(:root) {
+	--emoji-font: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiOne Mozilla',
+		'Twemoji Mozilla', 'Noto Emoji', 'Segoe UI Symbol', EmojiSymbols;
+
+	/* https://modernfontstacks.com/ */
+	--system-sans-stack: system-ui, ui-sans-serif, Helvetica, sans-serif, var(--emoji-font);
+	--handwritten-stack: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive, var(--emoji-font);
+
+	--transitional-serif-stack: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif, var(--emoji-font);
+	--old-style-serif-stack: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif, var(--emoji-font);
+	--slab-serif-stack: Rockwell, 'Rockwell Nova', 'Roboto Slab', 'DejaVu Serif', 'Sitka Small', serif,
+		var(--emoji-font);
+	--antique-serif-stack: Superclarendon, 'Bookman Old Style', 'URW Bookman', 'URW Bookman L', 'Georgia Pro', Georgia,
+		serif, var(--emoji-font);
+	--didone-serif-stack: Didot, 'Bodoni MT', 'Noto Serif Display', 'URW Palladio L', P052, Sylfaen, serif,
+		var(--emoji-font);
+
+	--humanist-sans-stack: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif,
+		var(--emoji-font);
+	--geometric-humanist-sans-stack: Avenir, 'Avenir Next LT Pro', Montserrat, Corbel, 'URW Gothic', source-sans-pro,
+		sans-serif, var(--emoji-font);
+	--classical-humanist-sans-stack: Optima, Candara, 'Noto Sans', source-sans-pro, sans-serif, var(--emoji-font);
+	--neo-grotesque-sans-stack: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif,
+		var(--emoji-font);
+	--industrial-sans-stack: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow',
+		sans-serif-condensed, sans-serif, var(--emoji-font);
+	--rounded-sans-stack: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari,
+		'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif, var(--emoji-font);
+
+	--mono-slab-serif-stack: 'Nimbus Mono PS', 'Courier New', 'Cutive Mono', monospace, var(--emoji-font);
+	--mono-code-stack: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace,
+		var(--emoji-font);
+	--mono-stack: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--emoji-font);
+
+	--page-default-font: var(--system-sans-stack);
+	--page-marker-font: var(--mono-stack);
+	--page-heading-font: var(--old-style-serif-stack);
+	--page-mono-font: var(--mono-stack);
+
+	--focus-color: Highlight;
+	--link-color: hsl(212 100% 30%);
+
+	--mask-chevron-down: url("data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M4 9L12 17L20 9' fill='none' stroke='black' stroke-width='2.5'/></svg>");
+	--mask-cross: url("data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M19 5L5 19M5 5L19 19' fill='none' stroke='black' stroke-width='2.5'/></svg>");
+	--mask-new-screen: url("data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M20 4L9.99997 14M20 4L20 9.99999M20 4L14 3.99998M10 4H4V20H20V14' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/></svg>");
+
+	--ol-indent: 2em;
+	--ul-indent: 1.375em;
+}
+
+@supports (color: lch(30.52% 51.73 278.81)) {
+	:where(:root) {
+		--link-color: lch(30.52% 51.73 278.81);
+	}
+}
+
+:where(:root),
+:where([dir='ltr']) {
+	--dir-adjust: 1;
+}
+
+:where([dir='rtl']) {
+	--dir-adjust: -1;
+}
+
+@media not (prefers-reduced-motion) {
+	:where(html) {
+		scroll-behavior: smooth;
+	}
+}
+
+:where(:target) {
+	scroll-margin-top: 2rem;
+}
+
+/* Skip links, visually hidden utilities */
+:root [data-hidden='visually' i]:not(:focus):not(:active) {
+	/* Remove all styling from cascade (most importantly to reset border, margin, padding) */
+	all: initial;
+	clip-path: path('');
+	/* Parent layouts will account for the size of the text unless this exists. */
+	contain: content;
+	/* Remove from flow, have minimal size to convince screen readers the element is visible */
+	position: absolute;
+	height: 1px;
+	width: 1px;
+	/* Prevent text wrapping as that would effect how screen readers read the text */
+	white-space: nowrap;
+}
+
+/* Generic scrolling utility */
+:where(div:has(> table:only-child)) {
+	overflow: hidden;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* Generic scrolling utility */
+:where([data-scrolling]) {
+	overflow: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* Generic scrolling utility */
+:where([data-scrolling='inline' i]) {
+	overflow-inline: auto;
+}
+
+/* Generic scrolling utility */
+:where([data-scrolling='block' i]) {
+	overflow-block: auto;
+}
+
+/* Eliminate transitions without disabling JS features relying on startTransition etc. */
+@media (prefers-reduced-motion) {
+	*,
+	::before,
+	::after {
+		animation-delay: -1ms !important;
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		background-attachment: initial !important;
+		scroll-behavior: auto !important;
+		transition-delay: 1ms !important;
+		transition-duration: 1ms !important;
+	}
+}
+
+/* Focus indicator */
+:where(:focus:not(:focus-visible)) {
+	outline: none;
+}
+
+/* Focus indicator */
+:where(:focus:focus-visible) {
+	outline: 3px solid var(--focus-color);
+	outline-offset: 3px;
+}
+
+/* Indicate element is busy */
+:where([aria-busy='true' i]) {
+	cursor: progress;
+}
+
+/* Indicate element is disabled */
+:where([aria-disabled='true' i], [disabled], :disabled) {
+	cursor: not-allowed;
+}
+
+/* Utility: invisible pseudo element to cover container area */
+:where([data-before='cover' i])::before {
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+:where(html) {
+	font-family: var(--page-default-font);
+	font-feature-settings: 'tnum';
+	font-variant-numeric: tabular-nums;
+	line-height: 1.375;
+	tab-size: 4;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+:where(body) {
+	display: grid;
+	font-size: 1.125rem;
+	grid-template-columns: 1fr min(65rem, 90%) 1fr;
+	margin: 0;
+	min-height: 100dvh;
+}
+
+:where(body > *) {
+	grid-column: 2;
+}
+
+:where(body > footer),
+:where(body > header) {
+	grid-column: 1 / -1;
+}
+
+:where(a) {
+	color: var(--link-color);
+	cursor: pointer;
+	font-weight: 500;
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+}
+
+/* External links */
+:where(a[target='_blank' i][rel~='noopener' i][rel~='noreferrer' i][aria-describedby]) {
+	padding-right: 1.5rem;
+}
+
+/* External links */
+:where(a[target='_blank' i][rel~='noopener' i][rel~='noreferrer' i][aria-describedby])::after {
+	background: currentColor;
+	content: '';
+	height: 1.25em;
+	position: absolute;
+	width: 1.25rem;
+	transform: translateX(0.1875rem);
+	-webkit-mask-image: var(--mask-new-screen);
+	mask-image: var(--mask-new-screen);
+	-webkit-mask-position: bottom;
+	mask-position: bottom;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+}
+
+:where(strong) {
+	font-weight: 600;
+}
+
+:where(b) {
+	font-weight: 700;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--page-heading-font);
+	margin-block: 1rem 0.5rem;
+	line-height: 1.125;
+}
+
+:where(code, kbd, samp) {
+	font-family: var(--page-mono-font);
+	font-size: 1em;
+}
+
+:where(pre) {
+	font-family: var(--page-mono-font);
+	font-size: 1rem;
+}
+
+:where(code) {
+	background: rgba(0, 72, 0, 0.1);
+	border-radius: 0.25rem;
+	box-shadow: 0 0 0 3px rgba(0, 72, 0, 0.1);
+	margin-inline: 2px;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+	margin-block: 2rem 1rem;
+	margin-inline: 0;
+}
+
+:where(h1) {
+	font-size: 3rem;
+}
+
+:where(h2) {
+	font-size: 2.25rem;
+}
+
+:where(h3) {
+	font-size: 1.75rem;
+}
+
+:where(h4) {
+	font-size: 1.5rem;
+}
+
+:where(h5) {
+	font-size: 1.375rem;
+}
+
+:where(h6) {
+	font-size: 1.25rem;
+}
+
+:where(small) {
+	font-size: 0.875em;
+}
+
+:where(sub, sup) {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+:where(sub) {
+	bottom: -0.25em;
+}
+
+:where(sup) {
+	top: -0.5em;
+}
+
+:where(hr) {
+	box-sizing: content-box;
+	color: inherit;
+	height: 0;
+	overflow: visible;
+}
+
+/* List that aligns to content next to floats. */
+:where(ol) {
+	margin-block: 1rem;
+	margin-inline: 0 var(--ol-indent);
+	padding: 0;
+	transform: translateX(calc(var(--dir-adjust) * var(--ol-indent)));
+}
+
+/* List that aligns to content next to floats. */
+:where(ul) {
+	margin-block: 1rem;
+	margin-inline: 0 var(--ul-indent);
+	padding: 0;
+	transform: translateX(calc(var(--dir-adjust) * var(--ul-indent)));
+}
+
+/* Ensure equal width numbers */
+:where(li)::marker {
+	font-family: var(--page-marker-font);
+	font-size: 1em;
+	line-height: 1.45rem;
+}
+
+/* List inside list margin reset */
+:where(dl, ol, ul) :where(dl, ol, ul) {
+	margin-block: 0;
+}
+
+/* List style reset utility (workaround Safari VoiceOver removing list semantics based on CSS list-style) */
+:where([role='list']:is(ol, ul)) {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	transform: none;
+}
+
+:where([role='list']:is(ol, ul) > li) {
+	margin: 0;
+}
+
+:where(iframe) {
+	border-style: none;
+}
+
+:where(audio, canvas, iframe, img, progress, svg, video) {
+	vertical-align: middle;
+}
+
+:where(iframe, img, input, video, select, textarea) {
+	height: auto;
+	max-width: 100%;
+}
+
+:where(table img) {
+	max-width: unset;
+}
+
+:where(svg:not([fill])) {
+	fill: currentColor;
+}
+
+:where(table) {
+	border-collapse: collapse;
+	border-color: currentColor;
+	text-indent: 0;
+}
+
+:where(td, th) {
+	background-clip: padding-box;
+	filter: brightness(1);
+}
+
+:where(textarea) {
+	margin: 0;
+	resize: vertical;
+}
+
+:where(button, input, optgroup, select, textarea) {
+	font-family: var(--page-default-font);
+	font-size: 1em;
+	line-height: 1.125;
+	margin: 0;
+}
+
+:where(button, select) {
+	text-transform: none;
+}
+
+:where(button, [type='button'], [type='reset'], [type='submit'])::-moz-focus-inner {
+	border-style: none;
+	padding: 0;
+}
+
+:where(fieldset) {
+	padding: 0;
+}
+
+:where(legend) {
+	box-sizing: border-box;
+	color: inherit;
+	display: table;
+	max-width: 100%;
+	padding: 0;
+	white-space: normal;
+}
+
+:where([type='search']) {
+	-webkit-appearance: textfield;
+	appearance: textfield;
+}
+
+:where([type='search'])::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+
+::-webkit-file-upload-button {
+	-webkit-appearance: button;
+	font: inherit;
+}
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+	height: auto;
+}
+
+::-webkit-input-placeholder {
+	color: inherit;
+	opacity: 0.5625;
+}
+
+:where(details) {
+	background: rgba(0, 72, 0, 0.05);
+	border: 1px solid rgba(0, 0, 0, 0.25);
+	border-radius: 0.5rem;
+	display: block;
+	margin: 1rem 0;
+	max-width: 50rem;
+	padding: 0 1rem;
+}
+
+:where(summary) {
+	font-size: 1.125rem;
+	font-weight: bolder;
+	margin: 0 -1rem;
+	padding: 1rem 3rem 1rem 1rem;
+	position: relative;
+	user-select: none;
+	z-index: 1;
+}
+
+:where(summary:focus:focus-visible) {
+	border-radius: 0.5rem;
+	outline-offset: -3px;
+}
+
+:where(summary)::marker {
+	content: none;
+}
+
+:where(summary)::-webkit-details-marker,
+:where(summary)::after {
+	background: radial-gradient(currentColor 66%, transparent 66%);
+	content: '';
+	height: 1.5rem;
+	margin: 0;
+	-webkit-mask-image: var(--mask-chevron-down);
+	mask-image: var(--mask-chevron-down);
+	position: absolute;
+	inset-inline-end: 1rem;
+	top: 50%;
+	transform: translateY(-50%) rotate(0deg);
+	transition: transform var(--ms, 250ms) ease-in-out;
+	width: 1.5rem;
+}
+
+:where(details[open] > summary)::-webkit-details-marker,
+:where(details[open] > summary)::after {
+	transform: translateY(-50%) rotate(180deg);
+}
+
+@supports (-webkit-backdrop-filter: blur(0)) {
+	:where(summary)::after {
+		content: none; /* Prefer ::-webkit-details-marker on Safari because it animates. */
+	}
+}
+
+:where(details > summary + div) {
+	box-sizing: content-box;
+	margin: -1rem;
+	overflow: hidden;
+	padding: 1rem;
+}
+
+@supports (contain: content) {
+	:where(details > summary + div) {
+		contain: content;
+		overflow: visible;
+	}
+}
+
+:where(details[data-open]) {
+	--ms: 250ms;
+}
+
+:where(details[data-open='false' i]) {
+	--opacity: 0;
+	--transform: translateY(-50%);
+}
+
+:where(details[data-open='true' i]) {
+	--opacity: 1;
+	--transform: translateY(0%);
+}
+
+:where(details[data-open] > summary + div) {
+	transition: height var(--ms) ease-in-out;
+}
+
+:where(details[data-open='false' i] > summary + div) {
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+
+:where(details[data-open='true' i] > summary + div) {
+	height: var(--height, auto);
+}
+
+:where(details[data-open] > summary + div > div) {
+	contain: layout;
+	opacity: var(--opacity);
+	transform: var(--transform);
+	transition: opacity var(--ms) ease-in-out, transform var(--ms) ease-in-out;
+}
+
+:where(details[data-open='false' i] > summary)::-webkit-details-marker,
+:where(details[data-open='false' i] > summary)::after {
+	transform: translateY(-50%) rotate(0deg);
+}
+
+:where(details[data-open='true' i] > summary)::-webkit-details-marker,
+:where(details[data-open='true' i] > summary)::after {
+	transform: translateY(-50%) rotate(180deg);
+}

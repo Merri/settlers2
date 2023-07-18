@@ -1,0 +1,39 @@
+---
+import { MarkdownContent } from 'astro'
+import Layout from './Layout.astro'
+import { default as BlogLayout } from '$/components/BlogPost.astro'
+import { Props as Post } from '$/components/BlogPost.astro'
+
+export interface Props {
+	content: MarkdownContent<Post>
+}
+
+const {
+	description,
+	permalink = new URL(Astro.url.pathname, Astro.site).toString(),
+	title,
+	seriesTitle,
+	pubDate,
+	modDate,
+	author,
+	heroImage,
+	alt,
+	disqusIdentifier,
+	disqusCanonical,
+} = Astro.props.content
+---
+
+<Layout lang="en" description={description} permalink={permalink} title={title}	seriesTitle={seriesTitle}>
+	<BlogLayout
+		title={title}
+		seriesTitle={seriesTitle}
+		description={description}
+		author={author}
+		heroImage={heroImage}
+		pubDate={pubDate}
+		modDate={modDate}
+		alt={alt}
+	>
+		<slot />
+	</BlogLayout>
+</Layout>

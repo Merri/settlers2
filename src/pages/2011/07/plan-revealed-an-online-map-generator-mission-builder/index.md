@@ -1,10 +1,11 @@
 ---
-title: "Plan revealed: an online map generator & mission builder"
-publishDate: "2011-07-22"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
-  - "tools"
+title: 'Plan revealed: an online map generator & mission builder'
+description: Thoughts about creating a new online map generator and mission builder.
+pubDate: 2011-07-22
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
+    - tools
 ---
 
 I've been thinking about this for some time now. While the game is old, there is still atleast some life on it thanks to GOG.com and especially thanks to the very active German community of Settlers fans. Just having a look at Return to the Roots forum gives a good view of what is happening: there is even an entirely new people being developed, and graphics quality wise they're doing a pretty good job!

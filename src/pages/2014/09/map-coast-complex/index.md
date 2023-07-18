@@ -1,10 +1,11 @@
 ---
-title: "Map: Coast Complex"
-publishDate: "2014-09-27"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "maps"
-  - "site-news"
+title: 'Map: Coast Complex'
+description: A new map you can try to play.
+pubDate: 2014-09-27
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - maps
+    - news
 ---
 
 This is an experimental map from Map Generator. Map size is 176 x 144 and it is for 6 players. Mountain minerals are rarish to obtain.

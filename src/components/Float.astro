@@ -1,0 +1,62 @@
+---
+---
+
+<div class="grid">
+	<div class="container">
+		<slot name="image" />
+		<div class="content">
+			<slot />
+		</div>
+	</div>
+</div>
+
+<style>
+	.grid {
+		background: var(--shadow-bg);
+		border-radius: 1rem;
+		container-type: inline-size;
+		display: grid;
+		margin-block: 1rem;
+		padding: 1rem 2rem;
+	}
+
+	.container {
+		contain: layout;
+	}
+
+	@container (width < 35rem) {
+		.container > :global(img) {
+			margin-bottom: 2rem;
+			width: 100%;
+		}
+	}
+
+	@container (width >= 35rem) {
+		.container > :global(img) {
+			float: right;
+			margin: 0.5rem 0 0.5rem 1rem;
+			max-width: 50%;
+			position: relative;
+			z-index: 1;
+		}
+
+		.content {
+			position: relative;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	}
+
+	.content > :global(:first-child) {
+		margin-top: 0;
+	}
+
+	.content > :global(:last-child) {
+		margin-bottom: 0;
+	}
+
+	.content :global(li::after) {
+		content: '';
+		padding-inline-end: 2rem;
+	}
+</style>

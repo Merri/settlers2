@@ -1,12 +1,13 @@
 ---
-title: "The map generator is back!"
-publishDate: "2011-07-16"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'The map generator is back!'
+description: Map generator has been made available again on the downloads page. Thoughts on further improvements.
+pubDate: 2011-07-16
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
-![](/wp-content/uploads/2011/07/oktavianus_on_horse.png "Octavianus on a horse")
+![](/wp-content/uploads/2011/07/oktavianus_on_horse.png 'Octavianus on a horse')
 
 The download page finally re-introduces the map generator I had fully forgotten to include back in late 2009 when I remade the site last time and made the new design. The map generator really makes your life easier if you love making maps but are bothered on how long it takes to draw the landmass!
 

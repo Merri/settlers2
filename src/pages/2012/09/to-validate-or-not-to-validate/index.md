@@ -1,9 +1,10 @@
 ---
-title: "To validate or not to validate"
-publishDate: "2012-09-04"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'To validate or not to validate'
+description: Guaranteeing quality is slow.
+pubDate: 2012-09-04
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 I'm in the process of writing map uploading code. You might wonder why this is a slow process, but I have a very good reason: I write a lot of validation code. Why? Because I want to make absolutely sure nobody even wants to try to abuse the Map Database service. This means making the life of a spammer as hard as possible and to make things so solid that it isn't easy to break through by code injection of any kind.

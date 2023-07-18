@@ -64,3 +64,13 @@
 	margin: 0;
 	padding: 0;
 }
+
+.section {
+	align-items: center;
+	background: var(--shadow-bg);
+	border: thin solid var(--line-color);
+	border-radius: 1rem;
+	display: flex;
+	justify-content: space-between;
+	padding: 1rem;
+}

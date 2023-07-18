@@ -1,9 +1,11 @@
 ---
-title: "Map for download"
-publishDate: "2014-09-09"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "tools"
+title: 'Map for download'
+description: Map Generator map you can check out.
+pubDate: 2014-09-09
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - maps
+    - tools
 ---
 
 Just to display some of the invisible progress of the past days: more texturing features on Greenland maps.

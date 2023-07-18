@@ -1,0 +1,101 @@
+---
+import BaseHead from '$/components/BaseHead.astro'
+import BlogPost from '$/components/BlogPost.astro'
+import MainHeader from '$/components/MainHeader.astro'
+
+import { Props as Post } from '$/components/BlogPost.astro'
+import { MarkdownContent } from 'astro'
+
+export interface Props {
+	content: MarkdownContent<Post>
+}
+
+const {
+	permalink = new URL(Astro.url.pathname, Astro.site).toString(),
+	lang = 'en',
+	title,
+	seriesTitle,
+	description,
+	pubDate,
+	modDate,
+	author,
+	heroImage,
+	alt,
+	disqusIdentifier,
+	disqusCanonical,
+} = Astro.props.content
+---
+
+<html lang={lang}>
+	<head>
+		<BaseHead
+			title={seriesTitle ? `${title} | ${seriesTitle}` : title}
+			description={description}
+			permalink={permalink}
+		/>
+		<link rel="stylesheet" href="/next-ui.css" />
+		<script type="module">
+			const opts = { once: true }
+			function listenOnDevicePixelRatio() {
+				const dpr = window.devicePixelRatio || 1
+				document.body.style.setProperty('--inset', dpr !== 1 ? `calc((${dpr} - 1) * -50.001%)` : '')
+				document.body.style.setProperty('--scale', dpr !== 1 ? `scale(calc(1 / ${dpr}))` : '')
+				matchMedia(`(resolution: ${dpr}dppx)`).addEventListener('change', listenOnDevicePixelRatio, opts)
+			}
+			listenOnDevicePixelRatio()
+		</script>
+	</head>
+
+	<body>
+		<MainHeader />
+		<BlogPost
+			title={title}
+			seriesTitle={seriesTitle}
+			description={description}
+			author={author}
+			heroImage={heroImage}
+			pubDate={pubDate}
+			modDate={modDate}
+			alt={alt}
+		>
+			<slot />
+		</BlogPost>
+		<div class="layout">
+			<article id="disqus-comments" data-identifier={disqusIdentifier} data-url={disqusCanonical ?? permalink}>
+				<header>
+					<h2>Comments</h2>
+				</header>
+				<div id="disqus_thread"></div>
+			</article>
+		</div>
+		<style>
+			#disqus_thread {
+				background: white;
+				background-clip: padding-box;
+				border: thin solid rgba(0, 0, 0, 0.4);
+				margin-bottom: 8rem;
+				min-height: 26rem;
+				padding: 1rem;
+				position: relative;
+			}
+		</style>
+		<script>
+			var disqus_config = function () {
+				var el = document.getElementById('disqus-comments')
+				if (!el) return
+				var thread = el.dataset
+				/* @ts-ignore */
+				this.page.url = thread.url
+				/* @ts-ignore */
+				this.page.identifier = thread.identifier
+			}
+			;(function () {
+				var s = document.createElement('script')
+				s.src = 'https://settlers2.disqus.com/embed.js'
+				s.async = true
+				s.setAttribute('data-timestamp', '' + Date.now())
+				document.head.appendChild(s)
+			})()
+		</script>
+	</body>
+</html>

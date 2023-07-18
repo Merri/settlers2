@@ -1,7 +1,7 @@
 ---
 title: "Tools"
-publishDate: "2012-08-23"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2012-08-23
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 611
 ---
 

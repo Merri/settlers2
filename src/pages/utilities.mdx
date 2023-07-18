@@ -1,0 +1,62 @@
+---
+title: Utilities
+description: You can find tools here that you can use to work with The Settlers II or Return to the Roots game files.
+pubDate: 2023-07-17
+layout: '$layouts/BlogEnglish.astro'
+---
+
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+import Link from '$/components/Link.astro'
+
+These are utilities in various stages of development. They are a part of this site with the source code freely available
+on <Link href="https://github.com/Merri/settlers">GitHub</Link>.
+
+## Map Generator
+
+You can use The Settlers II.net Map Generator to create fully playable random maps. This map generator is less strict on
+it's limitations, you can use it as an experimental creative tool to help in making nice maps.
+
+This also means the generated maps are unbalanced with the resources they provide which makes them less ideal for
+(competitive) multiplayer as some players will have a natural advantage.
+
+<div class={inlineFlex}>
+	<a href="/map-generator">Go to Map Generator</a>
+	<Icon href="/icons/chevron-right.svg" />
+</div>
+
+## World Editor
+
+This small utility let's you cut pieces of maps, enlarge map area, and do other various kinds of manipulation. You can
+also use it to fix and sanitize and map file to make it work better with the original The Settlers II. For example, if
+you have made a map with Return to the Roots map editor or random map generator you can give that file to World Editor,
+and download it again to make it as compatible with the original game as possible.
+
+Another feature is that you can drop your saved games or even the pre-1.51 versions of the map files into the editor and
+save them in a version 1.51 compatible format.
+
+<div class={inlineFlex}>
+	<a href="/world-editor">Go to World Editor</a>
+	<Icon href="/icons/chevron-right.svg" />
+</div>
+
+## Text Utility
+
+You can use this tool to translate the game's `ENG` or `GER` text files, the ones you can't open in a regular text
+editor. You can also create freshly new text files for your own campaign missions.
+
+This text utility has a high level of error correction and can open files that are known to be slightly broken, and upon
+saving will fix to the format expected by the original game.
+
+<div class={inlineFlex}>
+	<Link href="https://codesandbox-astro-solidjs-playground.vercel.app/settlers2Text">Go to Text Utility</Link>
+	<Icon href="/icons/chevron-right.svg" />
+</div>
+
+## More?
+
+You can find old utilities from <Link hreflang="de" href="http://www.jnsoftware.de/Siedler2/home.htm">Jürgen Nagel's site</Link>, with neat additions such as The Great Wall:
+
+<div style="text-align: center;">
+	<img alt="The Great Wall" src="/assets/2022-04-09_The_Great_Wall.png" width="1024" height="768" loading="lazy" />
+</div>

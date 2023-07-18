@@ -1,0 +1,3 @@
+<svg id="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 9H16.5C17.8807 9 19 7.88071 19 6.5C19 5.11929 17.8807 4 16.5 4M4 15H16C17.1046 15 18 15.8954 18 17C18 18.1046 17.1046 19 16 19M7 12H15" stroke="var(--icon-stroke-color,currentColor)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

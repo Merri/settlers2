@@ -1,18 +1,20 @@
 ---
-title: "Bugs in the original game"
-publishDate: "2014-09-28"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "bugs"
+title: 'Bugs in the original game'
+description: Some insight of issues within The Settlers II.
+pubDate: 2014-09-28
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - bugs
+    - docs
 ---
 
 Just some random bugs that I've noticed while playing.
 
-- You can control the number of soldiers that you have in all of your military buildings. If you don't have enough soldiers and you set the setting to maximum and then back to minimum the game will keep on moving soldiers back and forth until each building has been visited by the requested number of soldiers. Ie. if you have only one extra soldier it will keep moving back'n'forth between a military building and your Headquarters until it has visited every military building as many times as there are missing slots.
-- If you pause the game and load a game the pause will remain in effect, except that the game will play. You just can't control it and the screen is dark. You can do this multiple times until you can't really make any sense of what you see on the screen.
-- Sometimes the game allows more soldiers to go into a military building than it has slots for soldiers.
-- Soldiers can get stuck facing each other when they've been on an attack mission.
-- Fisher and stonemason won't give a notice that there is no more accessible fish/stone if the site where there still is a resource is blocked by terrain (ie. swamp) or indestructible object (pine tree, or a tree that was falling when woodcutter's hut was destroyed). FYI: [Settlers II.net Map Generator](/map-generator/) has been written so that these conditions won't happen!
+-   You can control the number of soldiers that you have in all of your military buildings. If you don't have enough soldiers and you set the setting to maximum and then back to minimum the game will keep on moving soldiers back and forth until each building has been visited by the requested number of soldiers. Ie. if you have only one extra soldier it will keep moving back'n'forth between a military building and your Headquarters until it has visited every military building as many times as there are missing slots.
+-   If you pause the game and load a game the pause will remain in effect, except that the game will play. You just can't control it and the screen is dark. You can do this multiple times until you can't really make any sense of what you see on the screen.
+-   Sometimes the game allows more soldiers to go into a military building than it has slots for soldiers.
+-   Soldiers can get stuck facing each other when they've been on an attack mission.
+-   Fisher and stonemason won't give a notice that there is no more accessible fish/stone if the site where there still is a resource is blocked by terrain (ie. swamp) or indestructible object (pine tree, or a tree that was falling when woodcutter's hut was destroyed). FYI: [Settlers II.net Map Generator](/map-generator/) has been written so that these conditions won't happen!
 
 Have you noticed any interesting bugs? We can't really get any fixes these anymore, but knowing about these bugs may be nice-to-know information when implementing similar game mechanics in other games (such as Return to the Roots, Widelands and maybe other future projects).
 

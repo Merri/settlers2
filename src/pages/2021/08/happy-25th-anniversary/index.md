@@ -1,7 +1,10 @@
 ---
-title: "Happy 25th Anniversary!"
-publishDate: "2021-08-31"
-layout: '$layouts/BlogPost.astro'
+title: 'Happy 25th Anniversary!'
+description: The Settlers II is now 25 years old!
+pubDate: 2021-08-31
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 <img alt="Oktavianus on a horse" src="/design/oktavianus_on_horse.png" width="91" height="150" style="float:right" /> The original **Die Siedler II: Veni Vidi Vici** hit the store shelves on **August 31st 1996**! 25 years is a long time. During the years **Return to the Roots** has kept on continuing the legacy of the game by expanding it with online multiplayer, new features, and new content. And of course **The Settlers II 10th Anniversary** was released some 15 years ago, but in retrospective it failed to catch the charm of the original game, and followed it too soon after while being incompatible.

@@ -1,7 +1,7 @@
 ---
 title: "BBM File Format"
-publishDate: "2011-07-23"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2011-07-23
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 236
 ---
 

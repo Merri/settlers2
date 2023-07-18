@@ -1,9 +1,10 @@
 ---
-title: "Minor site update"
-publishDate: "2013-05-24"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Minor site update'
+description: Commenting system swapped to Disqus. Also have been hired as a programmer to a company.
+pubDate: 2013-05-24
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 We've switched to Disqus comments. At the moment it seems the old comments don't yet appear, but they should (as I exported them). Hopefully they do.

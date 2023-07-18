@@ -1,9 +1,10 @@
 ---
 title: "Datasheet for Buildings"
-publishDate: "2011-07-14"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2011-07-14
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: "97 http://settlers2.net/?page_id=97"
 disqusCanonical: 'https://settlers2.net/the-settlers-2/datasheet-for-buildings'
+permalink: https://settlers2.net/guides/buildings
 ---
 
 These tables cover base concepts of buildings in the game.
@@ -12,7 +13,7 @@ These tables cover base concepts of buildings in the game.
 
 These are the very foundation of your economy as building bigger buildings requires both boards and stones. Granite is a limited resource!
 
-<div class="horizontally-scrollable">
+<div data-scrolling="inline">
 
 | Building | Type / Boards / Stones | Inhabitant / Tool | Consumes / Produces |
 | :---: | :---: | --- | --- |
@@ -28,7 +29,7 @@ These are the very foundation of your economy as building bigger buildings requi
 
 You will eventually run out of fish and wild animals. Grain and water, and thus bread and ham are endless resources.
 
-<div class="horizontally-scrollable">
+<div data-scrolling="inline">
 
 | Building | Type / Boards / Stones | Inhabitant / Tool | Consumes / Produces |
 | :---: | :---: | --- | --- |
@@ -48,7 +49,7 @@ You will eventually run out of fish and wild animals. Grain and water, and thus 
 
 Metalworks produces tools randomly based on tool priorities. The tools window can be opened from Main selection window. Minerals are a limited resource!
 
-<div class="horizontally-scrollable">
+<div data-scrolling="inline">
 
 | Building | Type / Boards / Stones | Inhabitant / Tool | Consumes / Produces |
 | :---: | :---: | --- | --- |
@@ -66,7 +67,7 @@ Metalworks produces tools randomly based on tool priorities. The tools window ca
 
 A new soldier is generated in any Headquarters, Storehouse or Harbor when one Shield, Sword and Beer is available in storage.
 
-<div class="horizontally-scrollable">
+<div data-scrolling="inline">
 
 | Building | Type / Boards / Stones | Inhabitant / Tool | Consumes / Produces |
 | :---: | :---: | --- | --- |
@@ -85,7 +86,7 @@ Donkeys double the rate merchandise travels on road (flag-to-flag), however on e
 
 Transportation times increase if you don't build storehouses.
 
-<div class="horizontally-scrollable">
+<div data-scrolling="inline">
 
 | Building | Type / Boards / Stones | Inhabitant / Tool | Consumes / Produces |
 | :---: | :---: | --- | --- |

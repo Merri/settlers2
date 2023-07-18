@@ -1,0 +1,40 @@
+---
+import Icon from '$/components/Icon.astro'
+import styles from '$/components/inlineFlex.module.css'
+import { Generator } from '$/components/WorldEditor/Generator'
+import Layout from '$/layouts/Layout.astro'
+
+const title = 'The Settlers II.net Map Generator'
+const description = 'Generate maps for The Settlers II Gold Edition or Return to the Roots!'
+const permalink = 'https://settlers2.net/map-generator'
+---
+
+<Layout lang="en" title={title} description={description} permalink={permalink}>
+	<main class="editor" id="main">
+		<article class="content">
+			<div class="header">
+				<h1>Map Generator</h1>
+				<nav>
+					<span class={styles.inlineFlex}>
+						<a href="/map-generator/roadmap">Roadmap</a>
+						<Icon href="/icons/chevron-right.svg" />
+					</span>
+					<br />
+					<span class={styles.inlineFlex}>
+						<a href="/map-generator/legacy">Old map generator</a>
+						<Icon href="/icons/chevron-right.svg" />
+					</span>
+				</nav>
+			</div>
+			<Generator client:load />
+		</article>
+	</main>
+</Layout>
+<style>
+	.header {
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+</style>

@@ -1,0 +1,5 @@
+<svg id="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 3L9 5V21L3 19V3Z" fill="var(--icon-shade-color)"/>
+<path d="M21 5L15 3V19L21 21V5Z" fill="var(--icon-shade-color)"/>
+<path d="M9 5L3 3V19L9 21M9 5L15 3M9 5V21M15 3L21 5V21L15 19M15 3V19M15 19L12 20L9 21" stroke="var(--icon-stroke-color,currentColor)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

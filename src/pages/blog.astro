@@ -1,0 +1,82 @@
+---
+import { MarkdownInstance } from 'astro'
+import { isBefore } from 'date-fns'
+
+import BlogPostPreview from '$/components/BlogPostPreview.astro'
+import Icon from '$/components/Icon.astro'
+import { inlineFlexIcon } from '$/components/inlineFlex.module.css'
+import Link from '$/components/Link.astro'
+import Tags from '$/components/Tags.astro'
+import { Props as Post } from '../components/BlogPost.astro'
+import Layout from '$layouts/Layout.astro'
+
+const tags = new Set(
+	(new URL(Astro.request.url).searchParams.get('tags') ?? '')
+		.toLowerCase()
+		.split(',')
+		.map((tag) => tag.trim())
+		.filter((tag) => tag)
+)
+
+const now = new Date()
+
+const allPosts = await Astro.glob<MarkdownInstance<Post>>('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/**/*.(md|mdx)')
+
+const posts = allPosts
+	.filter((post) => isBefore(new Date(post.frontmatter.pubDate), now))
+	.filter((post) => tags.size === 0 || post.frontmatter.tags?.some((tag) => tags.has(tag.toLowerCase())))
+
+posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.pubDate))
+---
+
+<Layout
+	lang="en"
+	title="The Settlers II.net Blog"
+	description="News and updates around the topic of The Settlers II and Return to the Roots."
+	permalink="https://settlers2.net/blog"
+>
+	<link
+		slot="head"
+		rel="alternate"
+		type="application/rss+xml"
+		title="RSS Feed for The Settlers II.net Blog"
+		href="/rss.xml"
+	/>
+	<div style="contain: layout;">
+		<div class={inlineFlexIcon} style="float: right; margin-top: 2.5rem;">
+			<Icon href="/icons/social/rss.svg" title="RSS feed" size={3} />
+			<Link href="/rss.xml" data-before="cover">RSS Feed</Link>
+		</div>
+		<h1>Blog</h1>
+		<p>News and latest findings about The Settlers II or Return to the Roots.</p>
+	</div>
+	{
+		tags.size > 0 && (
+			<nav aria-labelledby="tagged-posts">
+				<span id="tagged-posts">Displaying posts tagged</span> <Tags tags={[...tags]} />
+				<small>
+					<a href="/blog/">
+						<strong>Clear tags</strong>
+					</a>
+				</small>
+			</nav>
+		)
+	}
+	{posts.map((post) => <BlogPostPreview post={post} />)}
+	<blockquote>
+		<p>
+			When you post on social media use tags <code>#RttR</code>, <code>#settlers2</code> and <code>#Settlers2Net</code>!
+		</p>
+		<p>
+			You can follow Vesa Piittinen on <Icon href="/icons/social/mastodon.svg" /> Mastodon:<br />
+			<code>@MerriNet@mastodon.social</code>
+		</p>
+		<p>
+			This site is made with <Link href="https://astro.build">Astro</Link>, <Link
+				href="https://github.com/Merri/settlers2"
+			>
+				source code available on GitHub
+			</Link>
+		</p>
+	</blockquote>
+</Layout>

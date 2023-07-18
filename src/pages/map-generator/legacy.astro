@@ -1,0 +1,17 @@
+---
+import { MapGenerator } from '$/components/MapGenerator'
+import Layout from '$/layouts/Layout.astro'
+
+const title = 'The Settlers II.net Map Generator'
+const description = 'Generate maps for The Settlers II Gold Edition and Return to the Roots'
+const permalink = 'https://settlers2.net/map-generator/legacy'
+---
+
+<Layout lang="en" title={title} description={description} permalink={permalink}>
+	<main id="main">
+		<article class="content">
+			<p>This is a legacy project. Try <a href="/map-generator">the new Map Generator!</a></p>
+			<MapGenerator client:only />
+		</article>
+	</main>
+</Layout>

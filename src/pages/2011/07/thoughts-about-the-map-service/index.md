@@ -1,9 +1,10 @@
 ---
-title: "Thoughts about the map service"
-publishDate: "2011-07-28"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Thoughts about the map service'
+description: Map service is something that would be very useful.
+pubDate: 2011-07-28
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 I've been spending some time thinking what kind of features I provide with the map service. The easiest thing to do is simply let people upload maps to the site one by one and then show a simple list of downloadable files. But that is something I don't want. There is already map listings of that kind.

@@ -1,10 +1,11 @@
 ---
-title: "Canvas limitations conquered"
-publishDate: "2012-08-02"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
-  - "tools"
+title: 'Canvas limitations conquered'
+description: Utility based on canvas.
+pubDate: 2012-08-02
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
+    - tools
 ---
 
 So, today I noticed a serious issue with my earlier PNG implementation: HTML5 Canvas doesn't treat colors as exactly as I'd like to when alpha channel is active on a pixel. This results RGB data on a semitransparent pixel to be incorrect when reading it. So I can't use a PNG image with alpha transparency.

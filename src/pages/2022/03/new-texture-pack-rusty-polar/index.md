@@ -1,7 +1,10 @@
 ---
 title: 'New texture pack: Rusty Polar'
-publishDate: '2022-03-27'
-layout: '$layouts/BlogPost.astro'
+description: New alternative texture set for the original The Settlers II.
+pubDate: 2022-03-27
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - textures
 ---
 
 <img alt="Rusty Polar texture pack Release Candidate 1" src="/assets/2022-03-27_rusty_polar.png" height="768" width="1024" />

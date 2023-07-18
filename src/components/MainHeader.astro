@@ -1,0 +1,170 @@
+---
+import Icon from '$/components/Icon.astro'
+
+---
+<header>
+	<nav>
+		<a href="#main" hidden aria-hidden="false">Skip to content</a>
+		<ul role="list">
+			<li>
+				<a href="/">
+					<img
+						alt="Settlers II.net"
+						src="/wp-content/uploads/2011/09/The-Settlers-II-net-810x320-300x118.png"
+						width="162"
+						height="64"
+					/>
+				</a>
+			</li>
+			<li>
+				<a href="/blog">
+					<Icon href="/icons/edit-3.svg" size={2.5} />
+					Blog
+				</a>
+			</li>
+			<li>
+				<a href="/guides">
+					<Icon href="/icons/star-1.svg" size={2.5} />
+					Game Guide
+				</a>
+			</li>
+			<li>
+				<a href="/downloads" title="">
+					<Icon href="/icons/download.svg" size={2.5} />
+					Downloads
+				</a>
+			</li>
+			<li>
+				<a href="/utilities" title="Game file utilities">
+					<Icon href="/icons/settings.svg" size={2.5} />
+					Utilities
+				</a>
+			</li>
+			<li>
+				<a href="/documentation" title="Technical documentation">
+					<Icon href="/icons/inbox.svg" size={2.5} />
+					Tech Docs
+				</a>
+			</li>
+		</ul>
+	</nav>
+</header>
+<style>
+	:where(nav > ul[role='list']) {
+		--icon-shade-color: color-mix(in lch, var(--color-yellow), transparent 50%);
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		font-family: var(--page-default-font);
+		font-weight: 600;
+		gap: 0.5rem 1rem;
+		justify-content: flex-start;
+		margin: 0;
+		min-height: 2rem;
+	}
+
+	:where(nav > ul[role='list']) a {
+		align-items: center;
+		color: var(--color-yellow);
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		text-decoration: none;
+		transition: transform 125ms ease-in-out;
+	}
+
+	:where(nav > ul[role='list'] li:not(:first-of-type)) a {
+		width: 7rem;
+	}
+
+	@media not all and (min-width: 53.75em) {
+		:where(nav > ul[role='list']) li {
+			margin: 0;
+		}
+
+		:where(nav > ul[role='list']) a {
+			flex: none;
+			flex-direction: row;
+			width: unset;
+		}
+	}
+
+	:where(nav > ul[role='list']) a:hover {
+		transform: scale(1.125);
+	}
+
+	:where(nav > ul[role='list'] li:first-of-type) a:hover {
+		filter: brightness(1.25);
+	}
+
+	:where(nav > ul[role='list'] li:not(:first-of-type)) a:hover {
+		color: #ffff7f;
+		filter: drop-shadow(0 0 0.25rem var(--color-yellow)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.5)) brightness(1.1);
+		-webkit-text-stroke-color: var(--color-yellow);
+		-webkit-text-stroke-width: 0.5px;
+	}
+
+	:where(nav > ul[role='list']) a > img {
+		filter: drop-shadow(0 0 1rem rgba(255, 255, 127, 0.375)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+	}
+
+	:where(nav > ul[role='list']) a > span {
+		font-size: 2rem;
+	}
+
+	:where(body > header > nav) {
+		background: #022a0c;
+		border-bottom: 0.25rem solid #7b7b5f;
+		box-sizing: border-box;
+		padding: 1.25rem 0 0.75rem;
+		position: relative;
+	}
+
+	:where(body > header > nav li:first-of-type) {
+		position: absolute;
+	}
+
+	@media not all and (min-width: 40em) {
+		:where(body > header > nav) {
+			padding-left: 1.5rem;
+			padding-right: 1.5rem;
+			padding-top: 112px;
+		}
+
+		:where(body > header > nav li:first-of-type) {
+			left: 50%;
+			top: 1.5rem;
+			transform: translateX(-50%);
+		}
+	}
+
+	@media (min-width: 40em) {
+		:where(body > header > nav) {
+			padding-left: 208px;
+			padding-right: 1.5rem;
+		}
+
+		:where(body > header > nav li:first-of-type) {
+			left: 2.5rem;
+			top: 2rem;
+		}
+	}
+
+	@media (min-width: 62em) {
+		:where(body > header > nav) {
+			padding-left: 2.5rem;
+			padding-right: 2.5rem;
+		}
+
+		:where(nav > ul[role='list']) {
+			justify-content: flex-start;
+			margin: auto;
+			max-width: 65rem;
+		}
+
+		:where(body > header > nav li:first-of-type) {
+			margin-right: 1rem;
+			position: static;
+		}
+	}
+</style>

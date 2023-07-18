@@ -3,12 +3,6 @@
 	gap: 0.125rem;
 }
 
-.horizontallyScrollable {
-	overflow: hidden;
-	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
-}
-
 .buttonRow {
 	display: flex;
 	gap: 0.5rem;

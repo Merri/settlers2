@@ -1,12 +1,14 @@
 ---
-title: "Gathering objects information"
-publishDate: "2012-08-28"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Gathering objects information'
+description: A new technical documentation page about objects.
+pubDate: 2012-08-28
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - docs
+    - news
 ---
 
-I started a new [page purely about objects](/documentation/objects/ "Objects"). The map file page would have started to become far too long if all the object details would've been added in so I thought it was better to start a fresh new page. Thanks to Spike for giving a little bit of new information as a push to get me started on investigating more!
+I started a new [page purely about objects](/documentation/objects/ 'Objects'). The map file page would have started to become far too long if all the object details would've been added in so I thought it was better to start a fresh new page. Thanks to Spike for giving a little bit of new information as a push to get me started on investigating more!
 
 **Update!**
 

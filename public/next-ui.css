@@ -1,0 +1,438 @@
+:root {
+	--emoji-font: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiOne Mozilla',
+		'Twemoji Mozilla', 'Noto Emoji', 'Segoe UI Symbol', EmojiSymbols;
+	--sans-font: system-ui, ui-sans-serif, Helvetica, sans-serif, var(--emoji-font);
+	--heading-font: 'Gentium Basic', var(--sans-font);
+	--content-font: 'Kaisei Tokumin', var(--sans-font);
+	--mono-font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--emoji-font);
+
+	--color-blue: #3894ff;
+	--color-blue-rgb: 56, 148, 255;
+	--color-green: #17c083;
+	--color-green-rgb: 23, 192, 131;
+	--color-orange: #e25858;
+	--color-orange-rgb: 226, 88, 88;
+	--color-purple: #882de7;
+	--color-purple-rgb: 136, 45, 231;
+	--color-red: #ff1639;
+	--color-red-rgb: 255, 22, 57;
+	--color-yellow: #ffbe2d;
+	--color-yellow-rgb: 255, 190, 45;
+}
+
+.horizontally-scrollable {
+	overflow: hidden;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+:where([aria-hidden='false' i][hidden]) {
+	display: initial;
+}
+
+:is(.visually-hidden, [aria-hidden='false' i][hidden]:not(:focus):not(:active)) {
+	all: initial;
+	clip: rect(0 0 0 0);
+	overflow: hidden;
+	height: 1px;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+:where([aria-busy='true' i]) {
+	cursor: progress;
+}
+
+:where([aria-disabled='true' i], [disabled]) {
+	cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		animation-delay: -1ms !important;
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		background-attachment: initial !important;
+		scroll-behavior: auto !important;
+		transition-delay: 1ms !important;
+		transition-duration: 1ms !important;
+	}
+}
+
+:where(:focus:not(:focus-visible)) {
+	outline: none;
+}
+
+:where(:focus:focus-visible) {
+	outline: 3px solid Highlight;
+	outline-offset: 3px;
+}
+
+:where([role='list']) {
+	list-style: none;
+	padding: 0;
+}
+
+:where(dl, ol, ul) :where(dl, ol, ul) {
+	margin: 0;
+}
+
+:where(html) {
+	font-family: var(--sans-font);
+	line-height: 1.375;
+	-moz-tab-size: 4;
+	tab-size: 4;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+:where(body) {
+	display: grid;
+	grid-template-columns: 1fr min(65rem, 90%) 1fr;
+	margin: 0;
+}
+
+:where(body > *) {
+	grid-column: 2;
+}
+
+:where(body > footer),
+:where(body > header) {
+	grid-column: 1 / -1;
+}
+
+:where(a) {
+	color: #00539b;
+	font-weight: 500;
+	text-underline-offset: 0.25em;
+}
+
+:where(a:visited) {
+	color: #7b3b13;
+}
+
+:where(hr) {
+	box-sizing: content-box;
+	color: inherit;
+	height: 0;
+	overflow: visible;
+}
+
+:where(code, kbd, pre, samp) {
+	font-family: var(--mono-font), monospace;
+	font-size: 1em;
+}
+
+:where(p) {
+	font-size: 1.25em;
+}
+
+:where(li) {
+	margin: 0.25rem 0;
+}
+
+:where(li + li) {
+	margin-top: 0.75rem;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--heading-font);
+	margin-block: 1rem 0.5rem;
+	line-height: 1.125;
+}
+
+:where(article > main) {
+	color: #33333b;
+	font-family: var(--content-font);
+}
+
+:where(article > main h2) {
+	color: #001b7b;
+}
+
+:where(article > main h3) {
+	color: #931b1b;
+}
+
+:where(article > main h4) {
+	color: #573327;
+}
+
+:where(article > main :is(h2, h3, h4, h5, h6, hr)) {
+	margin-top: 2rem;
+}
+
+:where(h1) {
+	font-size: 3rem;
+}
+
+:where(h2) {
+	font-size: 2.25rem;
+}
+
+:where(h3) {
+	font-size: 1.75rem;
+}
+
+:where(h4) {
+	font-size: 1.5rem;
+}
+
+:where(h5) {
+	font-size: 1.375rem;
+}
+
+:where(h6) {
+	font-size: 1.25rem;
+}
+
+:where(strong) {
+	font-weight: 600;
+}
+
+:where(b) {
+	font-weight: 700;
+}
+
+:where(small) {
+	font-size: 0.875em;
+}
+
+:where(iframe) {
+	border-style: none;
+}
+
+:where(audio, canvas, iframe, img, progress, svg, video) {
+	vertical-align: middle;
+}
+
+:where(iframe, img, input, video, select, textarea) {
+	height: auto;
+	max-width: 100%;
+}
+
+:where(svg:not([fill])) {
+	fill: currentColor;
+}
+
+:where(sub, sup) {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+:where(sub) {
+	bottom: -0.25em;
+}
+
+:where(sup) {
+	top: -0.5em;
+}
+
+:where(pre) {
+	background-color: wheat;
+	box-sizing: border-box;
+	box-shadow: inset 0 0 3px 2px rgba(255, 255, 255, 0.7), 0 0 1px 2px rgba(0, 0, 0, 0.1);
+	position: relative;
+	--padding-block: 1rem;
+	--padding-inline: 2rem;
+	padding: var(--padding-block) var(--padding-inline);
+	padding-right: calc(var(--padding-inline) * 2);
+	margin-left: calc(50vw - var(--padding-inline));
+	transform: translateX(-50vw);
+
+	line-height: 1.414;
+	width: calc(100vw + (var(--padding-inline) * 2) - 0.5rem);
+	max-width: calc(100% + (var(--padding-inline) * 2) - 0.5rem);
+	overflow-y: hidden;
+	overflow-x: auto;
+}
+
+@media (min-width: 37.75em) {
+	:where(pre) {
+		--padding-inline: 1.25rem;
+		border-radius: 0.5rem;
+	}
+}
+
+:where(table) {
+	border-collapse: collapse;
+	border-color: currentColor;
+	text-indent: 0;
+}
+
+:where(td, th) {
+	background-clip: padding-box;
+	filter: brightness(1);
+}
+
+:where(textarea) {
+	margin: 0;
+	resize: vertical;
+}
+
+:where(button, input, optgroup, select, textarea) {
+	font-family: var(--sans-font);
+	font-size: 1em;
+	line-height: 1.125;
+	margin: 0;
+}
+
+:where(button, input) {
+	overflow: visible;
+}
+
+:where(button, select) {
+	text-transform: none;
+}
+
+:where(button, [type='button'], [type='reset'], [type='submit'])::-moz-focus-inner {
+	border-style: none;
+	padding: 0;
+}
+
+:where(fieldset) {
+	padding: 0;
+}
+
+:where(legend) {
+	box-sizing: border-box;
+	color: inherit;
+	display: table;
+	max-width: 100%;
+	padding: 0;
+	white-space: normal;
+}
+
+:where([type='search']) {
+	-webkit-appearance: textfield;
+	appearance: textfield;
+}
+
+:where([type='search'])::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+
+::-webkit-file-upload-button {
+	-webkit-appearance: button;
+	font: inherit;
+}
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+	height: auto;
+}
+
+::-webkit-input-placeholder {
+	color: inherit;
+	opacity: 0.5625;
+}
+
+@property --icon-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: unset;
+}
+
+@property --icon-light-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: unset;
+}
+
+@property --icon-dark-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: unset;
+}
+
+/* design */
+
+@media not (prefers-reduced-motion) {
+	:where(html) {
+		scroll-behavior: smooth;
+	}
+}
+
+:where(*:target) {
+	scroll-margin-top: 2rem;
+}
+
+:where(body) {
+	background-image: linear-gradient(
+		to right,
+		#e6caaf 1em,
+		#fee8cb 2.5em,
+		rgba(255, 255, 255, 0) 25%,
+		rgba(255, 255, 255, 0) 75%,
+		#fee8cb calc(100% - 2.5em),
+		#e6caaf calc(100% - 1em)
+	);
+	--inset: 0;
+	--scale: 1;
+}
+
+:where(body > *:not(:is(header, footer))) {
+	background: white;
+	box-shadow: 0 0 5rem 5rem white;
+}
+
+body::after {
+	background-image: url('/design/corner4.png'), url('/design/corner3.png'), url('/design/corner2.png'),
+		url('/design/corner1.png'), url('/design/border4.png'), url('/design/border3.png'), url('/design/border2.png'),
+		url('/design/border1.png');
+	background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, repeat-y, repeat-y, repeat-x;
+	background-position: 100% 100%, 0 100%, 100% 0, 0 0, center 0, 0 center, 100% center, center 100%;
+	content: '';
+	pointer-events: none;
+	position: fixed;
+	z-index: 100;
+	inset: var(--inset);
+	transform: var(--scale);
+}
+
+@media not all and (min-width: 28em) {
+	:where(body) {
+		--inset: -50%;
+		--scale: scale(0.5);
+	}
+}
+
+:where(table) {
+	--table-cell-bg: rgba(243, 223, 203, 0.625);
+	--table-th-bg: rgba(243, 223, 203, 0.95);
+	--table-cell-bg2: rgba(243, 223, 203, 0.375);
+	border-spacing: 0;
+	box-sizing: border-box;
+	line-height: 2;
+	margin: 0;
+	white-space: nowrap;
+}
+
+:where(table img) {
+	max-width: unset;
+}
+
+:where(th) {
+	background-color: var(--table-th-bg);
+	border: thin solid rgba(0, 0, 0, 0.2);
+	padding: 0.25rem 0.5rem;
+	text-align: left;
+	vertical-align: top;
+}
+
+:where(td) {
+	background-color: var(--table-cell-bg);
+	border: thin solid rgba(0, 0, 0, 0.2);
+	padding: 0.25rem 0.5rem;
+	vertical-align: top;
+}
+
+:where(tr:nth-child(odd)) {
+	--table-cell-bg: var(--table-cell-bg2);
+}

@@ -1,7 +1,7 @@
 ---
 title: "Graphics files (LBM)"
-publishDate: "2011-06-25"
-layout: '$layouts/BlogPost.astro'
+pubDate: 2011-06-25
+layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 13
 ---
 

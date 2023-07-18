@@ -1,9 +1,10 @@
 ---
-title: "Artwork @ 1920x1080 (unfinished)"
-publishDate: "2011-08-02"
-layout: '$layouts/BlogPost.astro'
-categories: 
-  - "site-news"
+title: 'Artwork @ 1920x1080 (unfinished)'
+description: Continuing work on the art stuff.
+pubDate: 2011-08-02
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - news
 ---
 
 Still some work to do: adding more detail to the ship, adjusting water etc.
