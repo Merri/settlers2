@@ -346,7 +346,7 @@ export function WorldEditor() {
 				</div>
 			)}
 			<h2>Maps</h2>
-			<div className={styles.horizontallyScrollable}>
+			<div data-scrolling="inline">
 				<div className={styles.buttonRow}>
 					{worlds.map(({ filename, world }, index) => {
 						const isSelected = index === selected
@@ -583,22 +583,27 @@ export function WorldEditor() {
 								<td>Block 4 &amp; 5: object</td>
 								<td>
 									{world.blocks[BlockType.Object2]
-										.reduce((obj, objectType, index) => {
-											let meta = ''
-											if (objectType === 0x80) {
-												meta = `Building ${asHex(world.blocks[BlockType.Object1][index] + 1)}`
-											} else if (objectType === 0xc8) {
-												if (world.blocks[BlockType.Object1][index] === 0x16) {
-													meta = `Gate`
+										.reduce(
+											(obj, objectType, index) => {
+												let meta = ''
+												if (objectType === 0x80) {
+													meta = `Building ${asHex(
+														world.blocks[BlockType.Object1][index] + 1
+													)}`
+												} else if (objectType === 0xc8) {
+													if (world.blocks[BlockType.Object1][index] === 0x16) {
+														meta = `Gate`
+													}
 												}
-											}
-											if (meta) {
-												const x = index % world.width
-												const y = Math.round((index - x) / world.width)
-												obj.push({ meta, x, y })
-											}
-											return obj
-										}, [] as { meta: string; x: number; y: number }[])
+												if (meta) {
+													const x = index % world.width
+													const y = Math.round((index - x) / world.width)
+													obj.push({ meta, x, y })
+												}
+												return obj
+											},
+											[] as { meta: string; x: number; y: number }[]
+										)
 										.sort((a, b) => a.meta.localeCompare(b.meta))
 										.map(({ meta, x, y }, idx) => (
 											<span key={idx}>
@@ -616,14 +621,17 @@ export function WorldEditor() {
 									<td>Block 6: animals</td>
 									<td>
 										{Object.entries(
-											world.blocks[BlockType.Animal].reduce((record, animalType) => {
-												if (animalType > 0 && animalType < 255) {
-													const name = getAnimalName(animalType)
-													if (record[name] == null) record[name] = 0
-													record[name]++
-												}
-												return record
-											}, {} as Record<string, number>)
+											world.blocks[BlockType.Animal].reduce(
+												(record, animalType) => {
+													if (animalType > 0 && animalType < 255) {
+														const name = getAnimalName(animalType)
+														if (record[name] == null) record[name] = 0
+														record[name]++
+													}
+													return record
+												},
+												{} as Record<string, number>
+											)
 										).map(([name, count]) => (
 											<span key={name}>
 												{name}: {count}
@@ -638,16 +646,19 @@ export function WorldEditor() {
 									<td>
 										<select>
 											{world.blocks[BlockType.Animal]
-												.reduce((record, loByte, i) => {
-													const hiByte = world.blocks[BlockType.Unknown][i]
-													if (loByte !== 255 && hiByte !== 255) {
-														const index = loByte | (hiByte << 8)
-														const x = i % world.width
-														const y = Math.ceil((i - x) / world.width)
-														record.push({ x, y, index })
-													}
-													return record
-												}, [] as { x: number; y: number; index: number }[])
+												.reduce(
+													(record, loByte, i) => {
+														const hiByte = world.blocks[BlockType.Unknown][i]
+														if (loByte !== 255 && hiByte !== 255) {
+															const index = loByte | (hiByte << 8)
+															const x = i % world.width
+															const y = Math.ceil((i - x) / world.width)
+															record.push({ x, y, index })
+														}
+														return record
+													},
+													[] as { x: number; y: number; index: number }[]
+												)
 												.sort((a, b) => a.index - b.index)
 												.map(({ x, y, index }) => (
 													<option key={index}>
@@ -662,12 +673,15 @@ export function WorldEditor() {
 								<td>Footer: animals</td>
 								<td>
 									{Object.entries(
-										world.animals.reduce((record, [animalType, animalX, animalY]) => {
-											const name = getAnimalName(animalType)
-											if (record[name] == null) record[name] = 0
-											record[name]++
-											return record
-										}, {} as Record<string, number>)
+										world.animals.reduce(
+											(record, [animalType, animalX, animalY]) => {
+												const name = getAnimalName(animalType)
+												if (record[name] == null) record[name] = 0
+												record[name]++
+												return record
+											},
+											{} as Record<string, number>
+										)
 									).map(([name, count]) => (
 										<span key={name}>
 											{name}: {count}
