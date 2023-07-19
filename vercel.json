@@ -55,6 +55,11 @@
 			"source": "/archives",
 			"destination": "https://settlers2.net/download",
 			"permanent": true
+		},
+		{
+			"source": "/cheats/world-map-file-format-wldswd",
+			"destination": "/documentation/world-map-file-format-wldswd",
+			"permanent": true
 		}
 	]
 }
