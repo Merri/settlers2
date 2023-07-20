@@ -6,7 +6,7 @@ modDate: 2011-07-31
 layout: '$layouts/BlogEnglish.astro'
 ---
 
-This is a HTML converted backup of `WLD_reference.txt` preserved for historical conservation.
+This is a HTML converted backup of [`WLD_reference.txt`](/WLD_reference.txt) preserved for historical conservation.
 
 Original file locations:
 
