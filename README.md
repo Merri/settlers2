@@ -10,7 +10,7 @@ The site also caters to people who are new to the game and just wish to know a b
 
 In addition the site works as an archive.
 
-Visit [settlers2.net](https://settlers2.net) | New site at [astro.settlers2.net](https://astro.settlers2.net)
+Visit [settlers2.net](https://settlers2.net)
 
 ### Vision
 
@@ -23,8 +23,7 @@ More wild ideas: graphics editor, texture set editor, sound editor, music editor
 ### Contributing
 
 We do not yet have a proper contribution guide, but in general you're welcome to do changes and create a pull request
-with your changes. You can contact the main author Merri at [Twitter](https://twitter.com/merrinen) or through
-[Return to the Roots Discord Server](https://discord.gg/kyTQsSx) if you have questions!
+with your changes. You can contact the main author Merri through [Return to the Roots Discord Server](https://discord.gg/kyTQsSx) if you have questions!
 
 ## Getting started
 
@@ -86,4 +85,4 @@ All commands are run from the root of the project, from a terminal:
 
 ### 👀 Want to learn more about Astro?
 
-Feel free to check [documentation](https://github.com/snowpackjs/astro) or jump into our [Discord server](https://astro.build/chat).
+Feel free to check [documentation](https://github.com/withastro/astro) or jump into our [Discord server](https://astro.build/chat).
