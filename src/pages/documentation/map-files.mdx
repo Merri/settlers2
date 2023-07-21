@@ -1,0 +1,105 @@
+---
+title: The Settlers II map files documentation
+description: Overview of map file formats such as CONTI200.DAT, WORLD200.DAT, MISS_200.WLD, SWD, and saved games.
+pubDate: 2023-07-20
+layout: '$layouts/BlogEnglish.astro'
+---
+
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+
+The Settlers II features multiple variations of map files. In each version of the game you have two formats: the "raw"
+map files with no saved data, and saved games. The shared parts of these two formats are mostly compatible with each
+other, however regular maps cannot include saved game data when being loaded as a starting point for a new map as some
+crucial information would be missing which is set into additional files when a map is a saved game.
+
+## Veni Vidi Vici releases
+
+This includes versions 0.15, 0.16, 1.00, 1.01, and 1.02 of the game. Each beta and demo was setup with the following
+files:
+
+```
+DATA\MAPS\CONTI200.DAT
+DATA\MAPS\WORLD200.DAT
+DATA\MISSIONS\MIS_0000.RTX
+DATA\TXT\MISS_001.ENG or DATA\TXT\MISS_001.GER
+SAVE\CNTRL800.DAT
+SAVE\COMPY800.DAT
+SAVE\CONTI800.DAT
+SAVE\DESKT800.DAT
+SAVE\MAILS800.DAT
+SAVE\TRANS800.DAT
+SAVE\WORLD800.DAT
+```
+
+The beta and demo executables load the 800 variant through their added option to start a demo, while WORLD200.DAT is
+usually the first Roman Campaign mission, "Off we go!". Saved games use 900 variant so they are WORLD900.DAT etc. within
+the `SAVE` directory.
+
+Put other way, the missions exclusive to the beta/demo version are saved games. This means you can create a saved game
+in a later version of the game with any map you desire, and then copy and rename those files to the beta/demo versions
+and see what happens. Of course you will not have success porting Winter World to pre-1.51 versions of the game as that
+terrain set was introduced in V1.50, however Wasteland might work. There are texture differences in the early versions
+especially with Wasteland.
+
+As of writing this I have not done this experimentation and there can be blockers, for example there is less data in
+some of the earlier beta/demo version saved games.
+
+### Save game documentation
+
+The saved games appear to be direct memory dumps of the game's internal organization of data, and if you have the
+know-how you can probably inspect the data in real time from computer memory and see it being organized exactly as in
+the saved game files. For now you can take this claim as "an educated guess" and a pinch of salt as this is something
+that has not been verified.
+
+-   [`CNTRL###.DAT`](./map-files/CNTRL.DAT)
+-   [`CONTI###.DAT`](./map-files/CONTI.DAT)
+-   [`WORLD###.DAT`](./map-files/WORLD.DAT)
+
+`COMPY###.DAT`, `DESKT###.DAT`, `MAILS###.DAT` and `TRANS###.DAT` to be analyzed.
+
+> <Icon href="/icons/info-circle.svg" shadeColor="var(--color-blue)" size={3} />
+> <br />
+> You can use [World Editor](/world-editor) to drag'n'drop saved games there and convert them to WLD/SWD. It supports
+> savegame maps from any version of the game.
+
+## Version 1.51
+
+The final version of the game was released first as Mission CD (<span lang="de">Mission Disk</span>) and later as a Gold
+Edition with no gameplay changes.
+
+This version of the game introduced a Map Editor `S2EDIT.EXE` which used `WORLD` directory as a target for SWD files.
+During this change the old `DATA\MAPS` files were also converted to the new format however their extension was WLD, thus
+`MISS_200.WLD`. As a file format there is no real difference between WLD and SWD, they are the same thing.
+
+The WLD/SWD file format combines the old `CONTI###.DAT` and `WORLD###.DAT` files together and adds in an additional
+header, and has an optional footer for animal data.
+
+The game does have a difference in how it handles Roman Campaign, World Campaign, and Unlimited Play / Skirmish loading.
+Harbor building is enabled only when loading Roman Campaign maps. World Campaign is unique in that it uses leader data
+from the map files, although despite there being an option for it you cannot change player from being Octavianus.
+
+In other words, the included header and footer data are used as meta information during loading of WLD/SWD to initialize
+a saved game.
+
+### WLD/SWD documentation
+
+-   [File structure, header and footer](./map-files/wld-and-swd)
+-   [Block 0 (height map)](./map-files/block-0)
+-   [Block 1 & 2 (textures)](./map-files/block-1-and-2)
+-   [Block 3 (roads)](./map-files/block-3)
+-   [Block 4 & 5 (objects)](./map-files/block-4-and-5)
+-   [Block 6 (animal)](./map-files/block-6)
+-   [Block 7 (unknown)](./map-files/block-7)
+-   [Block 8 (building sites)](./map-files/block-8)
+-   [Block 9 (fog of war)](./map-files/block-9)
+-   [Block 10 (icon)](./map-files/block-A)
+-   [Block 11 (resources)](./map-files/block-B)
+-   [Block 12 (gouraud shading)](./map-files/block-C)
+-   [Block 13 (areas)](./map-files/block-D)
+
+## Credits
+
+-   Thanks to Xaser for writing [WLD_reference.txt](/WLD_reference)!
+-   Thanks to the [Return to the Roots](/return-to-the-roots) team for their work on reverse engineering and creating
+    tools!

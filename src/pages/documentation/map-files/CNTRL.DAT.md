@@ -1,6 +1,12 @@
-# CNTRL###.DAT file format
+---
+title: CNTRL###.DAT file format
+description: Documentation for The Settlers II CNTRL.DAT file format.
+pubDate: 2022-03-05
+modDate: 2023-01-22
+layout: '$layouts/BlogEnglish.astro'
+---
 
-This file exists alongside WORLD###.DAT files.
+This file exists alongside [`WORLD###.DAT`](./WORLD.DAT) files in `SAVE` directory.
 
 ## Beta
 
