@@ -2,9 +2,14 @@
 title: 'Technical Documentation'
 description: The Settlers 2 technical file format documentation for graphics, map files, sprites, palettes, localization, saved games and other.
 pubDate: 2021-09-01
+modDate: 2023-07-22
 layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 474
 ---
+
+## New!
+
+[Map files documentation](/documentation/map-files) has new information on WLD/SWD and how savegame files relate to the map files.
 
 ## File formats
 
