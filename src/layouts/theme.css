@@ -273,6 +273,25 @@ body::after {
 	margin-top: 0.5rem;
 }
 
+:where(pre > code) {
+	background: unset;
+	box-shadow: unset;
+}
+
+:where(pre) {
+	border-radius: 0.5rem;
+	margin: 0 -1rem;
+	padding: 1rem;
+}
+
+:where(pre:not([class])) {
+	background: var(--shadow-bg);
+}
+
+:where(pre.github-dark) {
+	filter: var(--pre-filter);
+}
+
 :where(blockquote) {
 	background-color: var(--shadow-bg);
 	border-inline-start: 0.375rem solid var(--theme);
