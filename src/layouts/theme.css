@@ -238,7 +238,7 @@ body::after {
 	--table-cell-bg2: var(--shadow-bg);
 	border-spacing: 0;
 	box-sizing: border-box;
-	line-height: 1.5;
+	line-height: 1.75;
 	margin: 0;
 }
 
@@ -249,7 +249,7 @@ body::after {
 :where(th) {
 	background-color: var(--table-th-bg);
 	border: thin solid var(--line-color);
-	padding: 0.25rem 0.5rem;
+	padding: 0.5rem 1rem;
 	text-align: left;
 	vertical-align: top;
 }
@@ -257,7 +257,7 @@ body::after {
 :where(td) {
 	background-color: var(--table-cell-bg);
 	border: thin solid var(--line-color);
-	padding: 0.25rem 0.5rem;
+	padding: 0.5rem 1rem;
 	vertical-align: top;
 }
 
