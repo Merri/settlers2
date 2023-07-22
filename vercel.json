@@ -22,6 +22,11 @@
 	],
 	"redirects": [
 		{
+			"source": "/editor/world/",
+			"destination": "https://bluebyte.settlers2.net/s2maps/uploads/",
+			"permanent": true
+		},
+		{
 			"source": "/world-editor/generator",
 			"destination": "https://settlers2.net/map-generator",
 			"permanent": true
