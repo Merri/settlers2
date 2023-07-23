@@ -135,7 +135,7 @@ export const TEXTURE = {
 	TO_ID_VALUE: 0x3f,
 	// this is the other bitflag for the two highest bits
 	HARBOR: 0x40,
-	// we do not know the meaning of this bitflag; only exists on one or two BlueByte maps
+	// we do not know the meaning of this bitflag; only exists on one or two Blue Byte maps
 	UNKNOWN: 0x80,
 	// to get rid of support flags
 	DROP_SUPPORT: 0xfc,

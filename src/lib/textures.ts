@@ -138,7 +138,7 @@ export const TerrainSets: Record<SupportedTexture, TextureGroup> = {
 		id: SupportedTexture.Greenland,
 		type: TextureSet.Greenland,
 		name: 'Greenland',
-		author: 'BlueByte',
+		author: 'Blue Byte',
 		year: 1996,
 		textureNames: {
 			[Texture.Fertile1]: 'Savannah',
@@ -183,7 +183,7 @@ export const TerrainSets: Record<SupportedTexture, TextureGroup> = {
 		id: SupportedTexture.Wasteland,
 		type: TextureSet.Wasteland,
 		name: 'Wasteland',
-		author: 'BlueByte',
+		author: 'Blue Byte',
 		year: 1996,
 		textureNames: {
 			[Texture.Fertile1]: 'Dark Steppe',
@@ -228,7 +228,7 @@ export const TerrainSets: Record<SupportedTexture, TextureGroup> = {
 		id: SupportedTexture.WinterWorld,
 		type: TextureSet.WinterWorld,
 		name: 'Winter World',
-		author: 'BlueByte',
+		author: 'Blue Byte',
 		year: 1997,
 		textureNames: {
 			[Texture.Fertile1]: 'Taiga',

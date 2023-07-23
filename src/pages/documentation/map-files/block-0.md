@@ -11,7 +11,7 @@ Contains the height map. The original map editor uses range of values from `0x00
 **Base level** (default height) value depends on version of the game:
 
 -   Maps made for Veni Vidi Vici have a base level of 0 ([`WORLD20#.DAT`](./WORLD.DAT)).
--   BlueByte upgraded their maps base level to `0x28` (40) upon conversion to `WLD` extension.
+-   Blue Byte upgraded their maps base level to `0x28` (40) upon conversion to `WLD` extension.
 -   Map Editor `S2EDIT.EXE` uses base level of `0x0A` (10) for `SWD` extension.
 
 There are some graphical glitches in the game if height is roughly above `0x32` (50): the buildings start to clip out of view from bottom on high altitudes. For this reason this documentation recommends that all future tools limit the range of values between 0 and `0x32`.

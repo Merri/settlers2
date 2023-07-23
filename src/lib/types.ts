@@ -114,7 +114,7 @@ export enum TextureFlag {
 	ToIdValue = 0x3f,
 	/** Indicates a harbour building can be built here. */
 	Harbor = 0x40,
-	/** This flag exists only on one or two BlueByte maps in early revisions of the game, meaning is unknown. */
+	/** This flag exists only on one or two Blue Byte maps in early revisions of the game, meaning is unknown. */
 	Unknown = 0x80,
 }
 

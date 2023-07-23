@@ -150,7 +150,7 @@ disqusIdentifier: 474
 -   Colors used during gameplay always come from the palette files, so palette in main texture set is ignored.
 
 Making changes to a palette will also require changing the gouraud table, otherwise the light and shadow colors will
-become corrupted. BlueByte developers made late changes to the palette but forgot to update the gouraud table in V1.0
+become corrupted. Blue Byte developers made late changes to the palette but forgot to update the gouraud table in V1.0
 releases of the game so there is corrupt / glitchy colors visible with some of the colors in the game in some levels of
 shadow. The issue was fixed in V1.51 release.
 
