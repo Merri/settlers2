@@ -1,18 +1,33 @@
 ---
+import { MarkdownInstance } from 'astro'
+import { isBefore } from 'date-fns'
+
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
 import Layout from '$/layouts/Layout.astro'
 import Link from '$/components/Link.astro'
+
+import { Props as Post } from '../components/BlogPost.astro'
 
 const title = 'Settlers 2.net'
 const description =
 	'Information, maps, new graphics, and more about the original The Settlers II: Gold Edition as provided by the community'
 const permalink = 'https://settlers2.net/'
+
+const now = new Date()
+
+const allPosts = await Astro.glob<MarkdownInstance<Post>>('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/**/*.(md|mdx)')
+
+const posts = allPosts.filter((post) => post.frontmatter.tags?.includes('news') && isBefore(new Date(post.frontmatter.pubDate), now))
+posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.pubDate))
+
 ---
 
 <Layout lang="en" title={title} description={description} permalink={permalink}>
 	<div id="pronounced-name" hidden>The Settlers 2 dot net</div>
 	<main id="main">
 		<article>
-			<hgroup >
+			<hgroup class="main-hgroup">
 				<h1 aria-labelledby="pronounced-name">The Settlers II.net</h1>
 				<p>An online encyclopedia on <em>The Settlers II Gold Edition</em> and <em>Return to the Roots</em></p>
 			</hgroup>
@@ -20,6 +35,17 @@ const permalink = 'https://settlers2.net/'
 				<img alt="The Settlers II Gold Edition screenshot" src="/assets/docs/settlers2-gold-edition.png" height="480" width="640" loading="lazy" />
 				<figcaption>Wonderful pixel art game from the 90s!</figcaption>
 			</figure>
+			<blockquote>
+				<hgroup>
+					<p><strong>Latest news</strong></p>
+					<h2 class="news-title"><a href={posts[0].url}>{posts[0].frontmatter.title}</a></h2>
+				</hgroup>
+				<p>{posts[0].frontmatter.description}</p>
+				<div class={inlineFlex}>
+					<a href={posts[0].url}>Read more!</a>
+					<Icon href="/icons/chevron-right.svg" />
+				</div>
+			</blockquote>
 			<div class="cards">
 				<div class="card">
 					<h2>New to the game?</h2>
@@ -61,15 +87,19 @@ const permalink = 'https://settlers2.net/'
 	article {
 		container-type: inline-size;
 	}
-	hgroup {
+	.main-hgroup {
 		display: grid;
 		font-weight: 600;
 		font-size: 1.5rem;
 		place-content: center;
 		text-align: center;
 	}
+	.news-title,
 	hgroup p {
 		margin: 0;
+	}
+	.news-title a {
+		font-weight: inherit;
 	}
 	hgroup em {
 		display: inline-block;

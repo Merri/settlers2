@@ -11,6 +11,9 @@ indent_style = tab
 [*.md]
 trim_trailing_whitespace = false
 
+[*.mdx]
+indent_style = space
+
 [*.{astro,css,js,jsx,mjs,scss,ts,tsx}]
 charset = utf-8
 insert_final_newline = true
