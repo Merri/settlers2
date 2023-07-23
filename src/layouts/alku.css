@@ -117,11 +117,13 @@
 
 /* Generic scrolling utility */
 :where([data-scrolling='inline' i]) {
+	overflow-x: auto;
 	overflow-inline: auto;
 }
 
 /* Generic scrolling utility */
 :where([data-scrolling='block' i]) {
+	overflow-y: auto;
 	overflow-block: auto;
 }
 
