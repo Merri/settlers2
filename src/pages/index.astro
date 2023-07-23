@@ -1,6 +1,6 @@
 ---
 import { MarkdownInstance } from 'astro'
-import { isBefore } from 'date-fns'
+import { format, isBefore } from 'date-fns'
 
 import { inlineFlex } from '$/components/inlineFlex.module.css'
 import Layout from '$/layouts/Layout.astro'
@@ -20,6 +20,9 @@ const allPosts = await Astro.glob<MarkdownInstance<Post>>('./[0-9][0-9][0-9][0-9
 const posts = allPosts.filter((post) => post.frontmatter.tags?.includes('news') && isBefore(new Date(post.frontmatter.pubDate), now))
 posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.pubDate))
 
+const published = new Date(posts[0].frontmatter.pubDate);
+const datePublished = format(published, 'PPP')
+
 ---
 
 <Layout lang="en" title={title} description={description} permalink={permalink}>
@@ -36,7 +39,7 @@ posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.
 			</figure>
 			<blockquote>
 				<hgroup>
-					<p><strong>Latest news</strong></p>
+					<p><strong>Latest news</strong> from <time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time></p>
 					<h2 class="news-title"><a href={posts[0].url}>{posts[0].frontmatter.title}</a></h2>
 				</hgroup>
 				<p>{posts[0].frontmatter.description}</p>
