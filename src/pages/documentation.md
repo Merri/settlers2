@@ -7,11 +7,17 @@ layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 474
 ---
 
-## New!
+Most of the articles below are planned to be rewritten. The new map files documentation will replace the old WLD / SWD once I'm sure the new one covers everything the old one did.
 
-[Map files documentation](/documentation/map-files) has new information on WLD/SWD and how savegame files relate to the map files.
+-   [File formats](#file-formats)
+-   [Game interals](#game-internals)
+-   [Analysis assets](#analysis-assets)
+-   [siedler-welt.com](#siedler-weltcom)
+-   [Game files overview](#game-files-overview)
 
 ## File formats
+
+**NEW!** [Map files documentation](/documentation/map-files) has new information on WLD/SWD and how savegame files relate to the map files.
 
 -   [WLD / SWD](/documentation/world-map-file-format-wldswd) Maps
 -   [BBM](/documentation/bbm-file-format)
@@ -20,18 +26,45 @@ disqusIdentifier: 474
 -   [LST](/documentation/lst-file-format)
 -   [RTX](/documentation/mission-resource-text)
 
-### Game internals
+## Game internals
 
 -   [Objects](/documentation/objects)
 -   [Objects landscape table](/documentation/objects-landscape-table)
 
-### Do it yourself
+## Analysis assets
 
 -   [Tools](/documentation/tools) to help analyze the game
 
 ---
 
-## Game files explained
+## `siedler-welt.com`
+
+<img alt="" src="/assets/siedler-welt/s2_art.png" width="116" height="150" loading="lazy" style="float: right; margin: 1rem;" />
+
+This was a German site in 1998 &ndash; 1999, here are a few articles written by Sven Liebich.
+
+<div lang="de">
+
+-   [Mission.rtx](./documentation/siedler-welt.de/mission.rtx)
+-   [Savegame &ndash; Editoren](./documentation/siedler-welt.de/savegame-editoren)
+-   [Trans.dat](./documentation/siedler-welt.de/trans.dat)
+
+</div>
+
+<p style="display: flex; align-items: flex-end; gap: 1rem;">
+<img alt="" src="/assets/siedler-welt/flaganim.gif" width="29" height="35" loading="lazy" />
+<img alt="" src="/assets/siedler-welt/animwalk.gif" width="60" height="20" loading="lazy" />
+<img alt="" src="/assets/siedler-welt/siedgirl.gif" width="60" height="20" loading="lazy" />
+<img alt="" src="/assets/siedler-welt/flaganim.gif" width="29" height="35" loading="lazy" />
+</p>
+
+The articles appear to be written for "this is my first time touching a hex editor" level of audience.
+
+The original site backup on Wayback Machine is very hard to navigate as it used to link to all main level links through an extra script which does not work in the archived version. You need to manually write the correct address to browser address bar. Also you need to open each page from a frame to new tab alone out of the frameset so that the character set is correct. Lots of hassle.
+
+---
+
+## Game files overview
 
 -   [Root directory](#root-directory)
 -   [Data directory](#data-directory)

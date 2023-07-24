@@ -1,0 +1,96 @@
+---
+seriesTitle: siedler-welt.com
+title: Trans.dat
+description: Sven Liebich's description of trans.dat in German
+pubDate: 1998-07-01
+modDate: 2023-07-24
+layout: '$layouts/BlogEnglish.astro'
+---
+
+import Link from '$/components/Link.astro'
+
+> Archived copy from Sven Liebich's site<br />
+> Source: <Link href="https://web.archive.org/web/20010506064132fw_/http://www.siedler-welt.de/cheats/auswahl/transdat.htm">Wayback Machine</Link>
+
+<div lang="de">
+
+## Die Trans.dat
+
+Ein Savegame-Editor tut's natürlich auch, aber wer nicht nur das Hauptquartier, sondern auch noch diverse Lagerhäuser auffüllen will, der bediene sich dieser Anleitung. Benötigt wird ein HEX-Editor und ein Savegame (z.B. "Trans901.dat" für Save-Slot Nr.2)
+
+Man öffne mittels eines Hex-Editors eine der im Verzeichnis "SAVE" befindlichen TransXXX.dat-Dateien, wobei Trans000.dat den Save-Slot 1 und Trans009.dat den Slot 10 repräsentiert.
+
+Nun sucht man die HEX-Adresse "8A 1B" - sie steht für das eigene Hauptquartier und deren Lagerbestände (ungefähr in der Mitte der Datei befindlich). Genauer ist folgende, immer gleiche Struktur: "8D 00", es folgen 16 variable Bytes (wahrscheinlich die Koordinaten des HQ's), dann "8A 1B" (s.u).
+
+<div lang="en" style="contain: layout; text-align: center;">
+	<p>(missing hex table image)</p>
+</div>
+
+### Erläuterungen zur Grafik und deren Struktur:
+
+`8A 1B` Das Hauptquartier
+
+`00 00` 2 leere Bytes (nicht füllen!!!)
+
+`88 13`..5000 Baumstämme(!), 2 Bytes beschreiben die Menge einer Ware. Es sind insgesamt 61 Einträge à 2 Bytes vorzunehmen = 122 Bytes (Achtung: Überschreiben! - es darf kein Byte hinzugefügt werden). Die ersten Einträge beziffern die Menge der Waren, die letzten die der Personen, ganz zum Schluß die Soldaten - die Generäle habe ich der Deutlichkeit halber mit "F4 01"(= 500) gekennzeichnet. Die wichtigsten HEX-Codes und deren umgerechnete Menge findet ihr unten in der Tabelle.
+
+`00 00` 19 leere Bytes (nicht füllen!!!)
+
+`18 00` Das Hauptquartier eines Gegners, es folgt die gleiche Struktur. Danach folgen alle restlichen Hauptquartiere und dann die Lager (falls schon welche gebaut wurden)
+
+<div data-scrolling="inline">
+
+| Menge | HEX     | Menge | HEX     | Menge | HEX     |
+| :---- | :------ | :---- | :------ | :---- | :------ |
+| 10    | `0A 00` | 200   | `C8 00` | 3000  | `B8 0B` |
+| 20    | `14 00` | 300   | `2C 01` | 4000  | `A0 0F` |
+| 30    | `1E 00` | 400   | `90 01` | 5000  | `88 13` |
+| 40    | `28 00` | 500   | `F4 01` | 6000  | `70 17` |
+| 50    | `32 00` | 600   | `58 02` | 7000  | `58 1B` |
+| 60    | `3C 00` | 700   | `BC 02` | 8000  | `40 1F` |
+| 70    | `46 00` | 800   | `20 03` | 9000  | `28 23` |
+| 80    | `50 00` | 900   | `84 03` | 10000 | `10 27` |
+| 90    | `5A 00` | 1000  | `E8 03` | 20000 | `20 4E` |
+| 100   | `64 00` | 2000  | `D0 07` | 30000 | `30 75` |
+
+</div>
+
+<span lang="en">Last but not Least</span> die **Reihenfolge der Waren** in der "Trans.dat". Sie beginnt mit Holz (den Baumstämmen)
+und endet mit der Anzahl vorhandener Esel.
+
+<span lang="en">Here we go:</span>
+<br />
+**Holz, Bretter, Steine, Fleisch, Getreide, Mehl, Fische, Schinken, Brote, Wasser, Bier, Kohle, Eisenerze, Gold, Eisen,
+Münzen, Zangen, Äxte, Sägen, Spitzhacken, Hämmer, Schaufeln, Schmelztiegel, Angeln, Sensen, Beile, Nudelhölzer, Bögen,
+Schwerter, Schilde, Boote, Gehilfen, Holzfäller, Fischer, Förster, Schreiner, Steinmetze, Jäger, Bauern, Müller, Bäcker,
+Fleischer, Bergarbeiter, Bierbrauer, Schweinehirten, Eselzüchter, Eisengießer, Goldschmiede, Schlosser, Schmieder,
+Bauarbeiter, Planierer, Gelehrte, Schützen, Gefreite, Unteroffiziere, Offiziere, Generäle, Erkunder, Schiffsbauer und
+Esel.** (= 61 Einträge)
+
+Nochmal eine Anleitung: Will ich z.B. 300 Steine im HQ bunkern (für schlechte Zeiten 😉), so ändere ich folgenden Eintrag:
+
+```
+xx xx  xx xx  00 00  xx xx ... in ... xx xx  xx xx  2C 01 xx xx
+```
+
+### "Wie geht's weiter?"
+
+Als nächstes machen wir uns an die **Lagerhäuser**. Dazu wäre es klug, wie folgt vorzugehen:
+
+Man beginne frohen Mutes eine **Mission** oder ein **Freies Spiel**. Dann breite man sich aus, so weit es geht - nur Baracken bauen, vollkommen ausreichend für unsere Zwecke. 2 Baracken in alle vier Himmelsrichtungen müßten genügen, dann nämlich lohnt sich der Bau eines Lagerhauses, bzw. deren vier. Sind alle Lagerhäuser fertiggestellt, müßten sich in jedem Lagerhaus **1 Bauarbeiter** und einige Gehilfen befinden. Das ist es, was wir wollten - abspeichern und raus aus Siedler II - hinein in die bunte Welt des Hackens 😀).
+
+Die entsprechende "Trans.dat" wird nun geöffnet und nach dem Hauptquartier gesucht (s.o.), dann überspringt man die gegnerischen Hauptquartiere, die dem Muster des eigenen entsprechen, und findet als folgenden Eintrag die eben gebauten Lagerhäuser mit jeweils 01 00 = 1 Bauarbeiter und eine Eintragung für die Gehilfen, die in diesem Lagerhaus aufgewachsen sind (entsprechend der Zeit die von der Fertigstellung des Lagerhauses bis zum Zeitpunkt des Speicherns verstrichen ist). Das sieht dann so aus:
+
+<p style="background: white; text-align: center;">
+	<img alt="" src="/assets/siedler-welt/hex2.gif" width="619" height="588" loading="lazy" />
+</p>
+
+...hier ersetzt man nun nach Belieben die Waren-Einträge, wohlgemerkt: **ERSETZEN**, d.h. Cursor vor der entsprechende Stelle im **HEX-Abschnitt** plazieren und schreiben, oder ein komplettes (bereits "vervollständigtes" 😉) Lager **markieren**, **kopieren**, nun den **einzufügenden** Bereich **markieren** (auf den Byte genau!) und **einfügen**. Sollte sich dabei irgendetwas **verschieben**, muß man von vorne beginnen - sicherheitshalber die Datei erneut ohne Speichern öffnen.
+
+### Folgende Hinweise sollte man generell beachten:
+
+-   Die Siedler II kommt speichertechnisch mit 64.000 verschiedenen Personen zurecht. Fügt man nun in jedes Lagerhaus 30.000 Personen ein, so ist man schnell am Limit angelangt. Erfahrungsgemäß dauert es Stunden, bis 500 Generäle ihr Leben auf dem Schlachtfeld gelassen haben. Ich kenne auch niemanden, der es bislang geschafft hat, 500 Anglern einen Arbeitsplatz einzurichten 😃. Alles in Maßen.
+-   Bier + Schwerter + Schilder = 1 Soldat... also nicht wundern, wenn man bei Spielstart kein Bier, keine Schwerter und Schilde mehr im Lager hat, dafür aber mehr Gefreite als eingetragen.
+-   Zur Bewachung des HQ's werden (weil vorhanden) jeweils 1 Soldat jeden Ranges abkommandiert. Dadurch vermindert sich die Anzahl der eingestellten Soldaten.
+
+</div>

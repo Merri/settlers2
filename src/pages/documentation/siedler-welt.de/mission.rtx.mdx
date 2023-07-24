@@ -1,0 +1,282 @@
+---
+seriesTitle: siedler-welt.com
+title: Mission.rtx
+description: Sven Liebich's description of mission.rtx in German
+pubDate: 1998-07-01
+modDate: 2023-07-24
+layout: '$layouts/BlogEnglish.astro'
+---
+
+import Link from '$/components/Link.astro'
+
+> Archived copy from Sven Liebich's site<br />
+> Source: <Link href="https://web.archive.org/web/20010208211459fw_/http://www.siedler-welt.de/cheats/auswahl/missiortx.htm">Wayback Machine</Link>
+
+<div lang="de">
+
+## Die Mission.rtx
+
+Wenn man schon jedem so eindeutig die Möglichkeiten des Cheatens offenbart, wäre dann ein Handbuch nicht angebracht gewesen? 😃)
+
+Man öffne mittels eines Texteditors (Word-Pad, Windows-Editor - unter DOS: edit-Befehl) die im Verzeichnis DATA/MISSIONS enthaltenen Dateien MIS_0000.RTX (für Mission 1) bis MIS_0009 (für Mission 10) - halt, nicht alle auf einmal...schön der Reihe nach 😃)
+
+Beispiel: `MIS_0007.RTX` (Mission 8)
+
+```
+[GLOBAL_MAP_SETTINGS]
+```
+
+Abschnittsnamen sind generell in eckigen Klammern `[]`
+
+```
+!GLOBAL_SET_MAP    207
+```
+
+Die Karte für die Mission 8
+
+```
+!GLOBAL_SET_BOBS  0
+```
+
+BOBS (BildOBjectS(?)) sind die Grafikdateien für Gebäude, Siedler, Schiffe, etc. Es gibt zu einigen Missionen besondere Grafiken (wie z.B. den Wikinger oder das gestrandete Schiff).
+
+<img alt="" src="/assets/siedler-welt/wiking.gif" width="60" height="34" loading="lazy" style="float: left; margin: 1rem;" /> Die Dateien mit der Endung .LST können nicht einfach in einem Grafikprogramm editiert werden. Es gibt aber inzwischen ein kleines Tool von <Link href="http://www.jnsoftware.de/Siedler2/home.htm">Jürgen Nagel</Link>.
+
+```
+!GLOBAL_ADD_COMPUTER_PLAYER    1   11
+!GLOBAL_ADD_COMPUTER_PLAYER    2   10
+```
+
+Hier wird bestimmt, mit wem man es zu tun bekommt. Wobei die erste Stelle nur der Unterscheidung dient (Computer-Gegener 1, Computer-Gegner 2). Die zweite Zahl bestimmt den Führer und dessen Volk. Hier eine Auflistung:
+
+<div data-scrolling="inline">
+	<table>
+		<thead>
+			<tr>
+				<th colspan="4">Index Computer-Gegner</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<img alt="" src="/assets/faces/octavianus.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Octavianus</span>
+				</td>
+				<td>0</td>
+				<td>
+					<img alt="" src="/assets/faces/yamauchi.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Yamauchi</span>
+				</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="/assets/faces/julius.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Julius</span>
+				</td>
+				<td>1</td>
+				<td>
+					<img alt="" src="/assets/faces/tsunami.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Tsunami</span>
+				</td>
+				<td>7</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="/assets/faces/brutus.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Brutus</span>
+				</td>
+				<td>2</td>
+				<td>
+					<img alt="" src="/assets/faces/hakirawashi.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Hakirawashi</span>
+				</td>
+				<td>8</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="/assets/faces/erik.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Erik</span>
+				</td>
+				<td>3</td>
+				<td>
+					<img alt="" src="/assets/faces/shaka.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Shaka</span>
+				</td>
+				<td>9</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="/assets/faces/knut.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Knut</span>
+				</td>
+				<td>4</td>
+				<td>
+					<img alt="" src="/assets/faces/todo.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Todo</span>
+				</td>
+				<td>10</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="/assets/faces/olof.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Olof</span>
+				</td>
+				<td>3</td>
+				<td>
+					<img alt="" src="/assets/faces/mnga-tscha.png" width="36" height="48" loading="lazy" />
+					<br />
+					<span>Mnga Tscha</span>
+				</td>
+				<td>9</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+Man wird also auf Todo und Mnga Tscha stoßen.
+
+```
+!GLOBAL_SET_COMPUTER_ALLIANCE  1    2
+!GLOBAL_SET_COMPUTER_ALLIANCE  2    1
+!GLOBAL_SET_COMPUTER_ALLIANCE  2    0
+```
+
+Wer ist mit wem verbündet? Erste Zeile: Computergegner 1 mit Computergegner 2, dritte Zeile: Computergegner 2 mit dem Käufer des Spiels (0=Mensch). Verbündungen können umgewandelt, gelöscht oder hinzugefügt werden.
+
+```
+!GLOBAL_SET_COMPUTER_BARRIER  10   19  100
+```
+
+Eine unsichtbare Barriere, die den Computergegner daran hindert an der Koordinate 19,100 im Umkreis von 10 Einheiten zu bauen. Dieser Eintrag ist wichtig für alle Hafenwelten. An den oben genannten Koordinaten sollte, in selbst erstellten Welten in der jeweiligen Mission.rtx, ein möglicher Bauplatz für ein Hafengebäude eingetragen werden. (Die 10 ist nur ein ungefährer Wert, der in seinen Auswirkungen leider etwas schwanken kann - probieren geht über studieren. Danke Candy 😉)
+
+```
+!LOAD_MISSION_TEXTS   8
+```
+
+Die Auftragsbeschreibungen der jeweiligen Missionen sind editierbar und liegen im Verzeichnis DATA/TXT
+
+```
+[MAPCOMMANDS]
+```
+
+Abschnittsname
+
+```
+!ENABLE_ALL_HOUSES
+```
+
+jedes Haus darf gebaut werden, es gibt keinerlei Beschränkungen (außer dem Hauptquartier)
+
+```
+!SET_HOUSE   24,  25, 97
+```
+
+Das Hauptquartier (24) und dessen Koordinaten (25, 97 &lt;--von oben links gemessen)
+
+```
+!ADD_WARE   0  20
+```
+
+Die Waren im HQ...was (0=Holz) und wieviel (20). Hierzu eine Auflistung aller Waren und deren Nummern:
+
+<div data-scrolling="inline">
+
+| Waren    |  ID | Waren        |  ID |
+| :------- | --: | :----------- | --: |
+| Holz     |   0 | Zange        |  16 |
+| Bretter  |   1 | Axt          |  17 |
+| Steine   |   2 | Säge         |  18 |
+| Fleisch  |   3 | Spitzhacke   |  19 |
+| Getreide |   4 | Hammer       |  20 |
+| Mehl     |   5 | Schaufel     |  21 |
+| Fisch    |   6 | Schmeltiegel |  22 |
+| Schinken |   7 | Angel        |  23 |
+| Brot     |   8 | Sense        |  24 |
+| Wasser   |   9 | Beil         |  25 |
+| Bier     |  10 | Nudelholz    |  26 |
+| Kohle    |  11 | Bogen        |  27 |
+| Eisenerz |  12 | Schwert      |  28 |
+| Gold     |  13 | Schild       |  29 |
+| Eisen    |  14 | Boot         |  30 |
+| Münzen   |  15 |              |     |
+
+</div>
+
+**ACHTUNG: Die maximal "zulässige" Menge einer Ware ist 255**. Wer den Hals nicht vollkriegen kann 😉 der muß der [Trans.DAT](./trans.dat) zuleibe rücken.
+
+```
+!ADD_PEOPLE   0  20
+```
+
+Die Berufsgruppen im HQ...was (0=Gehilfe) und wieviele (20). Hierzu eine Auflistung aller Berufe und deren Nummern:
+
+<div data-scrolling="inline">
+
+| Berufsgruppen |  ID | Berufsgruppen |  ID |
+| :------------ | --: | :------------ | --: |
+| Gehilfe       |   0 | Bierbrauer    |  12 |
+| Bauarbeiter   |  19 | Bergarbeiter  |  11 |
+| Planierer     |  20 | Eisengießer   |  15 |
+| Holzfäller    |   1 | Schmied       |  18 |
+| Förster       |   3 | Münzpräger    |  16 |
+| Steinmetz     |   5 | Schlosser     |  17 |
+| Fischer       |   2 | Schiffsbauer  |  28 |
+| Jäger         |   6 | Gelehrter     |  21 |
+| Schreiner     |   4 | Erkunder      |  27 |
+| Bauer         |   7 | Esel          |  29 |
+| Schweinehirt  |  13 | Schütze       |  22 |
+| Eselzüchter   |  14 | Gefreiter     |  23 |
+| Müller        |   8 | Unteroffizier |  24 |
+| Bäcker        |   9 | Offizier      |  25 |
+| Fleischer     |  10 | General       |  26 |
+
+</div>
+
+```
+!ADD_ANIMAL   0  20 XX XX
+```
+
+Tiere...welche (0=Eisbär), wieviele (20) &lt;max. 99&gt; (kann schon arg ruckelig werden, da die Tiere alle von einer Startkoordinate in alle Himmelsrichtungen ausschwärmen) und welche Startkoordinaten. Hierzu eine Auflistung aller Tierarten und deren Nummern
+
+<div data-scrolling="inline">
+
+| Tiere     |  ID | Tiere  |  ID |
+| :-------- | --: | :----- | --: |
+| Eisbär    |   0 | Hirsch |   4 |
+| Kaninchen |   1 | Reh    |   5 |
+| Hase      |   2 | Ente   |   6 |
+| Fuchs     |   3 | Esel   |   7 |
+
+</div>
+
+```
+!SET_ACT_PLAYER   (0- 2)
+```
+
+0=Käufer des Spiels (Mensch), 1-2 Computergegner.
+
+Und das hat Hotte noch dazu herausgefunden:
+
+Dieser String dient der Zuweisung für die Resourcen, die dahinter folgen. Dazu gehören
+
+```
+!SET_HOUSE N,x,y
+!ADD_WARE N,Anz
+!ADD_PEOPLE N,Anz
+```
+
+Diese Zuweisung gilt solange, bis die nächste folgt. Als Default ist Spieler 0 (der leidenschaftliche Siedler2-Zocker) gegeben. Deshalb ist für ihn auch keine Zuweisung nötig. Sofern sie nicht geändert wurde.
+
+</div>
