@@ -32,7 +32,7 @@
 }
 
 .downloadSwdWld {
-	background: white;
+	background: var(--shadow-bg);
 	border-radius: 0.5rem;
 	padding: 1rem;
 }

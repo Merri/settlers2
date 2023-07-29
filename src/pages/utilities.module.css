@@ -1,0 +1,15 @@
+.card {
+	background: var(--shadow-bg);
+	border: thin solid var(--line-color);
+	border-radius: 1rem;
+	margin: 1rem -1rem;
+	padding: 2rem;
+}
+
+.card > :first-child {
+	margin-top: 0;
+}
+
+.card > :last-child {
+	margin-bottom: 0;
+}

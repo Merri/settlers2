@@ -8,9 +8,12 @@ layout: '$layouts/BlogEnglish.astro'
 import Icon from '$/components/Icon.astro'
 import { inlineFlex } from '$/components/inlineFlex.module.css'
 import Link from '$/components/Link.astro'
+import styles from './utilities.module.css'
 
-These are utilities in various stages of development. They are a part of this site with the source code freely available
+These utilities in various stages of development. Being a part of this site the source code is freely available
 on <Link href="https://github.com/Merri/settlers2">GitHub</Link>.
+
+<div class={styles.card}>
 
 ## Map Generator
 
@@ -24,6 +27,8 @@ This also means the generated maps are unbalanced with the resources they provid
 	<a href="/map-generator">Go to Map Generator</a>
 	<Icon href="/icons/chevron-right.svg" />
 </div>
+</div>
+<div class={styles.card}>
 
 ## World Editor
 
@@ -39,6 +44,8 @@ save them in a version 1.51 compatible format.
 	<a href="/world-editor">Go to World Editor</a>
 	<Icon href="/icons/chevron-right.svg" />
 </div>
+</div>
+<div class={styles.card}>
 
 ## Text Utility
 
@@ -51,6 +58,7 @@ saving will fix to the format expected by the original game.
 <div class={inlineFlex}>
 	<Link href="https://codesandbox-astro-solidjs-playground.vercel.app/settlers2Text">Go to Text Utility</Link>
 	<Icon href="/icons/chevron-right.svg" />
+</div>
 </div>
 
 ## More?
