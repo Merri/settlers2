@@ -1,0 +1,472 @@
+---
+title: How palette and lighting works in The Settlers II
+description: This is a look into how palette and the effect of lights and shadows is achieved in original The Settlers II Gold Edition.
+pubDate: 2023-07-30
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - article
+    - docs
+    - palette
+    - modding
+---
+
+import Link from '$/components/Link.astro'
+
+The 1990s was the era of 8-bit graphics. It imposed artistic limitations, but also provided some technical possibilities
+for neat effects that were lightweight for a computer to handle. Efficient processing was a must at that time as
+processing power was much weaker compared to computers of today. These days we have had a revolution in the gaming scene
+and we have seen pixel art becoming a popular medium to stylize games. Even if there is no longer a need to do that for
+computational reasons.
+
+<p style="text-align: center;">
+	<img
+		alt=""
+		src="/assets/siedler-welt/hafenanim.gif"
+		width="246"
+		height="258"
+		loading="lazy"
+		style="image-rendering: pixelated;"
+	/>
+</p>
+
+Here we don't look into a modern title, but an actual 90s game title The Settlers 2, and how it handles it's graphics.
+We focus on the 256 color palette and the beautiful lighting and shadow effects which the game creates despite only
+having so few colors available. And besides learning how it works, we look into how you can change the palette and still
+not break the light and shadow!
+
+-   [Learning to byte](#learning-to-byte)
+-   [The basics of 8-bit palettes](#the-basics-of-8-bit-palettes)
+-   [Finding the palettes](#finding-the-palettes)
+-   [Viewing the palette](#viewing-the-palette)
+-   [Editing the palette](#editing-the-palette)
+-   [Viewing the light and shadow color table](#viewing-the-light-and-shadow-color-table)
+-   [A useful palette utility](#a-useful-palette-utility)
+-   [Wrapping up](#wrapping-up)
+
+## Learning to byte
+
+As this is my first actual blog article here attempting to teach the game internals I will bother you with some general
+technical know-how which will be necessary to understand the further we delve into this topic. Feel free to skip to next
+section if you're familiar with bits and hexadecimals!
+
+8-bit is equivalent of one byte, and it can represent 256 different values. There are multiple different ways to
+represent these values: binary (base 2), hexadecimal (base 16), and the familiar base 10 decimal system. Each of the
+examples below represent the same numerical value:
+
+-   Base 10 number: `11`
+-   Base 2 as binary: `00001011`
+-   Base 16 as hex: `0x0B`
+
+Here binary visually displays all the 8 bits and it is a common way to show binary. The least important bit is to the
+right. It is value of 1. Every bit further to the left is a power of 2 of the previous bit. Thus: 1, 2, 4, 8, 16, 32,
+64, 128. That is what the values are up to a full single byte with 8 bits. Binary is a base of 2 it only has two numbers
+available, 0 and 1. This makes for a simple logic to understand the numbers: value 0 means a bit is not active, while
+value 1 means it is active.
+
+In the above example we have bits 1, 2, and 8 active as indicated by number 1. When we combine these bits together we
+can do math: 1 + 2 + 8 = 11. That is how binary can be translated to our familiar numeric system.
+
+Hexadecimal instead is base 16. We represent it with the familiar numbers, but we also extend it with 6 more from the
+alphabet: A, B, C, D, E and F. Hexadecimals are used because they are a rather convenient way to display byte
+information: you only need two digits to show a byte. The same explained in math: 16 &times; 16 = 256, the number of
+different values (or states) a byte can hold.
+
+The example value above is `0B`. When we start translating the alphabets to the familiar system we first react `A`. It
+is 10. The next digit is `B`, which is 11. Which means the last hexadecimal letter `F` is equivalent of 15.
+
+What about the maximum value of a byte? What does it look like?
+
+-   Base 10: `255`
+-   Base 2: `11111111`
+-   Base 16: `0xFF`
+
+> **Note!**<br />`0x` does nothing: it is only a common syntax for humans to let you know the number is hexadecimal.
+
+The important thing to understand is that these different systems make it **easier** to grasp computer concepts and
+data. For example things like bitflags and bitmasks start to make much more sense once you have an understanding of
+binary and hexadecimal. Also, understanding what makes up a byte is quite important as it's ability to contain 256
+different values directly explains why an 8-bit indexed palette has 256 colors.
+
+If you find these concepts difficult to grasp I highly recommend looking up a more comprehensive article on the topic!
+
+## The basics of 8-bit palettes
+
+There are a **lot** of image and palette file formats. An issue with palette file formats is that many of them share the
+same file extension: `PAL`. It can be a Jasc Software Palette, a RIFF Palette (= Microsoft Windows LogPalette), an
+Enchanced RIFF Palette, or a raw binary palette of byte values in either 24-bit or 16-bit format. The 24-bit binary
+palette is also known as VGA palette, or as Adobe Color Table with `ACT` file extension.
+
+24-bit VGA palette is a simple format in that it has all the 256 palette entries in order making up to a file that is
+always 768 bytes in size. Why that size? Each color consist of three bytes: red, green, and blue. Thus 256 colors nets
+in 768 bytes. This is also where the 24-bit comes from: 3 bytes = 3 &times; 8 bits = 24 bits. 24-bit colors means that
+a palette can choose from to 256 &times; 256; &times; 256 different colors, or about 1.67 million colors.
+
+> **Note!**<br />Adobe Color Table may have an additional footer and then it is 772 bytes. The final 2 bytes is a 16-bit value telling how many of the colors there are. You can find both 768 bytes and 772 bytes sized files using `ACT` file extension in circulation.
+
+This 768 bytes color table also happens to be a common way to store palettes in image files. For example on 8-bit `GIF`
+images the palette is in that raw binary format and can be manipulated directly using a hex editor &ndash; of course as
+long as you know where the palette is located!
+
+However The Settlers II does not use a file format that is common these days. Instead it uses an Amiga standard known as
+Interchange File Format, `IFF`. You can't find this file extension however. Instead within the graphics directory you
+can find `BBM` and `LBM` extensions. This extension is used for both `ILBM` and `PBM` format images, which are subtypes
+of images standardized for the IFF.
+
+The lucky part is that IFF is a relatively easy format to read even in a hex editor. And, palettes are also stored in an
+entry that is 768 bytes long! But before we get into that: how can you actually see the palette?
+
+## Finding the palettes
+
+Our next goal would be to find and then edit the palettes, so it would be nice to view them! Here we get into our first
+struggle: an issue with old file formats is that usually you don't have anything on your system that is able to open the
+files!
+
+For our purposes there are mostly nine interesting files, in three locations. These locations are `DATA\TEXTURES`,
+`GFX\PALETTE` and `GFX\TEXTURES`. The last location is best for actually seeing some image, however it is a file which
+provides no value to us as far as editing a palette goes. However to get started we will ignore the other paths for now.
+Lets see how we could open `TEX5.LBM`!
+
+For purely viewing the game's images there are many options available. A cross-platform tool for about any common device
+would be <Link href="https://www.xnview.com/en/">XnView</Link>. For Windows you might
+like <Link href="https://www.irfanview.com/">IrfanView</Link> although you will also need to install the plugins
+package to get ILBM support. You can also use these programs to convert images, however they likely do not support the
+specific format used by The Settlers II, so you can only do reliable conversions **from** S2 files, not **to** S2.
+
+<figure style="text-align: center;">
+	<img
+		alt="IrfanView displaying TEX5.LBM texture file"
+		src="/assets/articles/2023-07-29_irfanview-tex5-lbm.png"
+		width="352"
+		height="421"
+		loading="lazy"
+	/>
+	<figcaption
+		children={
+			<>
+				IrfanView can display <code>TEX5.LBM</code>, but it handles it as 24 bits image (24 BPP).
+				<br />
+				To gain access to the app's palette editor it should handle it as 8 BPP.
+			</>
+		}
+	/>
+</figure>
+
+But there is another problem: these programs do not help with palettes! What we want to do is to be able to see the
+palette colors and their RGB values. This limits options a lot and personally as a Windows user I've long
+found <Link href="https://bluebyte.settlers2.net/utils">Paint Shop Pro 7</Link> to be useful. It is actually still my
+daily driver graphics program after over 22 years since it's release as I rarely have needs for fancier functionality
+than what PSP7 provides.
+
+For the rest of this article I will use PSP7 to demonstrate. You can also use other program that you prefer and know to
+support indexed palettes, however finding a suitable converter that keeps the indexed palette intact and untouched can
+be a challenge. One potential possibility that I found while researching this article
+was <Link href="https://netpbm.sourceforge.net/">Netpbm</Link> which is a command line image conversion utility
+available for multiple operating systems.
+
+## Viewing the palette
+
+By this point we should know a program that can open an LBM image file and handle it as indexed palette file, meaning
+that we also can view and edit it's palette in the image editor. Here is what `TEX5.LBM` looks like when opened up in
+Paint Shop Pro 7:
+
+<p style="text-align: center;">
+	<img
+		alt="Paint Shop Pro 7 with TEX5.LBM open and palette visible"
+		src="/assets/articles/2023-07-30_psp7-tex5-lbm.png"
+		width="666"
+		height="601"
+		loading="lazy"
+	/>
+</p>
+
+PSP7 is convenient in that we can immediately spot the palette visible on the right side edge of the window! However
+being compact the representation isn't the clearest. We can get a better view by opening the palette editor. So via the
+top menu we can select `Colors > Edit palette`. What do we see now?
+
+<p style="text-align: center;">
+	<img
+		alt="Edit palette view in Paint Shop Pro 7 using TEX5.LBM file"
+		src="/assets/articles/2023-07-30_psp7-tex5-lbm-edit-palette.png"
+		width="403"
+		height="402"
+		loading="lazy"
+	/>
+</p>
+
+Wonderful! This is what we want to see. By analyzing here we can find the actual color values and write down a few of
+them so that we can validate our findings. PSP7 conveniently displays the HTML hex values in the bottom right corner of
+this window. In hexadecimal the first three colors are:
+
+`00 00 00 FF FF 00 FF DB 17`
+
+And the last three:
+
+`FF FF FF 00 43 5B 9F A3 9F`
+
+With this information we could now proceed to investigate `TEX5.LBM` with a hex editor to find a 768 bytes region where
+the first and last nine bytes match the above values. That would be rather guaranteed to be the location of the palette!
+
+However there is still one thing to note: `TEX5.LBM` isn't actually the file we are interested of. The game **does not**
+use the palette in this file in any way. And the palette is also "incorrect" as it does not match exactly with what is
+used in the game. In a way, the palette and colors here don't matter, what matters are **the indexed color values of the
+image**.
+
+Of course it helps if the colors in the texture file are close to the correct ones, the ones of the actual palette. But
+in other words this means that **we can change a palette file without touching these texture files**.
+
+Now how do we do that?
+
+## Editing the palette
+
+I do not know why the palette has been abstracted to it's own file. Maybe it has been considered worthwhile to keep it
+as the "master" source so that nobody would accidentally change the master palette of the game while working on the
+textures. Or maybe the other tools used for game graphics and sprites required it to be an another small file. Or maybe
+the palette rotation rules included in the palette were annoying.
+
+Regardless lets open `PAL5.BBM` and see what we got there!
+
+> **Note!**<br />Before continuing make sure you have backup copies of the game's files. Duplicate the whole game folder, or make a copy of `PAL5.BBM` as `PAL5-original.BBM` or similar. Or maybe make the whole thing a Git repo if you're familiar with git.
+>
+> This helps you to get back to a working state when you mess something up! (It happens to all of us.)
+
+<p style="text-align: center;">
+	<img
+		alt="Edit palette view in Paint Shop Pro 7 using PAL5.LBM file"
+		src="/assets/articles/2023-07-30_psp7-pal5-lbm-edit-palette.png"
+		width="773"
+		height="752"
+		loading="lazy"
+	/>
+</p>
+
+The image in `PAL5.BBM` is a rather boring one: it is just 8 &times; 8 pixel white block. In the above screenshot I have
+zoomed in to the maximum 32x supported by PSP7, which happens to make it exactly the same size as `TEX5.LBM`.
+
+I have also opened the palette again and this time around we do have the actual game palette which you experience when
+you are playing a Greenland map. I guess now it is as good time as any to let you know what the special palette indexes
+are!
+
+In this palette the first color is black `00 00 00`. This black is not really rendered by the game: it is used for
+transparency. When you look at `TEX5.LBM` textures you notice that there are some road and other graphics pieces that
+have black color. That black is never rendered.
+
+Here is a table for the rest of the special colors:
+
+<div data-scrolling="inline">
+
+|           Index |  Hex RGB   | Description                                                                  |
+| --------------: | :--------: | :--------------------------------------------------------------------------- |
+|               0 | `00 00 00` | Transparent / invisible. However some UI elements may also use this.         |
+|              57 | `C3 23 23` | Minimap lava color.                                                          |
+|              61 | `13 3B A7` | Minimap water color.                                                         |
+| 128 &ndash; 155 |     -      | Player colors, 4 colors per player. Total of 7 players.                      |
+| 156 &ndash; 159 |     -      | Unused "eighth player". Could repurpose colors for other use.                |
+| 250 &ndash; 247 |     -      | Eight colors for water palette rotation.                                     |
+| 248 &ndash; 251 |     -      | Four colors for lava and fire palette rotation.                              |
+|             252 | `00 00 00` | Black.                                                                       |
+|             253 | `FF FF FF` | White.                                                                       |
+|             254 | `FF 00 8F` | Most likely a debug color. One of the unused textures is only of this color. |
+|             255 | `FF FF FF` | White, unknown if has other meanings.                                        |
+
+</div>
+
+The remaining colors are gradients of varying sizes. Some gradients are evem rather close to each other like neutral
+grey, warm grey, cold grey, and an earthy green grey. This variety of greys can help in bringing other colors together.
+Also the palette is earth tone heavy with a wide variety of green and brown tones.
+
+The tricky part with these colors is that they are shared with **all visual components** in the game. For the most part
+this means editing the colors should be relative: for example if you change one brown color to a purpler tone, you need
+to balance out it relative to all other browns as well, and possibly to all the other gradients. This will allow the
+game graphics to remain balanced.
+
+Doing that kind of change is hard! For the sake of an example, just to get **something** done, we should do a simple
+change that is as unlikely to break anything else as possible. What could we do?
+
+I would suggest to change the player color. This color should not have been used in any texture so it should be fairly
+safe bet to change. Lets do that!
+
+To change the colors we need to edit the color values in index 128, 129, 130 and 131. What you want to use is up to you,
+but inspired by the debug color I ended up using the following color values:
+
+-   `#FF7DC7`
+-   `#F00088`
+-   `#B40066`
+-   `#8C004F`
+
+These roughly match the original blues in their strength. Now lets proceed to save the file. In Paint Shop Pro 7 we can
+actually just go ahead and save this file, because the palette part of the IFF is the same regardless of image subtype
+being used. So even if the game would see the palette file's image as garbage due to PSP7 not saving that in the correct
+format, the palette instead will be fine!
+
+When saving the file make sure the file format remains as Amiga IFF, and that you do actually save it as `PAL5.BBM`, not
+as `PAL5.IFF` or `PAL5.BBM.IFF`.
+
+It is time to boot up the game and see what we've got...
+
+<p style="text-align: center;">
+	<img
+		alt="Player 1 color in debug color on The Settlers II Gold Edition"
+		src="/assets/articles/2023-07-30_debug-player-color.jpg"
+		width="1024"
+		height="768"
+		loading="lazy"
+	/>
+</p>
+
+**Success!** If you want to try this file out you can download it here: <a href="/assets/article/2023-07-30_debug-player.zip">2023-07-30_debug-player.zip</a>.
+
+If you are using something else than Paint Shop Pro 7 then you might need to do additional steps to get the final BBM
+file:
+
+1. Save the image as indexed palette 8-bit PNG. Make sure when saving that no optimization settings are enabled!
+2. Use a tool to convert from PNG to LBM. Subtype doesn't really matter, it can be either ILBM or PBM.
+3. Rename the resulting file as `PAL5.BBM` and put it inside `GFX\PALETTE` to replace the original file.
+
+Similarly you may need to actually do the same in reverse, to convert the `PAL5.BBM` to a PNG file. Again, when
+converting you must make sure there are no extra optimizations applied, and that the resulting file is 8-bit indexed
+palette file with 256 colors. Optimizations are dangerous as they tend to touch the palette and mess things up.
+Optimizations are great for web, but not great when you want to maintain correctness of data for a game.
+
+## Viewing the light and shadow color table
+
+We have now covered the files within `GFX` directory, but how about that `DATA\TEXTURES` directory? What are those
+`GOU5.DAT` and others doing?
+
+By inspecting the files we notice one thing: they all share a size being 65536 bytes, or 64 kilobytes. Whoa, entire
+memory capacity of a Commodore 64! Purely looking at the file via hex editor won't make you any wiser: the values seem
+utter garbage.
+
+Until at one point you notice that the file runs through entire range of byte values in order. All the way from `0x00`
+to `0xFF`. That is faschinating, and it is a clue. Since the file is related to textures, what would happen if we looked
+into this file by using a palette?
+
+There is of course a challenge: most image programs don't let you open a raw image stream. Luckily again, at least for
+me, Paint Shop Pro 7 happens to support this! So browse to `DATA\TEXTURES` using PSP7, pick Raw file format and then
+open up `GOU5.DAT`. You will be presented with a dialog:
+
+<p style="text-align: center;">
+	<img
+		alt="Paint Shop Pro 7 RAW Options dialog"
+		src="/assets/articles/2023-07-30_psp7-gou5-dat-raw-options.png"
+		width="287"
+		height="372"
+		loading="lazy"
+	/>
+</p>
+
+Wait wait wait! The width and height are empty, how did I know to enter 256 in both fields? This information is derived
+from the range of a byte, again. Also when you do 256 &times; 256 you get the file's size, 65536.
+
+All the other fields can remain untouched. What happens after clicking OK?
+
+<p style="text-align: center;">
+	<img
+		alt="GOU5.DAT"
+		src="/assets/articles/2023-07-30_gou5-dat.png"
+		width="768"
+		height="768"
+		loading="lazy"
+		style="image-rendering: pixelated;"
+	/>
+</p>
+
+I made the image bigger to make it a bit easier to see what is going on. What is interesting is the row 64 (`0x40`).
+That is the line where the values increase in order from 0 to 255, or from black to white when represented in a
+greyscale palette.
+
+However, the rest of the image still doesn't really make a lot of sense. So, we now need to get a palette to this image.
+Go back to `PAL5.BBM` (the original one) and save the palette. In PSP7 this happens via `Colors > Save palette`. Once
+this is done make `GOU5.DAT` image active and the do the reverse, `Colors > Load palette`. PSP7 will notify about the
+image getting converted to indexed image. This is what we want. Continue on!
+
+<p style="text-align: center;">
+	<img
+		alt="Paint Shop Pro 7 Load paletet dialog: maintain indexes active"
+		src="/assets/articles/2023-07-30_psp7-gou5-dat-load-palette-maintain-indexes.png"
+		width="422"
+		height="390"
+		loading="lazy"
+	/>
+</p>
+
+At this point is is very important that you choose **Maintain indexes** from the bottom. Then pick up the palette you
+saved and open it.
+
+<p style="text-align: center;">
+	<img
+		alt="GOU5.DAT with a palette"
+		src="/assets/articles/2023-07-30_gou5-dat-palette.png"
+		width="768"
+		height="768"
+		loading="lazy"
+		style="image-rendering: pixelated;"
+	/>
+</p>
+
+Oh! Now this makes much more sense! We can clearly see how each color of the palette has been applied more darkness as
+color goes up from row 64, while becoming lighter as color goes further down. And the best thing is: we can also modify
+this file!
+
+A simple trick that you can do is to invert the image from the top 130 rows. So I did that and saved the file again
+still keeping it as a RAW image. The palette / color data does not matter as it wont be saved. What will be saved are
+the index values of the palette.
+
+After saving the file as `GOU5.DAT` (despite using Raw file format) it is time to boot up the game and check the result:
+
+<p style="text-align: center;">
+	<img
+		alt="Light and shadow inverted on The Settlers II Gold Edition"
+		src="/assets/articles/2023-07-30_inverted-shadow-and-light.png"
+		width="1024"
+		height="768"
+		loading="lazy"
+	/>
+</p>
+
+And it worked! While this reversal of shadow and light isn't a useful modification as such we see that we now have some
+control over the light and shadow. We could do things such as adjust the strength of the light and shadow, make it
+either less or more strong. As long as the indexes do match with the palette defined in `PAL5.BBM` you can do whatever
+changes you please. Like, maybe have set of palette colors dedicated for ice texture that becomes ultra glossy, while
+rest of the colors are more toned down.
+
+<p>
+	<img
+		alt="GOU5.DAT with a palette, flipped light and shadow"
+		src="/assets/articles/2023-07-30_gou5-dat-palette-flipped.png"
+		width="256"
+		height="256"
+		loading="lazy"
+		style="image-rendering: pixelated;"
+	/>
+</p>
+
+<a href="/assets/articles/2023-07-30_inverted-light-and-shadow.zip">Download the inverted light and shadow GOU5.DAT</a>
+
+## A useful palette utility
+
+There is one more thing I wish to talk about with you. I have made a small little project over at CodeSandbox that can
+handle reading lots of palette and indexed image file formats. There is a cool thing you can do with it: you can drop in
+an image file over a palette, and that image will be converted to use that palette using closest colors possible.
+
+In other words: it is **ideal** for making the final `GOU5.DAT` images! You can work in full color mode when adjusting
+your light and shadow on each color and then drop the image on the palette opened in the palette project and copy back
+the resulting image.
+
+You can find the utility here: <Link href="https://codesandbox.io/s/indexed-palette-converter-xw113">Indexed Palette Converter</Link>
+
+Note that the code is not super optimized: if you drop a huge file on a palette, especially something like a JPEG, it
+will take almost forever to process it. The tool is much more optimal for switching images between palettes.
+
+## Wrapping up
+
+In this article you should've learned a few things:
+
+-   Why bytes and their visual reprentations are crucial to understand
+-   What 8-bit VGA palettes are
+-   What are indexed images and how their data relates to a palette
+-   How you can change a palette in The Settlers 2 despite it's exotic file format
+-   That you can view and change the game's light and shadow table
+
+I hope you liked this introductionary article! You can find this article as well as my other posts from Mastodon under
+`$MerriNet@mastodon.social` or the `#Settlers2Net` hashtag. Being part of blog here you can also get notifications of
+new stuff in your RSS reader feed.
