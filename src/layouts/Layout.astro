@@ -89,6 +89,10 @@ const {
 				opacity: var(--reduced-opacity);
 			}
 
+			:global(:where(h1, h2, h3, h4, h5, h6)) {
+				text-wrap: balance;
+			}
+
 			:global(a)::after {
 				transition: opacity 125ms ease-in-out;
 			}

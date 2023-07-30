@@ -1,5 +1,5 @@
 ---
-title: "Graphics files (LBM)"
+title: 'Graphics files (LBM)'
 pubDate: 2011-06-25
 layout: '$layouts/BlogEnglish.astro'
 disqusIdentifier: 13
@@ -25,7 +25,7 @@ As you can see, I have highlighted the correct options: untick "Compress IFF/LBM
 
 ### More graphics tools
 
-If you are interested on nice old graphics programs, try [Paint Shop Pro 4.12](https://piittinen.name/files/psp412.exe) & [Paint Shop Pro 7.04](https://piittinen.name/files/psp704.exe) out. I still use the latter one, you can make it work forever simply by opening a file. The 4.12 version works forever with no special tricks even after hitting the 60 day limit. Also, [IrfanView](https://www.irfanview.com/) is able to create very good 256 color palettes as well as dither existing palettes very well. You can find palette files bundled with Map Generator.
+If you are interested on nice old graphics programs, try [Paint Shop Pro 4.12](https://vesa.piittinen.name/files/psp412.exe) & [Paint Shop Pro 7.04](https://vesa.piittinen.name/files/psp704.exe) out. I still use the latter one, you can make it work forever simply by opening a file. The 4.12 version works forever with no special tricks even after hitting the 60 day limit. Also, [IrfanView](https://www.irfanview.com/) is able to create very good 256 color palettes as well as dither existing palettes very well. You can find palette files bundled with Map Generator.
 
 ## LBM File Format
 
@@ -35,7 +35,7 @@ C++ source code for reading and writing The Settlers II LBM files can be found a
 
 The SVN is no longer in active use since December 2010, but here are backups:
 
-- [siedler15-libendian-trunk.r7178.tar](/wp-content/uploads/2011/07/siedler15-libendian-trunk.r7178.tar.gz)
-- [siedler15-libsiedler2-trunk.r7294.tar](/wp-content/uploads/2011/07/siedler15-libsiedler2-trunk.r7294.tar.gz)
+-   [siedler15-libendian-trunk.r7178.tar](/wp-content/uploads/2011/07/siedler15-libendian-trunk.r7178.tar.gz)
+-   [siedler15-libsiedler2-trunk.r7294.tar](/wp-content/uploads/2011/07/siedler15-libsiedler2-trunk.r7294.tar.gz)
 
-Also note that the [BBM page contains ILBM documentation](/documentation/bbm-file-format/ "BBM File Format")!
+Also note that the [BBM page contains ILBM documentation](/documentation/bbm-file-format/ 'BBM File Format')!
