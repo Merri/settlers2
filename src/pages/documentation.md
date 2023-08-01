@@ -12,7 +12,7 @@ Most of the articles below are planned to be rewritten. The new map files docume
 -   [File formats](#file-formats)
 -   [Game interals](#game-internals)
 -   [Analysis assets](#analysis-assets)
--   [siedler-welt.com](#siedler-weltcom)
+-   [siedler-welt.de](#siedler-weltde)
 -   [Game files overview](#game-files-overview)
 
 ## File formats
@@ -37,7 +37,7 @@ Most of the articles below are planned to be rewritten. The new map files docume
 
 ---
 
-## `siedler-welt.com`
+## `siedler-welt.de`
 
 <img alt="" src="/assets/siedler-welt/s2_art.png" width="116" height="150" loading="lazy" style="float: right; margin: 1rem;" />
 
