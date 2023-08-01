@@ -45,6 +45,7 @@ This was a German site in 1998 &ndash; 1999, here are a few articles written by 
 
 <div lang="de">
 
+-   [Hafenpatch](./documentation/siedler-welt.de/hafenpatch)
 -   [Mission.rtx](./documentation/siedler-welt.de/mission.rtx)
 -   [Savegame &ndash; Editoren](./documentation/siedler-welt.de/savegame-editoren)
 -   [Trans.dat](./documentation/siedler-welt.de/trans.dat)

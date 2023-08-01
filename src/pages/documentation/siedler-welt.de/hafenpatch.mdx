@@ -1,0 +1,173 @@
+---
+seriesTitle: siedler-welt.com
+title: Der Hafenpatch
+description: Sven Liebich's description of Hafenpatch in German
+pubDate: 1998-07-01
+modDate: 2023-08-01
+layout: '$layouts/BlogEnglish.astro'
+---
+
+import Link from '$/components/Link.astro'
+
+> Archived copy from Sven Liebich's site<br />
+> Source: <Link href="https://web.archive.org/web/20010208213024fw_/http://www.siedler-welt.de/cheats/auswahl/hafenpat.htm">Wayback Machine</Link>
+
+<div lang="de">
+
+## Der Hafenpatch (programm: Andre Dahmen)
+
+Laut Blue Byte ist es nicht möglich im hauseigenen Editor Häfen zu bauen. Was tun? Wenn's in einigen Leveln der 1. Missionen funktioniert, warum dann nicht auch mit dem Editor? Dies begründet Blue Byte mit Speicherproblemen.
+
+<img
+	alt=""
+	src="/assets/siedler-welt/ship.gif"
+	width="112"
+	height="74"
+	loading="lazy"
+	style="float: left; margin: 0.5rem;"
+/> Daß es doch möglich ist, wenn auch unter Zuhilfenahme eines Tools, soll hier gezeigt werden. Die Denkansätze hat Andre
+Dahmen mittels eines Pascal- Programmes umgesetzt. Das komplette Patch-Paket nennt sich `s2patch` und liegt zum herunterladen
+als .zip-Datei vor.
+
+Ich erspare mir also die ausführliche Erläuterung der Struktur einer .wld-Datei und verweise auf diesen wirklich gelungenen Patch. Es folgt eine Erklärung aller in der ZIP enthaltenen Dateien. Danach wird die Vorgehensweise im Einzelnen beschrieben.
+
+<a href="https://bluebyte.settlers2.net/siedler-welt.de/downloads/s2patch.zip">Download `s2patch.zip`</a>
+
+---
+
+## Inhalt der ZIP - Datei
+
+### `bereich.txt`
+
+(INFODATEI) Eine Aufschlüsselung der Missions-Binär-Daten. Hier werden die einzelnen HEX-Codes und deren Adressen aufgeschlüsselt. Unter Zuhilfenahme der s2dump.exe ist es möglich sich eine Welt mal ganz trocken 😃 in Zahlen anzusehen.
+
+### `anker.dat`
+
+Hier sind die Koordinaten und die Anzahl der Hafenbauplätze einzutragen, die man zuvor im Editor von Blue Byte notiert haben sollte. Ein Texteditor ist dazu vollkommen ausreichend. Achtung: Zwischen den Koordinaten-Paaren ein &lt;Tab&gt; einfügen!
+
+### `anker.exe`
+
+Die wichtigste Datei, die compilierte anker.pas, zum Patchen der Missions-Dateien. Der korrekte Aufruf lautet: `Laufwerk:\Verzeichnis\anker Welt.wld`, wobei das Verzeichnis beide Dateien enthalten muß (anker.exe und die entsprechende `*.wld` Datei). Für "Welt" muß der Name der eigenen Welt eingesetzt werden.
+
+### `anker.pas`
+
+(INFODATEI) Quellcode der anker.exe, geschrieben in Turbo Pascal 4.0
+
+### `hilfen.txt`
+
+(INFODATEI) einige Anmerkungen des Autors.
+
+### `null.exe`
+
+Ein weiteres, recht nützliches Programm zum Absenken aller Höhen auf den Meeresspiegel. Der korrekte Aufruf lautet: Laufwerk:\Verzeichnis\null Welt.wld, wobei das Verzeichnis beide Dateien enthalten muß (null.exe und die entsprechende \*.wld Datei). Der Patch funktioniert mit allen Leveln, ob Missionen oder im Freien Spiel)
+
+### `null.pas`
+
+(INFODATEI) Quellcode der null.exe, geschrieben in Turbo Pascal 4.0 (c) Borland.
+
+### `s2dump.exe`
+
+Das Programm erstellt einen HEX-DUMP von Siedler2-Welten. Der Vorteil ist, daß die einzelnen Bereiche der \*.wld-Dateien in separate Text-Files ausgegeben werden und die Koordinaten erhalten bleiben. Jede Zeile enthält so je nach Welt-Größe 32, 64, 96... Einträge pro Zeile. Dieses Programm dient lediglich der Veranschaulichung (für Leute die gerne HEXen).
+
+### `s2dump.pas`
+
+(INFODATEI) Quellcode der s2dump.exe, geschrieben in Turbo Pascal 4.0
+
+### `test.swd`
+
+Testwelt mit 2 Häfen (32 x 32). Im Editor ansehen.
+
+---
+
+> "Wie funktioniert denn nun der ganze Spaß?"
+>
+> Ganz einfach...naja, fast 😃
+>
+> Für alle, die bislang nur Siedler II ohne Mission-CD installiert haben, gibt es eine schlechte Nachricht: Geht nicht! TIP: Mission-CD kaufen (sie enthält auch den Editor zum Erstellen eigener Welten).
+
+Wer folgende Reihenfolge strikt einhält, sollte keine Probleme bekommen und sich endlich den langgehegten Wunsch, eine Hafenwelt zu erstellen, erfüllen können. Auf los geht´s los:
+
+1.  **Siedler II installieren** (falls noch nicht geschehen)
+2.  **Mission-CD installieren** (falls noch nicht geschehen)
+3.  **Update für Mission-CD von Blue Byte** <a href="https://bluebyte.settlers2.net/updates/siedler2mission/">installieren</a> (Update 1.51 (1,3 MB) für DIE SIEDLER 2 - MISSION CD. Nach dem Runterladen die Datei "s2mup.exe" in das Verzeichnis, in dem DIE SIEDLER2 installiert wurde, kopieren. Die Datei mit Doppelklick starten (unter DOS im Siedler-Verzeichnis "s2mup" eingeben). Alle Fragen mit "JA" beantworten. Die überarbeiteten Dateien werden automatisch ersetzt. Das Update behebt unter anderem auch das Katapult-Problem. Achtung: Danach auf keinen Fall das Update von Siedler II installieren, sonst werden die eben aufgefrischten Dateien wieder überschrieben.
+4.  <div style="contain: layout;">
+
+    <div>
+    	<img
+    		alt=""
+    		src="/design/castle.png"
+    		width="31"
+    		height="31"
+    		loading="lazy"
+    		style="float: right; margin: 1rem;"
+    	/>
+    	**Welten-Editor** öffnen und nach eigenene Vorstellungen eine Welt kreieren. Dabei darauf achten, daß an den Stellen,
+    	an denen später ein Hafen gebaut werden soll, ausreichend Platz für ein solches Gebäude vorhanden ist.
+    </div>
+
+    <img
+    	alt=""
+    	src="/assets/siedler-welt/hafenanim.gif"
+    	width="123"
+    	height="129"
+    	loading="lazy"
+    	style="float: left; margin: 1rem;"
+    />
+
+    Je Insel nur EIN Hafen (das erspart späteren Frust wenn die Schiffe nicht das tun was sie sollen). Die Koordinaten für
+    den Hafenplatz (links oben angezeigt), sowie die Anzahl der Häfen notiern. WICHTIG: Der Zielhafen auf feindlichem Gebiet
+    sollte möglichst lange anlaufbar sein - dem Gegner Granit, Wald, oder Berge mit Schnee vor die Nase setzen, ihn aber
+    nicht vollständig abkapseln)
+
+    </div>
+
+5.  Die Datei speichern und nach dem Speichern in `"Miss208.wld"` umbenennen.
+
+6.  Die Datei `anker.exe` und `anker.dat` sowie die eben erstellte `Welt.wld` müssen sich nun im selben Verzeichnis befinden (am besten im "WORLDS"-Verzeichnis).
+
+7.  Die Datei anker.dat mittels Text-Editor öffnen und in der ersten Zeile die Anzahl der Häfen eintragen. Ab der zweiten Zeile die Koordinatenpaare der Häfen in folgender Form eintragen:
+
+    ```
+    XX[TAB]YY
+    XX[TAB]YY
+
+    ([TAB] = Tabulator-Taste, XX = X-Koordinate, YY = Y-Koordinate)
+    ```
+
+    ... speichern.
+
+8.  Umbenennen der Welt in `Miss208.wld`
+
+9.  Die Welt wird nun gepatcht. Folgende Programmzeile ist dafür erforderlich:
+    `Laufwerk:\Verzeichnis\anker Miss208.wld` (unter Windows über "Start"-"Ausführen" - "anker.exe" doppelklicken und dahinter den Namen der Welt angeben)
+
+10. Die gepatchte `Miss208.wld` muß nun noch ins Verzeichnis `"DATA\MAPS"` kopiert werden...hier befindet sich jedoch noch die Original Mission 9 (Miss008.wld). Um ein Überschreiben zu verhindern, einfach einen Unterordner "ORIGINAL" anlegen und die Original-Miss208.wld dort ablegen.
+
+11. Das war's...
+
+    **Um die Welt nun zu spielen, muß sie sich im "DATA\MAPS"-Verzeichnis befinden und kann über die alten Missionen (Mission 9) angewählt werden.**
+
+### Die Haken...
+
+-   Ein kleiner Schönheitsfehler ist natürlich die Meldung, die man zu Beginn des Spieles erhält - sie bezieht sich auf die Original-Mission (einfach nicht beachten 😃)
+
+-   Leider ist es nicht möglich eine so erstellte Hafenwelt im Freien Spiel anzuwählen - die Werft kann dann nämlich keine großen Schiffe bauen - da nutzt der schönste Hafen nichts.
+
+-   <img
+    	alt=""
+    	src="/assets/siedler-welt/wiking.gif"
+    	width="180"
+    	height="102"
+    	loading="lazy"
+    	style="float: right; image-rendering: pixelated; margin: 1rem;"
+    /> Möglich ist nur das ersetzen einer Hafenwelt in der alten Kampagne, die genannte Mission 9 oder die Mission 8 eignen
+    sich besonders, weil die Bauoption HAFEN bereits anwählbar ist (in der 4. Mission muß erst der Schiffbrüchige gefunden
+    werden).
+
+-   Beim Anlegeplatz auf feindlichem Territorium sollte man peinlichst darauf achten, daß der Gegner nicht schneller das Gebiet besetzen kann als man selbst. Sonst nämlich ist der Hafenplatz nicht mehr erreichbar und das S§el läuft ins Leere. Am einfachsten wird dies durch Änderung der !GLOBAL_SET_COMPUTER_BARRIER-Eintragung in der Mission.rtx gelöst.
+
+-   Der Welten-Austausch mit Freunden wird schwieriger, ist aber natürlich möglich.
+
+Frohes Welten-Basteln...
+
+</div>
