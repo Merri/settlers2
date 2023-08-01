@@ -136,5 +136,5 @@ Contents of map blocks are documented separately:
 -   [Block 9 (fog of war)](./block-9)
 -   [Block 10 (icon)](./block-A)
 -   [Block 11 (resources)](./block-B)
--   [Block 12 (gouraud shading)](./block-C)
+-   [Block 12 (light and shadow map)](./block-C)
 -   [Block 13 (areas)](./block-D)

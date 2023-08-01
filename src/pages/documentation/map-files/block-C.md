@@ -1,12 +1,12 @@
 ---
-title: Map Block 12 (gouraud shading)
+title: Map Block 12 (light and shadow map)
 description: Documentation for The Settlers II map file format, map block 12.
 pubDate: 2015-08-20
 modDate: 2023-07-31
 layout: '$layouts/BlogEnglish.astro'
 ---
 
-This is a precalculated light and shadow information for gouraud shading. <a href="/return-to-the-roots">Return to the Roots</a> ignores this block.
+This is a precalculated light and shadow map information for minimap, and is also used for values the game uses for calculating shading on landscape textures. <a href="/return-to-the-roots">Return to the Roots</a> ignores this block as it uses more modern rendering techniques to present the landscape.
 
 The calculation is based purely on values from height map. For each position you take:
 
