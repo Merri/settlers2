@@ -1,0 +1,149 @@
+---
+title: How to translate The Settlers II
+description: Should you be interested on bringing The Settlers II Gold Edition to your language this is the page to read!
+pubDate: 2023-08-03
+layout: '$layouts/BlogEnglish.astro'
+tags:
+    - article
+    - docs
+    - localization
+---
+
+import Link from '$/components/Link.astro'
+
+So, you are interested on bringing The Settlers II Gold Edition localized to your language? You've come to the right
+place! On this page we cover all the files you need to touch and go through some of the limitations. I'll also give tips
+on how to do the actual translation work so that you **localize** the game instead of simply replacing English words
+with equivalent words from a dictionary.
+
+## Locating the files
+
+Here we assume you are basing your translation off of the English version which is more common than the German one.
+There is a difference between them: the German one uses `.GER` extension on the language files while the English, French
+and Polish language versions use `.ENG` extension.
+
+The main language files are located in `DATA\ONLINE`, `DATA\TXT`, `DATA\TXT2`, and `DATA\TXT3` directories. These can be
+split to two groups: `ONLINE` and `TXT2` contain plain text files you can open right in a text editor such as Notepad.
+The two other directories instead contain files which are in a special string tables format, and require a more
+specialized tool. We'll get back to that.
+
+## Limitations
+
+The biggest limitation to creating a translation for the game is that we do not have a font editor. This limits
+localization mostly to European languages which use the latin character set. The game predates wide adoption of Unicode
+which means the game uses an 8-bit character set limiting the maximum different characters to 256. The character set
+from the game is known as Code Page 437 (CP437).
+
+Here is a table of the complete character set, however the game's font does not include all the characters of it.
+The two first rows are not available and some of the other special characters may also be unavailable. However all the
+letters should be available so you can check from the table below if the desired letters outside the English A-Z range
+can be found.
+
+<div data-scrolling="inline" style="font-family: var(--page-mono-font);">
+
+|             |   0   |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  A  |  B  |    C     |  D  |  E  |  F   |
+| ----------: | :---: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :------: | :-: | :-: | :--: |
+|   0#<br />0 |  NUL  | ☺  |  ☻  | ♥  | ♦  | ♣  | ♠  |  •  |  ◘  |  ○  |  ◙  | ♂  |    ♀    |  ♪  |  ♫  |  ☼   |
+|  1#<br />16 |   ►   |  ◄  | ↕  | ‼  |  ¶  |  §  |  ▬  |  ↨  |  ↑  |  ↓  |  →  |  ←  |    ∟     | ↔  |  ▲  |  ▼   |
+|  2#<br />32 |  SP   |  !  |  "  |  #  | `$` |  %  |  &  |  '  | `(` | `)` | `*` |  +  |    ,     |  -  |  .  |  /   |
+|  3#<br />48 |   0   |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  :  |  ;  |   `<`    |  =  | `>` |  ?   |
+|  4#<br />64 |   @   |  A  |  B  |  C  |  D  |  E  |  F  |  G  |  H  |  I  |  J  |  K  |    L     |  M  |  N  |  O   |
+|  5#<br />80 |   P   |  Q  |  R  |  S  |  T  |  U  |  V  |  W  |  X  |  Y  |  Z  |  [  |    \     |  ]  |  ^  | `_`  |
+|  6#<br />96 | &#96; |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |  i  |  j  |  k  |    l     |  m  |  n  |  o   |
+| 7#<br />112 |   p   |  q  |  r  |  s  |  t  |  u  |  v  |  w  |  x  |  y  |  z  | `{` | &verbar; | `}` |  ~  |  ⌂   |
+| 8#<br />128 |   Ç   |  ü  |  é  |  â  |  ä  |  à  |  å  |  ç  |  ê  |  ë  |  è  |  ï  |    î     |  ì  |  Ä  |  Å   |
+| 9#<br />144 |   É   |  æ  |  Æ  |  ô  |  ö  |  ò  |  û  |  ù  |  ÿ  |  Ö  |  Ü  |  ¢  |    £     |  ¥  |  ₧  |  ƒ   |
+| A#<br />160 |   á   |  í  |  ó  |  ú  |  ñ  |  Ñ  |  ª  |  º  |  ¿  |  ⌐  |  ¬  |  ½  |    ¼     |  ¡  |  «  |  »   |
+| B#<br />176 |   ░   |  ▒  |  ▓  |  │  |  ┤  |  ╡  |  ╢  |  ╖  |  ╕  |  ╣  |  ║  |  ╗  |    ╝     |  ╜  |  ╛  |  ┐   |
+| C#<br />192 |   └   |  ┴  |  ┬  |  ├  |  ─  |  ┼  |  ╞  |  ╟  |  ╚  |  ╔  |  ╩  |  ╦  |    ╠     |  ═  |  ╬  |  ╧   |
+| D#<br />208 |   ╨   |  ╤  |  ╥  |  ╙  |  ╘  |  ╒  |  ╓  |  ╫  |  ╪  |  ┘  |  ┌  |  █  |    ▄     |  ▌  |  ▐  |  ▀   |
+| E#<br />224 |   α   |  ß  |  Γ  |  π  |  Σ  |  σ  |  µ  |  τ  |  Φ  |  Θ  |  Ω  |  δ  |    ∞     |  φ  |  ε  |  ∩   |
+| F#<br />240 |   ≡   |  ±  |  ≥  |  ≤  |  ⌠  |  ⌡  |  ÷  |  ≈  |  °  |  ∙  |  ·  |  √  |    ⁿ     |  ²  |  ■  | NBSP |
+
+</div>
+
+For a more exhaustive and complete list I recommend having a look at <Link href="https://en.wikipedia.org/wiki/Code_page_437">Wikipedia article on CP437</Link>.
+I also recommend checking the section about Internationalization to see which characters are missing. Depending on
+situation you may have to figure out creative uses of words to avoid issues with unavailable characters.
+
+## Overcoming the character set
+
+One of the technical challenges for you will be dealing with the plain text files. You likely must load and save them in
+CP437 so that letters outside basic A-Z range will appear correctly in the game.
+
+Instead of figuring out how to work with the files in a text editor already available on your system you can try out
+online tools to help you out. This one appeared to work as expected: <Link href="http://codelobe.com/tools/cp437-converter">CP437 Converter</Link>.
+
+The above tool works for files in `ONLINE` and `TXT2` directories. To use it:
+
+1. Open a `.ENG` file in it using the "Load CP437" button
+2. Press "Convert to UTF-8" button
+3. Press "Swap In & Out" button
+4. Translate the text in the upper "input" text field
+5. Once done, press "Convert to CP437" button
+6. Check that the output field looks ok and is not missing letters
+7. Press "Download Output" and rename the result to be the same `.ENG` file you opened
+
+You may wish to verify that your changes worked by replacing the original file with the new file and booting up the
+game.
+
+## Translating the string table files
+
+The files within `TXT` and `TXT3` contain multiple entries in one file, so they will take longer to localize. However we
+do have a tool for this: go to the utilities section of this site and you find **Text Utility**. It is designed for
+translating and it handles the CP437 issue for you transparently, so for the most part you can translate strings one by
+one. The tool also displays the original string alongside your translated one, so you can refer back to it.
+
+> **Note!**<br />You never need to remove or add strings, only edit them. The add and removal features exist for people
+> who wish to create custom campaign missions.
+
+## Tips for localization
+
+One of the bigger challanges of translating is that it is an art of itself. You are not replacing a word for word.
+Instead you are retelling what is being said using the target language. Words are not important. Understanding and
+meaning are.
+
+A common mistake is to just really look up words in a dictionary and replace one for the other. There is a known Finnish
+subtitle for Star Wars where storm troopers are discussion in Death Star and say "it must be another drill". The
+translated text does not have the drill in the meaning as in "training", but instead as the meaning of the tool "drill".
+
+So always make sure you **understand the context** when you are translating. Find out where the text you translate is
+being used in the game. Unfortunately this is not always possible so you will have to do some translations blind. Some
+error messages are impossible to generate. Luckily these are rather unlikely to occur on modern emulated machines.
+
+You may also consider the tone of the characters. You may need to think "how Octavianus would write into his diary if he
+was man in my language?" An easy way out is to just use general written language, but there may be room for some
+creativity on characterization. Would it fit if he sounded archaic?
+
+Some of the help text of the game are visible in the menu dialog where you can access statistics and the other things.
+Move that window to a corner and open up another window. Now when you hover your mouse over some other buttons you can
+see help text appearing in the main window. This is a bit unintuitive, but if you're looking for some strings you can't
+find elsewhere this is one good place to check.
+
+One common challenge you may also encounter is limited space. You may have to find shorter word variants or terms to
+make all your text fit in the visual available space within the game. As a tip mark it up somewhere if you notice you
+put a longer text to a string field than the original text was so that you will remember to check it.
+
+## The maps
+
+It is also possible to translate the map loading screens, but this means you have to change the origina `.WLD` files in
+the four `MAPS` directories. If you want to only translate Roman Campaign and World Campaign then `MAPS` and `MAPS2`
+will be enough.
+
+You can edit the map names in <a href="https://settlers2.net/world-editor">World Editor</a> and then download the file
+back in Campaign format.
+
+Note that map names do have length limitations! For campaign maps the maximum length is 23 or 24 characters.
+
+## Sharing the results
+
+Once you're done I'm happy to host your localization here on settlers2.net! However it is a good idea to play with the
+language a few times and also ask some other native speakers of the language to check it out. The good thing about The
+Settlers II is that there isn't an awful lot of text in the game and you should be able to complete it within about a
+week even if you're inexperienced in doing translation work. You should prefer taking your time instead of rushing it
+out as fast as possible.
+
+Also if you have further questions or need clarification I can try to help out. You can reach to me via Mastodon `@MerriNet@mastodon.social`, and other contact methods are possible via my <Link href="https://vesa.piittinen.name">homepage</Link>. Also you can find me on <Link href="https://discord.gg/kyTQsSx">Return to the Roots Discord</Link>.
+
+I will also return back to update this article over time as need arises. Upon first time I'm writing this I'm doing a
+very pure infodump from the top of my head and I might miss something.
