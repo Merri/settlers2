@@ -1,3 +1,12 @@
 User-agent: *
 Disallow: /fonts/
 Disallow: /icons/
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
