@@ -4,7 +4,7 @@ description: Analyzing the texture drawing a bit further.
 pubDate: 2015-09-04
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - textures
+  - textures
 ---
 
 I just wanted to know which parts of textures are actually drawn by the game. So it uses two simple triangles and both triangles use the same texture. On flat surface the triangle is within roughly a 31 x 30 rectangle, but it can stretch by one additional pixel to both directions to 32 x 31 when drawing slopes.

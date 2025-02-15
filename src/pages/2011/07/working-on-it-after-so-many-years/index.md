@@ -4,7 +4,7 @@ description: I have been analyzing and reverse engineering the map file format a
 pubDate: 2011-07-24
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 ![](/wp-content/uploads/2011/07/Precise-color-SWD-maps.png)I guess one could say I should be upset. All my old documentation I wrote to papers some five years ago has been long lost and I don't even have the code for my own Map Generator anymore. I've lost all my old e-mail too, with some information on The Settlers II file formats in them.

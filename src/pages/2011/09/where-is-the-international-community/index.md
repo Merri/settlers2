@@ -3,9 +3,9 @@ title: 'Where is the international community?'
 pubDate: 2011-09-08
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - communities
-    - RttR
-    - news
+  - communities
+  - RttR
+  - news
 heroImage: '/wp-content/uploads/2011/09/2011-09-08-The-Settlers-II.net_.jpg'
 ---
 

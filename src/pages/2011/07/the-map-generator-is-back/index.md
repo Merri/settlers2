@@ -4,7 +4,7 @@ description: Map generator has been made available again on the downloads page. 
 pubDate: 2011-07-16
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 ![](/wp-content/uploads/2011/07/oktavianus_on_horse.png 'Octavianus on a horse')

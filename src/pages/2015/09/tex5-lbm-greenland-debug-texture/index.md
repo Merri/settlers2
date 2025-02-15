@@ -4,7 +4,7 @@ description: Another debugging tool for figuring things out.
 pubDate: 2015-09-05
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - tools
+  - tools
 ---
 
 If you ever want to consider drawing your own texture for the game then this information here will be quite useful! Download can be found at the end of this post.

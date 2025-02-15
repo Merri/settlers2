@@ -4,7 +4,7 @@ description: I have been analyzing the textures and palettes between the various
 pubDate: 2011-08-28
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - textures
+  - textures
 heroImage: '/wp-content/uploads/2011/08/Textures.png'
 ---
 

@@ -4,8 +4,8 @@ description: Reverse engineering discovery when analyzing the map files.
 pubDate: 2012-08-19
 layout: '$layouts/BlogEnglish.astro'
 tags:
-		- docs
-    - textures
+  - docs
+  - textures
 ---
 
 I found one more texture that is usable in the game! With usable I have the following requirements:

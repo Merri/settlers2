@@ -4,7 +4,7 @@ description: Uploading map files is now possible.
 pubDate: 2012-08-31
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 As the Map Database part of Online Editor isn't going to be finished very soon I made it very easy to upload maps: just upload a map and it'll appear for everyone. At the moment any one person can have up to 15 maps in the service.

@@ -4,7 +4,7 @@ description: Continuing work on the art stuff.
 pubDate: 2011-08-02
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 Still some work to do: adding more detail to the ship, adjusting water etc.

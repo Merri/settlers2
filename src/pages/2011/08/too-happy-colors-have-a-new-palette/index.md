@@ -4,7 +4,7 @@ description: Alternative palette for the game.
 pubDate: 2011-08-19
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - tools
+  - tools
 ---
 
 Ever thought the color selection in The Settlers II is too colorful and happy? Don't worry, I now have a solution for your problem!

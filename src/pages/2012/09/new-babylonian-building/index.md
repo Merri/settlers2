@@ -4,7 +4,7 @@ description: More pixel art work.
 pubDate: 2012-09-11
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - RttR
+  - RttR
 ---
 
 Spike asked to do something. I did something. First I did this:

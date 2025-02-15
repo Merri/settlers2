@@ -4,7 +4,7 @@ description: It is a palette to help making pixel art compatible with the origin
 pubDate: 2012-09-16
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - docs
+  - docs
 ---
 
 ![](/wp-content/uploads/2012/09/safe_building_palette.png 'safe_building_palette')

@@ -4,7 +4,7 @@ description: I've been looking further into the map files and now also RttR docu
 pubDate: 2011-08-09
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - tools
+  - tools
 ---
 
 After finding out about RttR documentation and having a look at some of the source code we now have gathered a great deal of information about The Settlers II WLD/SWD file format. Yet there is still things that need further investigation:

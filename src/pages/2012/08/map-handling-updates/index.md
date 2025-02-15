@@ -4,8 +4,8 @@ description: Improvements in Canvas Map Viewer utility.
 pubDate: 2012-08-05
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
-    - tools
+  - news
+  - tools
 ---
 
 Now that the technical side is no longer such a big of a problem I have rebuilt the JavaScript code in a more object oriented manner to make it easier to manipulate map data. I added a few features to showcase things that are possible to do:

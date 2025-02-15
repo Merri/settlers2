@@ -4,8 +4,8 @@ description: Playable maps generated, but only for Return to the Roots.
 pubDate: 2014-08-31
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
-    - tools
+  - news
+  - tools
 ---
 
 The map generator now generates maps that are **playable right away in RttR!** Resources, trees and granite are now placed on the map so there is something to play with. Some final touches are still needed to make sure the compatibility with old game is established. In the meanwhile the original Map Editor can be used to load and then save the map and then the map becomes playable in the original game as well!

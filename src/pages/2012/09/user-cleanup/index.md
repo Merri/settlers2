@@ -4,7 +4,7 @@ description: Spam account removals.
 pubDate: 2012-09-01
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 I went through the users list and removed any account that seemed like a spam account. I hope I didn't remove any accounts of a real user. If that happened I apologize, and you're free to create a new account.

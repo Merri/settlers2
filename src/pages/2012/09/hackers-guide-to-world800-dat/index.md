@@ -4,8 +4,8 @@ description: Original beta maps in a format that is usable with the later versio
 pubDate: 2012-09-02
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - docs
-    - tools
+  - docs
+  - tools
 ---
 
 To make it easier for everyone to have a look at these files I've now compiled all WORLD800.DAT files from the demo versions of the game into something that is easier to work with!

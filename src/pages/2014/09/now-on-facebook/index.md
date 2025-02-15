@@ -4,7 +4,7 @@ description: The Settlers II.net is now on FB.
 pubDate: 2014-09-18
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 import Link from '$/components/Link.astro'

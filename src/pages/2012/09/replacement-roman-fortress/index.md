@@ -4,7 +4,7 @@ description: Another pixel art piece.
 pubDate: 2012-09-22
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - RttR
+  - RttR
 ---
 
 ![](/wp-content/uploads/2012/09/new_roman_fortress5.png 'new_roman_fortress5') ![](/guide/castle/fortress.png 'Roman Fortress')

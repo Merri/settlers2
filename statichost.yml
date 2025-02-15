@@ -1,0 +1,6 @@
+image: node:22
+command: npm i --global bun && bun i && bun run build
+public: dist
+domains:
+  - settlers2.net
+  - www.settlers2.net

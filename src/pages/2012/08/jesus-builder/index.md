@@ -4,7 +4,7 @@ description: A funny glitch in the game where a water walks on water.
 pubDate: 2012-08-19
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - bugs
+  - bugs
 ---
 
 I'm not kidding here! This guy walked on water!

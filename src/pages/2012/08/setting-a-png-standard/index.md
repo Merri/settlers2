@@ -4,8 +4,8 @@ description: Thoughts on creating a new PNG format for easier manipulation of ma
 pubDate: 2012-08-01
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
-    - tools
+  - news
+  - tools
 ---
 
 I have successfully completed a WLD/SWD/DAT to PNG world converter! A resulting file:

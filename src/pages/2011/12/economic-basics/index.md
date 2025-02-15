@@ -4,7 +4,7 @@ description: Short article on some basics for managing your economy in The Settl
 pubDate: 2011-12-30
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - docs
+  - docs
 ---
 
 **Preface**

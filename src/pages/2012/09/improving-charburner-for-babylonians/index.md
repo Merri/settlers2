@@ -4,7 +4,7 @@ description: Doing some pixel art graphics work.
 pubDate: 2012-09-15
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - RttR
+  - RttR
 ---
 
 Charburner is a unique addition in Return to the Roots. There was an existing old artwork for the building:

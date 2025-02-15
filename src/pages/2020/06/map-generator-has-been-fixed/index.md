@@ -4,7 +4,7 @@ description: Map Generator download feature was broken for an unknown period of 
 pubDate: 2020-06-29
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 I'm not sure how long things were broken, but Map Generator's download feature has been fixed. Alongside that I've fixed HTTPS related issues and warnings. As an additional reminder the maps generated are fully usable with S2EDIT and it is a good idea to decorate the maps further using it :)

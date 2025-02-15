@@ -4,7 +4,7 @@ description: Ubisoft is removing existing sites in favor of moving people to Fac
 pubDate: 2012-08-25
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 It looks like bluebyte.net is currently offline for maintenance. This has been going on for atleast a week by now. Unfortunatenaly this also means the old original Settlers & Siedler sites are down, so the links at the bottom of this page to the official sites do not work.

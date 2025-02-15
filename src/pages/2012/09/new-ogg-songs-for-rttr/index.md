@@ -4,7 +4,7 @@ description: Game songs in OGG file format.
 pubDate: 2012-09-22
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - RttR
+  - RttR
 ---
 
 [Download OGG songs](/wp-content/uploads/2012/09/SOUNDDAT.zip)

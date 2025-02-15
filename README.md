@@ -16,7 +16,7 @@ Visit [settlers2.net](https://settlers2.net)
 
 To provide easy-to-use map generator, maps database, online localization tool & font editor.
 
-Wild idea: generate game demo with chosen map, and run it on DOSBox on the browser.
+Wild idea: generate game demo with chosen map, and run it on DOSBox in the browser.
 
 More wild ideas: graphics editor, texture set editor, sound editor, music editor. Full modding.
 
@@ -27,62 +27,15 @@ with your changes. You can contact the main author Merri through [Return to the 
 
 ## Getting started
 
-The project uses `pnpm` instead of `npm`:
+The project uses `bun` instead of `npm`:
 
 ```
-npm i -g pnpm
+npm i -g bun
 git clone https://github.com/Merri/settlers2.git
 cd settlers2
-pnpm i
-pnpm run dev
+bun i
+bun run dev
 ```
 
-In a couple of seconds you should be able to go to `localhost:3000`. If you change the sources you will see the changes
+In a couple of seconds you should be able to go to `localhost:4321`. If you change the sources you will see the changes
 happen immediately in the browser, too.
-
-### Tech of the site
-
-- Built with the wonderful [Astro](https://astro.build)
-- Easy to add content in Markdown, or in JSX-similar `.astro` syntax
-- Fast development, ultra fast static site
-- Prefer static HTML/CSS when possible, vanilla JS next, Preact when more complexity is involved
-
-As of writing Astro is bleeding edge, being only three months old and still in early beta phase. It has it's quirks, but
-nothing prevents making good working stuff with it regardless of the issues.
-
-### 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```
-/
-├── public/
-│   ├── robots.txt
-│   └── favicon.ico
-├── src/
-│   ├── components/
-│   │   └── Tour.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact/SolidJS components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-### 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command           | Action                                      |
-|:------------------|:--------------------------------------------|
-| `pnpm i`          | Installs dependencies                       |
-| `pnpm run dev`    | Starts local dev server at `localhost:3000` |
-| `pnpm run build`  | Build your production site to `./dist/`     |
-
-### 👀 Want to learn more about Astro?
-
-Feel free to check [documentation](https://github.com/withastro/astro) or jump into our [Discord server](https://astro.build/chat).

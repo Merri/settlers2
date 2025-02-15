@@ -4,7 +4,7 @@ description: Some little work done for creating a Return to the Roots campaign.
 pubDate: 2012-09-04
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - RttR
+  - RttR
 ---
 
 import Link from '$/components/Link.astro'

@@ -4,8 +4,8 @@ description: Continued work on analyzing game's internal logic.
 pubDate: 2012-08-07
 layout: '$layouts/BlogEnglish.astro'
 tags:
-		- docs
-    - news
+  - docs
+  - news
 ---
 
 Flag, hut or castle? That is the question. At this point I'm only interested on how height map affects building site icon, thus ignoring effects of objects (trees & granite) and houses.

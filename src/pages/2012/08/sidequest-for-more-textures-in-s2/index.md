@@ -4,8 +4,8 @@ description: Experimentation to see if the original game can handle more than ju
 pubDate: 2012-08-06
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - docs
-    - textures
+  - docs
+  - textures
 ---
 
 I wanted to try out if it is possible to add a fourth texture set into the original The Settlers II. So I went ahead and copied a few files like MAP_0_Y.LST as MAP_3_Y.LST or GOU5.DAT as GOU8.DAT, as well as modified a map to point to texture 4 and introduced my own customized Greenland texture as TEX8.LST... and what do you know, it works!

@@ -4,7 +4,7 @@ description: Commenting system swapped to Disqus. Also have been hired as a prog
 pubDate: 2013-05-24
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 We've switched to Disqus comments. At the moment it seems the old comments don't yet appear, but they should (as I exported them). Hopefully they do.

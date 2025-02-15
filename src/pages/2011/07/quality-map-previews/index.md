@@ -4,7 +4,7 @@ description: A look into results of generating map thumbnails with higher detail
 pubDate: 2011-07-27
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 **The Roman Campaign maps.**

@@ -4,8 +4,8 @@ description: Some insight of issues within The Settlers II.
 pubDate: 2014-09-28
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - bugs
-    - docs
+  - bugs
+  - docs
 ---
 
 Just some random bugs that I've noticed while playing.

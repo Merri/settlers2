@@ -4,8 +4,8 @@ description: Improvements to Online Editor utility.
 pubDate: 2012-08-15
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
-    - tools
+  - news
+  - tools
 ---
 
 Online Editor has been updated. Updates since yesterday:

@@ -4,7 +4,7 @@ description: World Editor utility is now under construction.
 pubDate: 2022-03-02
 layout: '$layouts/BlogEnglish.astro'
 tags:
-    - news
+  - news
 ---
 
 Recently I've been continuing my work on porting the old JavaScript code to TypeScript. There has been some nice
