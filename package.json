@@ -14,11 +14,10 @@
 		"start": "bunx --bun astro dev",
 		"build": "bunx --bun astro build",
 		"dev": "bunx --bun astro dev",
-		"tsc": "npx tsc --noEmit"
+		"tsc": "bunx --bun tsc --noEmit --skipLibCheck"
 	},
 	"devDependencies": {
 		"@astro-community/astro-embed-youtube": "0.5.6",
-		"@astrojs/deno": "5.0.1",
 		"@astrojs/mdx": "4.0.8",
 		"@astrojs/node": "9.1.0",
 		"@astrojs/preact": "4.0.4",
@@ -26,25 +25,16 @@
 		"@astrojs/sitemap": "3.2.1",
 		"@babel/core": "7.26.9",
 		"@babel/plugin-transform-react-jsx-source": "7.25.9",
-		"@types/cookie": "1.0.0",
-		"@types/marked": "6.0.0",
-		"@types/memoizee": "0.4.11",
 		"@types/node": "22.13.4",
 		"alku": "1.0.0",
 		"astro": "5.3.0",
-		"cookie": "1.0.2",
 		"date-fns": "4.1.0",
 		"date-fns-tz": "3.2.0",
-		"dompurify": "3.2.4",
-		"marked": "15.0.7",
-		"memoizee": "0.4.17",
-		"normalize.css": "8.0.1",
 		"pako": "2.1.0",
 		"preact": "10.25.4",
 		"prettier": "3.5.1",
 		"prettier-plugin-astro": "0.14.1",
 		"random-seedable": "1.0.8",
-		"sanitize.css": "13.0.0",
 		"typescript": "5.7.3",
 		"typescript-plugin-css-modules": "5.1.0"
 	}
