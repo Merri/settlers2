@@ -1,19 +1,18 @@
-import { cp437ToString, stringToCp437 } from './cp437'
-import { getAllMapRegions, locateCoastalCastles } from './mapRegions'
-import { C8ObjectType } from './objects'
-import { TextureBuildFeature } from './textures'
+import { cp437ToString, stringToCp437 } from './cp437.ts'
+import { getAllMapRegions, locateCoastalCastles } from './mapRegions.ts'
+import { C8ObjectType } from './objects.ts'
+import { TextureBuildFeature } from './textures.ts'
 import {
 	BlockType,
+	ConstructionSite,
+	ObjectType,
 	RegionType,
-	TextureFlag,
+	SupportedTree,
 	Texture,
 	TextureFeatureFlag,
+	TextureFlag,
 	Textures,
-	ObjectType,
-	ConstructionSite,
-	AnimalType,
-	SupportedTree,
-} from './types'
+} from './types.ts'
 
 type MapClassBlocks = Record<BlockType, Uint8Array>
 
@@ -56,7 +55,7 @@ function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 			const id = (variant << 2) | (o1 >> 6)
 			const isCut = (o1 >> 3) & 0x01
 			const size = (o1 >> 4) & 0x03
-			const step = o1 & 0x07
+			//const step = o1 & 0x07
 
 			if (isCut) return
 			if (id > 8) return
@@ -300,33 +299,35 @@ function sanitizeSwdBlocks({ world }: { world: MapClass }): MapClassBlocks {
 const BLOCKS = 14
 
 export function getNodesByIndex(index: number, width: number, height: number) {
-	let x = index % width,
-		y = (index - x) / width,
+	const x = index % width,
 		xL = (x > 0 ? x : width) - 1,
-		xR = (x + 1) % width,
-		yT = ((y > 0 ? y : height) - 1) * width,
+		xR = (x + 1) % width
+
+	let y = (index - x) / width
+
+	const yT = ((y > 0 ? y : height) - 1) * width,
 		yB = ((y + 1) % height) * width,
 		odd = (y & 1) === 1
 
 	y *= width
 
 	return odd
-		? {
+		? ({
 				left: y + xL,
 				right: y + xR,
 				topLeft: yT + x,
 				topRight: yT + xR,
 				bottomLeft: yB + x,
 				bottomRight: yB + xR,
-		  } as const
-		: {
+			} as const)
+		: ({
 				left: y + xL,
 				right: y + xR,
 				topLeft: yT + xL,
 				topRight: yT + x,
 				bottomLeft: yB + xL,
 				bottomRight: yB + x,
-		  } as const
+			} as const)
 }
 
 export function getNodesAtRadius(index: number, radius: number, width: number, height: number) {
@@ -415,17 +416,19 @@ interface TextureNodes {
 }
 
 export function getTextureNodesByIndex(index: number, width: number, height: number): TextureNodes {
-	let x = index % width,
-		y = (index - x) / width,
-		xL = (x > 0 ? x : width) - 1,
-		yT = ((y > 0 ? y : height) - 1) * width,
+	const x = index % width,
+		xL = (x > 0 ? x : width) - 1
+
+	let y = (index - x) / width
+
+	const yT = ((y > 0 ? y : height) - 1) * width,
 		odd = (y & 1) === 1
 
 	y *= width
 
 	if (odd) {
 		// only needed here
-		let xR = (x + 1) % width
+		const xR = (x + 1) % width
 
 		return {
 			bottom2Left: y + xL,
@@ -507,7 +510,7 @@ export class MapClass {
 	constructor(options: Options = { width: 256, height: 256 }) {
 		if ('fileContents' in options) {
 			const decoder = new TextDecoder()
-			const signature = decoder.decode(options.fileContents.buffer.slice(0, 10))
+			const signature = decoder.decode(options.fileContents.buffer.slice(0, 10) as AllowSharedBufferSource)
 			const headerSize = signature === 'WORLD_V1.0' ? 2342 : 0
 
 			const view = new DataView(options.fileContents.buffer)
@@ -966,7 +969,7 @@ export class MapClass {
 		})
 
 		if (playerLandRegionIds.size === 0) {
-			const biggestLandRegion = allRegions.reduce<typeof allRegions[number] | null>((current, region) => {
+			const biggestLandRegion = allRegions.reduce<(typeof allRegions)[number] | null>((current, region) => {
 				if (region.type === 'water') return current
 				if (current == null) return region
 				return current.positions.size >= region.positions.size ? current : region
@@ -1081,7 +1084,6 @@ export class MapClass {
 	 * Calculated based on height map block.
 	 */
 	updateLightMap = () => {
-		const size = this.width * this.height
 		const heightMap = this.blocks[BlockType.HeightMap]
 		const lightMap = this.blocks[BlockType.LightMap]
 		heightMap.forEach((height, index) => {
@@ -1173,7 +1175,7 @@ export class MapClass {
 
 		const sourceBlocks = cleanup ? sanitizeSwdBlocks({ world: this }) : this.blocks
 
-		const animalSet = this.animals.reduce((animals, [_type, x, y]) => {
+		const animalSet = this.animals.reduce((animals, [, x, y]) => {
 			const index = x + y * this.width
 			animals.add(index)
 			return animals
@@ -1328,7 +1330,7 @@ export class MapClass {
 		if (site >= ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
 			buildSite[nodes.topLeft] = ConstructionSite.Flag | (buildSite[nodes.topLeft] & ConstructionSite.Occupied)
 		}
-		[nodes.topRight, nodes.right, nodes.bottomRight, nodes.bottomLeft, nodes.left].forEach(index => {
+		;[nodes.topRight, nodes.right, nodes.bottomRight, nodes.bottomLeft, nodes.left].forEach((index) => {
 			const site = buildSite[index] | ConstructionSite.Occupied
 			if (site > ConstructionSite.OccupiedHut && site <= ConstructionSite.OccupiedCastle) {
 				buildSite[index] = ConstructionSite.Hut | (buildSite[index] & ConstructionSite.Occupied)
@@ -1395,8 +1397,7 @@ export class MapClass {
 			}
 
 			// TODO: write a proper construction site logic that works on a per node basis
-			default: {
-			}
+			default:
 		}
 
 		this.blocks[BlockType.Object1][index] = objectType

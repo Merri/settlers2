@@ -198,9 +198,9 @@ body::before {
 }
 
 body::after {
-	background-image: url('/design/corner4.png'), url('/design/corner3.png'), url('/design/corner2.png'),
-		url('/design/corner1.png'), url('/design/border4.png'), url('/design/border3.png'), url('/design/border2.png'),
-		url('/design/border1.png');
+	background-image:
+		url('/design/corner4.png'), url('/design/corner3.png'), url('/design/corner2.png'), url('/design/corner1.png'),
+		url('/design/border4.png'), url('/design/border3.png'), url('/design/border2.png'), url('/design/border1.png');
 	background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, repeat-y, repeat-y, repeat-x;
 	background-position:
 		100% 100%,

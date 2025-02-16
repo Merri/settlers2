@@ -485,7 +485,7 @@ export const SupportedTree = {
 	WinterCypress: 15, // to allow snow cypress outside winter
 } as const
 
-export type SupportedTree = typeof SupportedTree[keyof typeof SupportedTree]
+export type SupportedTree = (typeof SupportedTree)[keyof typeof SupportedTree]
 
 interface Tree {
 	/** These are a set of customized colors for "prettier" rendering on minimap. */

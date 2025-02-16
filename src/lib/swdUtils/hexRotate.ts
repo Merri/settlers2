@@ -1,5 +1,5 @@
-import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '../MapClass'
-import { BlockType } from '../types'
+import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '../MapClass.ts'
+import { BlockType } from '../types.ts'
 
 export function hexRotate(world: MapClass): MapClass {
 	const newWorld = new MapClass({ width: world.width, height: world.height })

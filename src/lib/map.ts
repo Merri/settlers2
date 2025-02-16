@@ -1,4 +1,4 @@
-import { AREA, OBJECT_TYPE, SITE, TEXTURE, TEXTURE_INFO } from './constants'
+import { AREA, OBJECT_TYPE, SITE, TEXTURE, TEXTURE_INFO } from './constants.ts'
 
 // internal constants
 const MAX_ELEVATION = 5
@@ -15,7 +15,16 @@ const TOUCH_FROM_TOP_RIGHT = 0x40
 const EXTREME_AND_WET = TEXTURE.EXTREME | TEXTURE.WET
 
 export default function S2Map(width: number, height: number) {
-	var _width = Math.abs(~~width) & 0x0ffc,
+	// other cache
+	let _lastTextureIndex: number,
+		_lastTextureTopLeft: number,
+		_lastTextureTop: number,
+		_lastTextureTopRight: number,
+		_lastTextureBottomLeft: number,
+		_lastTextureBottom: number,
+		_lastTextureBottomRight: number
+
+	const _width = Math.abs(~~width) & 0x0ffc,
 		_height = Math.abs(~~height) & 0x0ffc,
 		_size = _width * _height,
 		// storage for raw map data
@@ -23,16 +32,8 @@ export default function S2Map(width: number, height: number) {
 		_rawMap = new Uint8Array(_rawMapBuffer),
 		// fast helper cache
 		_cache32bit = new Uint32Array(_size),
-		_cacheRadius = {},
-		_cacheRadiusOutset = {},
-		// other cache
-		_lastTextureIndex,
-		_lastTextureTopLeft,
-		_lastTextureTop,
-		_lastTextureTopRight,
-		_lastTextureBottomLeft,
-		_lastTextureBottom,
-		_lastTextureBottomRight,
+		_cacheRadius: Record<string, Uint32Array> = {},
+		_cacheRadiusOutset: Record<string, Uint32Array> = {},
 		// indexes to each block
 		_blockHeight = 0,
 		_blockTextures = _size,
@@ -55,16 +56,16 @@ export default function S2Map(width: number, height: number) {
 		_blockArea = _size * 13
 
 	// always seven
-	;(function (i) {
-		for (i = _blockOfSeven; i < _blockOfSeven + _size; i++) {
+	;(function (i = _blockOfSeven) {
+		for (; i < _blockOfSeven + _size; i++) {
 			_rawMap[i] = 7
 		}
 	})()
 
 	function calculateAreaMap() {
-		var i,
+		const areas = []
+		let i,
 			index = 0,
-			areas = [],
 			bitMask,
 			current,
 			nodes,
@@ -271,7 +272,7 @@ export default function S2Map(width: number, height: number) {
 	}
 
 	function calculateLightMap() {
-		var around, aroundLeft, i, j, k
+		let around, aroundLeft, i, j, k
 
 		for (i = 0; i < _size; i++) {
 			j = 64
@@ -287,7 +288,7 @@ export default function S2Map(width: number, height: number) {
 	}
 
 	function calculateSiteMap() {
-		var i,
+		let i,
 			mines = 0,
 			nodes,
 			radiusNodes,
@@ -323,20 +324,20 @@ export default function S2Map(width: number, height: number) {
 			texA = _rawMap[_blockTextures + texNodes.bottomRight] & TEXTURE.TO_ID_VALUE
 
 			if (
-				(TEXTURE_INFO[tex1].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex2].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex3].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex4].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex5].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex6].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex1 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex2 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex3 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex4 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex5 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex6 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
 				// water or swamp
 				(waters =
-					~~((TEXTURE_INFO[tex1].FLAG & TEXTURE.WET) === TEXTURE.WET) +
-					~~((TEXTURE_INFO[tex2].FLAG & TEXTURE.WET) === TEXTURE.WET) +
-					~~((TEXTURE_INFO[tex3].FLAG & TEXTURE.WET) === TEXTURE.WET) +
-					~~((TEXTURE_INFO[tex4].FLAG & TEXTURE.WET) === TEXTURE.WET) +
-					~~((TEXTURE_INFO[tex5].FLAG & TEXTURE.WET) === TEXTURE.WET) +
-					~~((TEXTURE_INFO[tex6].FLAG & TEXTURE.WET) === TEXTURE.WET)) === 6 ||
+					~~((TEXTURE_INFO[tex1 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.WET) === TEXTURE.WET) +
+					~~((TEXTURE_INFO[tex2 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.WET) === TEXTURE.WET) +
+					~~((TEXTURE_INFO[tex3 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.WET) === TEXTURE.WET) +
+					~~((TEXTURE_INFO[tex4 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.WET) === TEXTURE.WET) +
+					~~((TEXTURE_INFO[tex5 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.WET) === TEXTURE.WET) +
+					~~((TEXTURE_INFO[tex6 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.WET) === TEXTURE.WET)) === 6 ||
 				// granite
 				(_rawMap[_blockObjType + i] & OBJECT_TYPE.MATCH) === OBJECT_TYPE.GRANITE
 			) {
@@ -354,31 +355,31 @@ export default function S2Map(width: number, height: number) {
 				(_rawMap[_blockObjType + nodes.bottomLeft] & OBJECT_TYPE.MATCH) === OBJECT_TYPE.GRANITE ||
 				(_rawMap[_blockObjType + nodes.bottomRight] & OBJECT_TYPE.MATCH) === OBJECT_TYPE.GRANITE ||
 				// any texture that forces flags
-				(TEXTURE_INFO[tex1].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
-				(TEXTURE_INFO[tex2].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
-				(TEXTURE_INFO[tex3].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
-				(TEXTURE_INFO[tex4].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
-				(TEXTURE_INFO[tex5].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
-				(TEXTURE_INFO[tex6].FLAG & TEXTURE.ARID) === TEXTURE.ARID
+				(TEXTURE_INFO[tex1 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
+				(TEXTURE_INFO[tex2 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
+				(TEXTURE_INFO[tex3 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
+				(TEXTURE_INFO[tex4 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
+				(TEXTURE_INFO[tex5 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ARID) === TEXTURE.ARID ||
+				(TEXTURE_INFO[tex6 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ARID) === TEXTURE.ARID
 			) {
 				// point next to a swamp, water (outdated comment? "or there is a tree in bottom right point!")
 				_rawMap[_blockSites + i] = SITE.FLAG_OCCUPIED
 			} else if (
 				(mines =
-					~~((TEXTURE_INFO[tex1].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
-					~~((TEXTURE_INFO[tex2].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
-					~~((TEXTURE_INFO[tex3].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
-					~~((TEXTURE_INFO[tex4].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
-					~~((TEXTURE_INFO[tex5].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
-					~~((TEXTURE_INFO[tex6].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK)) === 6 &&
+					~~((TEXTURE_INFO[tex1 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
+					~~((TEXTURE_INFO[tex2 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
+					~~((TEXTURE_INFO[tex3 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
+					~~((TEXTURE_INFO[tex4 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
+					~~((TEXTURE_INFO[tex5 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK) +
+					~~((TEXTURE_INFO[tex6 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.ROCK) === TEXTURE.ROCK)) === 6 &&
 				// but some height rules apply to mines as well
 				_rawMap[i] - _rawMap[nodes.bottomRight] >= -3
 			) {
 				if (
-					(TEXTURE_INFO[tex7].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-					(TEXTURE_INFO[tex8].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-					(TEXTURE_INFO[tex9].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-					(TEXTURE_INFO[texA].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+					(TEXTURE_INFO[tex7 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+					(TEXTURE_INFO[tex8 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+					(TEXTURE_INFO[tex9 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+					(TEXTURE_INFO[texA as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
 					(_rawMap[_blockObjType + nodes.bottomRight] & OBJECT_TYPE.MATCH) === OBJECT_TYPE.TREE
 				) {
 					// snow or lava too close or a tree
@@ -414,10 +415,10 @@ export default function S2Map(width: number, height: number) {
 					_rawMap[_blockSites + i] = SITE.FLAG
 				}
 			} else if (
-				(TEXTURE_INFO[tex7].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex8].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[tex9].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
-				(TEXTURE_INFO[texA].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME
+				(TEXTURE_INFO[tex7 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex8 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[tex9 as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME ||
+				(TEXTURE_INFO[texA as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.EXTREME) === TEXTURE.EXTREME
 			) {
 				_rawMap[_blockSites + i] = SITE.FLAG_OCCUPIED
 			} else if (
@@ -470,19 +471,12 @@ export default function S2Map(width: number, height: number) {
 		}
 	}
 
-	function changeHeight(x, y, radius, strength) {
-		var newHeight,
-			nodes,
-			diff,
-			maxDiff,
-			i,
-			j,
-			k,
-			index,
-			around,
-			// array should be replaced with _cache32bit to improve performance
-			mark = [],
-			marked
+	function changeHeight(x: number, y: number, radius: number, strength: number) {
+		// array should be replaced with _cache32bit to improve performance
+		const mark = []
+
+		let newHeight, nodes, diff, maxDiff, i, j, k, index, around, marked: number
+
 		// sanitize
 		strength = ~~strength
 		radius = Math.abs(~~radius)
@@ -586,7 +580,7 @@ export default function S2Map(width: number, height: number) {
 			}
 			marked = nodes.length
 		}
-		while (mark.length > marked) {
+		while (mark.length > marked!) {
 			for (i = 0; i < mark.length; i++) {
 				index = mark[i]
 				j = _rawMap[_blockTouch + index]
@@ -594,7 +588,7 @@ export default function S2Map(width: number, height: number) {
 				if ((j & TOUCH_MARKED) === 0) {
 					// we have processed it now!
 					_rawMap[_blockTouch + index] |= TOUCH_MARKED
-					marked++
+					marked!++
 					// reset difference indicator
 					maxDiff = 0
 					// cache the current value
@@ -697,10 +691,10 @@ export default function S2Map(width: number, height: number) {
 		}
 	}
 
-	function getAllSitesOfType(siteType, strictMode) {
-		var i,
-			mask = 0xff,
-			sites = []
+	function getAllSitesOfType(siteType: number, strictMode = false) {
+		let i,
+			mask = 0xff
+		const sites = []
 
 		if (!strictMode && (siteType & 0xf0) === 0) {
 			mask = 0x0f
@@ -716,19 +710,21 @@ export default function S2Map(width: number, height: number) {
 		return sites
 	}
 
-	function getBlock(index) {
+	function getBlock(index: number) {
 		index = ~~index
 		if (index >= 0 && index <= 13) {
 			return _rawMap.subarray(index * _size, ++index * _size)
 		}
 	}
 
-	function getNodesByIndex(index) {
-		var x = index % _width,
-			y = (index - x) / _width,
+	function getNodesByIndex(index: number) {
+		const x = index % _width,
 			xL = (x > 0 ? x : _width) - 1,
-			xR = (x + 1) % _width,
-			yT = ((y > 0 ? y : _height) - 1) * _width,
+			xR = (x + 1) % _width
+
+		let y = (index - x) / _width
+
+		const yT = ((y > 0 ? y : _height) - 1) * _width,
 			yB = ((y + 1) % _height) * _width,
 			odd = (y & 1) === 1
 
@@ -759,9 +755,9 @@ export default function S2Map(width: number, height: number) {
 	// return array of indexes for nearby points
 	// outset = boolean, return only the outermost radius points
 	// WARNING! This function has quite an aggressive cache, you should not make two calls in a row!
-	// ie. don't do var a = getRadiusNodes(), b = getRadiusNodes() as BOTH will have the results of "b"
-	function getRadiusNodes(x: number, y: number, radius: number, outset = null) {
-		var nodes,
+	// ie. don't do let a = getRadiusNodes(), b = getRadiusNodes() as BOTH will have the results of "b"
+	function getRadiusNodes(x: number, y: number, radius: number, outset: boolean | null = null): Uint32Array {
+		let nodes,
 			i,
 			j,
 			k = 0,
@@ -909,12 +905,14 @@ export default function S2Map(width: number, height: number) {
 		return _rawMap
 	}
 
-	function getTextureNodesByIndex(index) {
-		var x = index % _width,
-			y = (index - x) / _width,
-			xL = (x > 0 ? x : _width) - 1,
-			xR,
-			yT = ((y > 0 ? y : _height) - 1) * _width,
+	function getTextureNodesByIndex(index: number) {
+		const x = index % _width,
+			xL = (x > 0 ? x : _width) - 1
+
+		let y = (index - x) / _width,
+			xR: number
+
+		const yT = ((y > 0 ? y : _height) - 1) * _width,
 			odd = (y & 1) === 1
 
 		y *= _width
@@ -944,8 +942,8 @@ export default function S2Map(width: number, height: number) {
 	}
 
 	// will not maintain harbor flag
-	function getTexturesByIndex(index) {
-		var nodes = getTextureNodesByIndex(index)
+	function getTexturesByIndex(index: number) {
+		const nodes = getTextureNodesByIndex(index)
 
 		return {
 			topLeft: _rawMap[_blockTextures + nodes.topLeft] & TEXTURE.TO_ID_VALUE,
@@ -958,8 +956,8 @@ export default function S2Map(width: number, height: number) {
 	}
 
 	// flats out the height map, doesn't do anything else
-	function initializeHeight(baseLevel) {
-		var i
+	function initializeHeight(baseLevel: number) {
+		let i
 
 		baseLevel = ~~baseLevel
 
@@ -974,12 +972,12 @@ export default function S2Map(width: number, height: number) {
 		}
 	}
 
-	function initializeTexture(texture) {
-		var i
+	function initializeTexture(texture: number) {
+		let i
 		// sanitize
 		texture = Math.abs(~~texture) & TEXTURE.TO_ID_VALUE
 		// is this a known texture?
-		if (TEXTURE_INFO[texture]) {
+		if (TEXTURE_INFO[texture as keyof typeof TEXTURE_INFO]) {
 			for (i = 0; i < _size * 2; i++) {
 				_rawMap[_blockTextures + i] = texture
 			}
@@ -987,15 +985,15 @@ export default function S2Map(width: number, height: number) {
 	}
 
 	function initializeObjects() {
-		var i
+		let i
 		// simply wipe everything
 		for (i = 0; i < _size * 2; i++) {
 			_rawMap[_blockObjects + i] = 0
 		}
 	}
 
-	function isAnyTextureWithAnyOfFlags(index, flags) {
-		var nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
+	function isAnyTextureWithAnyOfFlags(index: number, flags: number) {
+		let nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
 
 		if (_lastTextureIndex === index) {
 			topLeft = _lastTextureTopLeft
@@ -1016,17 +1014,17 @@ export default function S2Map(width: number, height: number) {
 		}
 
 		return (
-			!!(TEXTURE_INFO[topLeft].FLAG & flags) ||
-			!!(TEXTURE_INFO[top].FLAG & flags) ||
-			!!(TEXTURE_INFO[topRight].FLAG & flags) ||
-			!!(TEXTURE_INFO[bottomLeft].FLAG & flags) ||
-			!!(TEXTURE_INFO[bottom].FLAG & flags) ||
-			!!(TEXTURE_INFO[bottomRight].FLAG & flags)
+			!!(TEXTURE_INFO[topLeft as keyof typeof TEXTURE_INFO].FLAG & flags) ||
+			!!(TEXTURE_INFO[top as keyof typeof TEXTURE_INFO].FLAG & flags) ||
+			!!(TEXTURE_INFO[topRight as keyof typeof TEXTURE_INFO].FLAG & flags) ||
+			!!(TEXTURE_INFO[bottomLeft as keyof typeof TEXTURE_INFO].FLAG & flags) ||
+			!!(TEXTURE_INFO[bottom as keyof typeof TEXTURE_INFO].FLAG & flags) ||
+			!!(TEXTURE_INFO[bottomRight as keyof typeof TEXTURE_INFO].FLAG & flags)
 		)
 	}
 
-	function isEachTextureSame(index, texture) {
-		var nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
+	function isEachTextureSame(index: number, texture: number) {
+		let nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
 
 		if (_lastTextureIndex === index) {
 			topLeft = _lastTextureTopLeft
@@ -1056,8 +1054,8 @@ export default function S2Map(width: number, height: number) {
 		)
 	}
 
-	function isEachTextureWithAnyOfFlags(index, flags) {
-		var nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
+	function isEachTextureWithAnyOfFlags(index: number, flags: number) {
+		let nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
 
 		if (_lastTextureIndex === index) {
 			topLeft = _lastTextureTopLeft
@@ -1078,17 +1076,17 @@ export default function S2Map(width: number, height: number) {
 		}
 
 		return (
-			!!(TEXTURE_INFO[topLeft].FLAG & flags) &&
-			!!(TEXTURE_INFO[top].FLAG & flags) &&
-			!!(TEXTURE_INFO[topRight].FLAG & flags) &&
-			!!(TEXTURE_INFO[bottomLeft].FLAG & flags) &&
-			!!(TEXTURE_INFO[bottom].FLAG & flags) &&
-			!!(TEXTURE_INFO[bottomRight].FLAG & flags)
+			!!(TEXTURE_INFO[topLeft as keyof typeof TEXTURE_INFO].FLAG & flags) &&
+			!!(TEXTURE_INFO[top as keyof typeof TEXTURE_INFO].FLAG & flags) &&
+			!!(TEXTURE_INFO[topRight as keyof typeof TEXTURE_INFO].FLAG & flags) &&
+			!!(TEXTURE_INFO[bottomLeft as keyof typeof TEXTURE_INFO].FLAG & flags) &&
+			!!(TEXTURE_INFO[bottom as keyof typeof TEXTURE_INFO].FLAG & flags) &&
+			!!(TEXTURE_INFO[bottomRight as keyof typeof TEXTURE_INFO].FLAG & flags)
 		)
 	}
 
-	function isMixedTextureWithAllOfFlags(index, flags) {
-		var nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
+	function isMixedTextureWithAllOfFlags(index: number, flags: number) {
+		let nodes, topLeft, top, topRight, bottomLeft, bottom, bottomRight
 
 		if (_lastTextureIndex === index) {
 			topLeft = _lastTextureTopLeft
@@ -1109,52 +1107,75 @@ export default function S2Map(width: number, height: number) {
 		}
 
 		return (
-			((TEXTURE_INFO[topLeft].FLAG |
-				TEXTURE_INFO[top].FLAG |
-				TEXTURE_INFO[topRight].FLAG |
-				TEXTURE_INFO[bottomLeft].FLAG |
-				TEXTURE_INFO[bottom].FLAG |
-				TEXTURE_INFO[bottomRight].FLAG) &
+			((TEXTURE_INFO[topLeft as keyof typeof TEXTURE_INFO].FLAG |
+				TEXTURE_INFO[top as keyof typeof TEXTURE_INFO].FLAG |
+				TEXTURE_INFO[topRight as keyof typeof TEXTURE_INFO].FLAG |
+				TEXTURE_INFO[bottomLeft as keyof typeof TEXTURE_INFO].FLAG |
+				TEXTURE_INFO[bottom as keyof typeof TEXTURE_INFO].FLAG |
+				TEXTURE_INFO[bottomRight as keyof typeof TEXTURE_INFO].FLAG) &
 				flags) ===
 			flags
 		)
 	}
 
 	// will replace a texture if any of it's flags matches with the flags
-	function replaceTextureAnyOfFlags(index, texture, flags) {
-		var nodes
+	function replaceTextureAnyOfFlags(index: number, texture: number, flags: number) {
+		let nodes
 		// sanitize
 		texture = Math.abs(~~texture)
 		// is this a known texture?
-		if (TEXTURE_INFO[texture]) {
+		if (TEXTURE_INFO[texture as keyof typeof TEXTURE_INFO]) {
 			nodes = getTextureNodesByIndex(index)
-			if (TEXTURE_INFO[_rawMap[_blockTextures + nodes.bottomLeft] & TEXTURE.TO_ID_VALUE].FLAG & flags) {
+			if (
+				TEXTURE_INFO[
+					(_rawMap[_blockTextures + nodes.bottomLeft] & TEXTURE.TO_ID_VALUE) as keyof typeof TEXTURE_INFO
+				].FLAG & flags
+			) {
 				_rawMap[_blockTextures + nodes.bottomLeft] = texture
 			}
-			if (TEXTURE_INFO[_rawMap[_blockTextures + nodes.bottom] & TEXTURE.TO_ID_VALUE].FLAG & flags) {
+			if (
+				TEXTURE_INFO[
+					(_rawMap[_blockTextures + nodes.bottom] & TEXTURE.TO_ID_VALUE) as keyof typeof TEXTURE_INFO
+				].FLAG & flags
+			) {
 				_rawMap[_blockTextures + nodes.bottom] = texture
 			}
-			if (TEXTURE_INFO[_rawMap[_blockTextures + nodes.bottomRight] & TEXTURE.TO_ID_VALUE].FLAG & flags) {
+			if (
+				TEXTURE_INFO[
+					(_rawMap[_blockTextures + nodes.bottomRight] & TEXTURE.TO_ID_VALUE) as keyof typeof TEXTURE_INFO
+				].FLAG & flags
+			) {
 				_rawMap[_blockTextures + nodes.bottomRight] = texture
 			}
-			if (TEXTURE_INFO[_rawMap[_blockTextures + nodes.topLeft] & TEXTURE.TO_ID_VALUE].FLAG & flags) {
+			if (
+				TEXTURE_INFO[
+					(_rawMap[_blockTextures + nodes.topLeft] & TEXTURE.TO_ID_VALUE) as keyof typeof TEXTURE_INFO
+				].FLAG & flags
+			) {
 				_rawMap[_blockTextures + nodes.topLeft] = texture
 			}
-			if (TEXTURE_INFO[_rawMap[_blockTextures + nodes.top] & TEXTURE.TO_ID_VALUE].FLAG & flags) {
+			if (
+				TEXTURE_INFO[(_rawMap[_blockTextures + nodes.top] & TEXTURE.TO_ID_VALUE) as keyof typeof TEXTURE_INFO]
+					.FLAG & flags
+			) {
 				_rawMap[_blockTextures + nodes.top] = texture
 			}
-			if (TEXTURE_INFO[_rawMap[_blockTextures + nodes.topRight] & TEXTURE.TO_ID_VALUE].FLAG & flags) {
+			if (
+				TEXTURE_INFO[
+					(_rawMap[_blockTextures + nodes.topRight] & TEXTURE.TO_ID_VALUE) as keyof typeof TEXTURE_INFO
+				].FLAG & flags
+			) {
 				_rawMap[_blockTextures + nodes.topRight] = texture
 			}
 		}
 	}
 
-	function setTexture(index, texture) {
-		var nodes
+	function setTexture(index: number, texture: number) {
+		let nodes
 		// sanitize
 		texture = Math.abs(~~texture)
 		// is this a known texture?
-		if (TEXTURE_INFO[texture]) {
+		if (TEXTURE_INFO[texture as keyof typeof TEXTURE_INFO]) {
 			nodes = getTextureNodesByIndex(index)
 			_rawMap[_blockTextures + nodes.bottomLeft] = texture
 			_rawMap[_blockTextures + nodes.bottom] = texture
@@ -1186,5 +1207,5 @@ export default function S2Map(width: number, height: number) {
 		isMixedTextureWithAllOfFlags,
 		replaceTextureAnyOfFlags,
 		setTexture,
-	}
+	} as const
 }

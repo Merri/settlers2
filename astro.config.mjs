@@ -1,9 +1,10 @@
 // @ts-check
-import { defineConfig } from 'astro/config'
+import fs from 'node:fs'
+
 import mdx from '@astrojs/mdx'
 import preact from '@astrojs/preact'
 import sitemap from '@astrojs/sitemap'
-import fs from 'node:fs'
+import { defineConfig } from 'astro/config'
 import { deflate } from 'pako'
 
 /** @type {import('vite').Plugin} */

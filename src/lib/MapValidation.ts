@@ -1,6 +1,6 @@
-import { asHex } from './hex'
-import { getNodesByIndex, MapClass } from './MapClass'
-import { BlockType, ConstructionSite, TextureFlag, Textures } from './types'
+import { asHex } from './hex.ts'
+import { getNodesByIndex, MapClass } from './MapClass.ts'
+import { BlockType, ConstructionSite, TextureFlag, Textures } from './types.ts'
 
 /** Validate the map for saving as SWD/WLD file. */
 export function validateMapClass(world: MapClass) {
@@ -77,11 +77,11 @@ export function validateMapClass(world: MapClass) {
 		}
 	}
 
-	if (world.animals.some(([type, _x, _y]) => type === 0 || type > 9)) {
+	if (world.animals.some(([type]) => type === 0 || type > 9)) {
 		issues.push(`Unknown animal type exists within animal data`)
 	}
 
-	if (world.animals.some(([_type, x, y]) => x >= world.width || y >= world.height)) {
+	if (world.animals.some(([, x, y]) => x >= world.width || y >= world.height)) {
 		issues.push(`Animal is out of bounds`)
 	}
 
@@ -195,7 +195,7 @@ export function validateMapClass(world: MapClass) {
 			const id = (variant << 2) | (value >> 6)
 			const isCut = (value >> 3) & 0x01
 			const size = (value >> 4) & 0x03
-			const step = value & 0x07
+			//const step = value & 0x07
 
 			if (isCut) hasCutTrees = true
 			if (size < 3) hasGrowingTrees = true

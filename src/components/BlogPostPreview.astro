@@ -1,10 +1,11 @@
 ---
-import { MarkdownInstance } from 'astro'
+import { type MarkdownInstance } from 'astro'
 import { format } from 'date-fns'
 
-import { Props as Post } from '$/components/BlogPost.astro'
+import { type Props as Post } from '$/components/BlogPost.astro'
+
 import Icon from './Icon.astro'
-import { inlineFlex } from './inlineFlex.module.css'
+import styles from './inlineFlex.module.css'
 import Tags from './Tags.astro'
 
 export interface Props {
@@ -29,7 +30,7 @@ const ymd = format(date, 'yyyy-MM-dd')
 	</header>
 	<section set:html={`<p>${post.frontmatter.description}</p>`} />
 	<p>
-		<a href={url} class={inlineFlex}>
+		<a href={url} class={styles.inlineFlex}>
 			<strong>Continue reading</strong>
 			<Icon href="/icons/arrow-right.svg" />
 		</a>

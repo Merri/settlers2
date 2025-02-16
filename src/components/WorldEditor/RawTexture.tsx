@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'preact/hooks'
 
-import { renderTextureToCanvas, TextureGfx, TextureGfxSet } from '$/lib/textureGfx'
+import { renderTextureToCanvas, type TextureGfx, type TextureGfxSet } from '$/lib/textureGfx.ts'
 
 export function RawTextureCanvas({ gfx, gfxSet }: { gfx?: TextureGfx; gfxSet: TextureGfxSet }) {
 	const ref = useRef<HTMLCanvasElement>(null)

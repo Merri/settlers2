@@ -1,23 +1,22 @@
-import { Texture } from './types'
-
+import { SupportedTexture } from './textures.ts'
+import gfx0_152 from './textures/0_GREENLAND_PATCH_152.LBM?uint8array'
 // FIXME: implement CompressionStream once Firefox and Safari support it
 import palette0 from './textures/0_GREENLAND.BBM?uint8array'
-import palette1 from './textures/1_WASTELAND.BBM?uint8array'
-import palette2 from './textures/2_WINTER_WORLD.BBM?uint8array'
 import gfx0 from './textures/0_GREENLAND.LBM?uint8array'
-import gfx0_152 from './textures/0_GREENLAND_PATCH_152.LBM?uint8array'
 import gfx0jungle from './textures/0_JUNGLE.LBM?uint8array'
 import gfx0new from './textures/0_NEW_GREENLAND.LBM?uint8array'
-import gfx1 from './textures/1_WASTELAND.LBM?uint8array'
-import gfx2 from './textures/2_WINTER_WORLD.LBM?uint8array'
 //import palette0Alt from './textures/0_WETLANDS.BBM?uint8array'
 import gfx0Alt from './textures/0_WETLANDS.LBM?uint8array'
 //import palette1Alt from './textures/1_RUSTY_VALLEY.BBM?uint8array'
 import gfx1Alt from './textures/1_RUSTY_VALLEY.LBM?uint8array'
+import palette1 from './textures/1_WASTELAND.BBM?uint8array'
+import gfx1 from './textures/1_WASTELAND.LBM?uint8array'
 //import palette2Alt from './textures/2_POLAR_NIGHT.BBM?uint8array'
 import gfx2Alt from './textures/2_POLAR_NIGHT.LBM?uint8array'
-import { getAmigaImage, getAmigaPalette } from './textures/ilbm'
-import { SupportedTexture } from './textures'
+import palette2 from './textures/2_WINTER_WORLD.BBM?uint8array'
+import gfx2 from './textures/2_WINTER_WORLD.LBM?uint8array'
+import { getAmigaImage, getAmigaPalette } from './textures/ilbm.ts'
+import { Texture } from './types.ts'
 
 export type TextureGfxSet = Exclude<ReturnType<typeof getAmigaImage>, false> & { palette: ArrayBuffer }
 
@@ -374,4 +373,4 @@ export const TextureData: Record<
 	0x3f: { gfx: normal5, edge0: 'A', edge1: null, edge2: 'E' },
 } as const
 
-export type TextureData = typeof TextureData[keyof typeof TextureData]
+export type TextureData = (typeof TextureData)[keyof typeof TextureData]

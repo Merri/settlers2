@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/compat'
 
-import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '$/lib/MapClass'
+import { getNodesByIndex, getTextureNodesByIndex, MapClass } from '$/lib/MapClass.ts'
+import { palettes, texturePaletteIndex } from '$/lib/palette.ts'
+import { type Position } from '$/lib/PlayerBasedGenerator.ts'
+import { TextureData, textureGfxSet, type UniqueTextureId } from '$/lib/textureGfx.ts'
+import { SupportedTexture } from '$/lib/textures.ts'
+import { BlockType, ConstructionSite, RegionType, Texture, TextureFlag, Trees } from '$/lib/types.ts'
 
 import styles from './Map.module.css'
-import { BlockType, ConstructionSite, RegionType, Texture, TextureFlag, Trees } from '$/lib/types'
-import { palettes, texturePaletteIndex } from '$/lib/palette'
-import { Position } from '$/lib/PlayerBasedGenerator'
-import { SupportedTexture } from '$/lib/textures'
-import { TextureData, textureGfxSet, UniqueTextureId } from '$/lib/textureGfx'
 
 interface DrawOptions {
 	canvas: HTMLCanvasElement
@@ -88,7 +88,7 @@ function drawToCanvas({ canvas, world, color1 = 0, color2 = 255, blockType, regi
 			nodes.bottomLeft % world.width === 0 ? nodes.bottomLeft + world.width - 1 : nodes.bottomLeft - 1
 
 		let g = 96
-		let baseHeight = heightMap[i]
+		const baseHeight = heightMap[i]
 		g += 12 * (heightMap[nodes.topRight] - baseHeight)
 		g += 8 * (heightMap[nodes.topLeft] - baseHeight)
 		g += 8 * (heightMap[nodes.right] - baseHeight)

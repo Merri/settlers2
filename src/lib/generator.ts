@@ -1,27 +1,27 @@
 import { XORShift } from 'random-seedable'
 
-import S2Map from './map'
-
-import { CP437, COLOR, RESOURCE, SITE, TERRAIN, TEXTURE, TEXTURE_INFO, TREE_INFO } from './constants'
+import { COLOR, CP437, RESOURCE, SITE, TERRAIN, TEXTURE, TEXTURE_INFO, TREE_INFO } from './constants.ts'
+import S2Map from './map.ts'
 
 export default function Generator(random: XORShift) {
-	let map,
-		areas,
-		baseLevel,
-		colorMap,
-		colors = [],
-		data,
-		deletedNodes = [],
+	let map: ReturnType<typeof S2Map>,
+		areas: { mass: number; type: number; x: number; y: number }[],
+		baseLevel: number,
+		colorMap: HTMLImageElement | boolean,
+		data: Uint8Array,
+		deletedNodes: number[] = [],
 		height = 0,
 		mass = 0,
-		nodes = [],
-		players = [],
+		nodes: number[] = [],
+		players: { index: number; x: number; y: number }[] = [],
 		size: number,
-		seedMap,
+		seedMap: Uint8Array,
 		width = 0
 
+	const colors: ImageData[] = []
+
 	function expandTo(index: number, value: number, current: number | null = null) {
-		var aroundExpandTo = map.getNodesByIndex(index)
+		const aroundExpandTo = map.getNodesByIndex(index)
 
 		seedMap[index] = value
 		if (current != null) {
@@ -31,11 +31,11 @@ export default function Generator(random: XORShift) {
 		mass++
 
 		Object.keys(aroundExpandTo).forEach(function (key) {
-			index = aroundExpandTo[key]
+			index = aroundExpandTo[key as keyof typeof aroundExpandTo]
 			if (seedMap[index] === 0) {
 				seedMap[index] = 1
 				if (deletedNodes.length) {
-					nodes[deletedNodes.pop()] = index
+					nodes[deletedNodes.pop()!] = index
 				} else {
 					nodes.push(index)
 				}
@@ -43,18 +43,28 @@ export default function Generator(random: XORShift) {
 		})
 	}
 
-	function seed(options: Record<string, any> = {}) {
+	function seed(
+		options: {
+			likelyhood?: number[]
+			startingPoints?: number
+			massRatio?: number
+			width?: number
+			height?: number
+			borderProtection?: number
+		} = {}
+	) {
 		// if (!options || !options.length) options = {};
-		var likelyhood = options.likelyhood,
-			givenStartingPoints = ~~options.startingPoints,
-			givenMassRatio = ~~options.massRatio
+		const likelyhood = options.likelyhood || []
+
+		let givenStartingPoints = ~~(options.startingPoints ?? 0),
+			givenMassRatio = ~~(options.massRatio ?? 0)
 
 		// width = 1024 || (~~(random.float() * 20) + 7) * 16,
 		// height = 1024 || (~~(random.float() * 20) + 7) * 16,
-		width = ~~options.width
-		height = ~~options.height
+		width = ~~(options.width ?? 0)
+		height = ~~(options.height ?? 0)
 		size = width * height
-		var borderProtection = ~~options.borderProtection
+		let borderProtection = ~~(options.borderProtection ?? 0)
 		if (borderProtection) {
 			borderProtection = ~~(Math.min(width, height) / borderProtection)
 		}
@@ -79,8 +89,8 @@ export default function Generator(random: XORShift) {
 		nodes = []
 		deletedNodes = []
 		mass = 0
-		var massRatio = ~~((size / 100) * givenMassRatio)
-		var startingPoints = 0
+		const massRatio = ~~((size / 100) * givenMassRatio)
+		let startingPoints = 0
 
 		map = S2Map(width, height)
 		data = map.getRawData()
@@ -101,7 +111,7 @@ export default function Generator(random: XORShift) {
         x = ~~(random.float() * (width - borderProtection * 2)) + borderProtection;
         y = ~~(random.float() * (height - borderProtection * 2)) + borderProtection;
         index = y * width + x;
-        var direction = ~~(random.float() * 6),
+        let direction = ~~(random.float() * 6),
             around;
         while (startingPoints < givenStartingPoints) {
             around = map.getNodesByIndex(index);
@@ -141,7 +151,7 @@ export default function Generator(random: XORShift) {
         }
         */
 
-		var expander = 7
+		let expander = 7
 
 		// do the land expansion
 		if (mass > 0) {
@@ -178,7 +188,13 @@ export default function Generator(random: XORShift) {
 	}
 
 	// options: baseLevel
-	function createHeight(options) {
+	function createHeight(options: {
+		baseLevel: number
+		flatten: number
+		groundLevel: number
+		randomize: number
+		noiseOnWater: boolean
+	}) {
 		// if (!options || !options.length) options = {};
 		baseLevel = options.baseLevel = ~~options.baseLevel
 		options.groundLevel = Math.abs(~~options.groundLevel)
@@ -196,10 +212,10 @@ export default function Generator(random: XORShift) {
 
 		map.initializeHeight(options.baseLevel)
 
-		var x, y
+		let x, y
 		// push land up or down before we start!
-		var i = options.baseLevel <= 30 ? options.groundLevel : -options.groundLevel
-		var index = 0
+		let i = options.baseLevel <= 30 ? options.groundLevel : -options.groundLevel
+		let index = 0
 		for (y = 0; y < height; y++) {
 			for (x = 0; x < width; x++) {
 				if (seedMap[index] > 1) {
@@ -209,9 +225,9 @@ export default function Generator(random: XORShift) {
 			}
 		}
 
-		var around
-		var j, k
-		var value
+		let around
+		let j, k
+		let value
 		// draw the final height map based on what we have
 		index = 0
 		for (y = 0; y < height; y++) {
@@ -296,17 +312,23 @@ export default function Generator(random: XORShift) {
 		map.calculateLightMap()
 	}
 
-	function createBaseTextures(options) {
-		var i,
+	function createBaseTextures(options: {
+		mountainGenerate: number
+		seamless: boolean
+		texture: number
+		waterTexture: number
+	}) {
+		let i,
 			j,
-			heightTotal = new Uint32Array(60),
 			smallestHeight = 60,
 			biggestHeight = 0,
+			siteNodes
+
+		const heightTotal = new Uint32Array(60),
 			mountainTextures = [1, 11, 12, 13],
 			textureBlock1 = size * 1,
 			textureBlock2 = size * 2,
-			siteBlock = size * 8,
-			siteNodes
+			siteBlock = size * 8
 
 		// sanitize
 		options.mountainGenerate = ~~options.mountainGenerate
@@ -671,11 +693,11 @@ export default function Generator(random: XORShift) {
 		}
 
 		while (swampPositions.length) {
-			map.setTexture(swampPositions.shift(), 0x03)
+			map.setTexture(swampPositions.shift()!, 0x03)
 		}
 
 		/*
-        var radiusNodes = map.getRadiusNodes(0, 1, 2, true);
+        let radiusNodes = map.getRadiusNodes(0, 1, 2, true);
         for (i = 0; i < 12; i++) {
             map.setTexture(radiusNodes[i], 0x10);
         }
@@ -689,7 +711,7 @@ export default function Generator(random: XORShift) {
 		return areas
 	}
 
-	function getRandomPlayerPositions(maxPlayerCount, radius) {
+	function getRandomPlayerPositions(maxPlayerCount: number, radius: number) {
 		players = []
 
 		// sanitize
@@ -702,17 +724,17 @@ export default function Generator(random: XORShift) {
 
 		radius = ~~radius
 
-		function generateRandomPlayers(sites) {
-			var nodesNearPlayer
+		function generateRandomPlayers(sites: number[]) {
+			let nodesNearPlayer: number[]
 
 			if (sites.length > 0 && players.length < maxPlayerCount) {
 				// randomize a position from given plausible sites
-				var index = sites[~~(random.float() * sites.length)]
-				var x = index % width
-				var y = ~~((index - x) / width)
+				const index = sites[~~(random.float() * sites.length)]
+				const x = index % width
+				const y = ~~((index - x) / width)
 
 				// getRadiusNodes returns a typed array; must convert it to regular array
-				nodesNearPlayer = Array.apply([], map.getRadiusNodes(x, y, radius))
+				nodesNearPlayer = Array.from(map.getRadiusNodes(x, y, radius))
 
 				// remove nodes near newly randomized player
 				sites = sites.filter(function (nearbyIndex) {
@@ -739,8 +761,8 @@ export default function Generator(random: XORShift) {
 		return players
 	}
 
-	function applyResources(options) {
-		var i,
+	function applyResources(options?: { treeRatio?: number; graniteRatio?: number }) {
+		let i,
 			j,
 			k,
 			treeIndex,
@@ -748,7 +770,10 @@ export default function Generator(random: XORShift) {
 			usableLandmass = 0,
 			newResource,
 			nearbyNodes,
-			resources = {
+			textureFlag,
+			textures
+
+		const resources = {
 				freshWater: 0,
 				mineCoal: 0,
 				mineIronOre: 0,
@@ -758,8 +783,6 @@ export default function Generator(random: XORShift) {
 				granite: 0,
 				tree: 0,
 			},
-			textureFlag,
-			textures,
 			objectIndexBlock = size * 4,
 			objectTypeBlock = size * 5,
 			siteBlock = size * 8,
@@ -796,13 +819,17 @@ export default function Generator(random: XORShift) {
 			newResource = 0
 			textures = map.getTexturesByIndex(i)
 			// we have to drop support flags so that ie. Mountain Meadow is comparable to the Habitable Mountain texture (essentially the same)
-			textureFlag = TEXTURE_INFO[textures.topLeft].FLAG & TEXTURE.DROP_SUPPORT
+			textureFlag = TEXTURE_INFO[textures.topLeft as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.DROP_SUPPORT
 			eachTextureIsSameKind =
-				textureFlag === (TEXTURE_INFO[textures.top].FLAG & TEXTURE.DROP_SUPPORT) &&
-				textureFlag === (TEXTURE_INFO[textures.topRight].FLAG & TEXTURE.DROP_SUPPORT) &&
-				textureFlag === (TEXTURE_INFO[textures.bottomLeft].FLAG & TEXTURE.DROP_SUPPORT) &&
-				textureFlag === (TEXTURE_INFO[textures.bottom].FLAG & TEXTURE.DROP_SUPPORT) &&
-				textureFlag === (TEXTURE_INFO[textures.bottomRight].FLAG & TEXTURE.DROP_SUPPORT)
+				textureFlag === (TEXTURE_INFO[textures.top as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.DROP_SUPPORT) &&
+				textureFlag ===
+					(TEXTURE_INFO[textures.topRight as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.DROP_SUPPORT) &&
+				textureFlag ===
+					(TEXTURE_INFO[textures.bottomLeft as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.DROP_SUPPORT) &&
+				textureFlag ===
+					(TEXTURE_INFO[textures.bottom as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.DROP_SUPPORT) &&
+				textureFlag ===
+					(TEXTURE_INFO[textures.bottomRight as keyof typeof TEXTURE_INFO].FLAG & TEXTURE.DROP_SUPPORT)
 			if (eachTextureIsSameKind) {
 				// water?
 				if (textures.topLeft === 0x05) {
@@ -940,21 +967,25 @@ export default function Generator(random: XORShift) {
 		return resources
 	}
 
-	function draw(options) {
+	function draw(options: {
+		canvas: HTMLCanvasElement
+		viewType: number | 'seed' | 'fast' | 'pretty'
+		terrain?: number
+	}) {
 		// if (!options || !options.length) options = {};
 		// draw the stuff so we can see stuff
 		if (!width || !height) throw new Error(`Invalid size: ${width} x ${height}`)
-		var canvas = options.canvas
-		var buffer = canvas.getContext('2d')
-		var image = buffer.getImageData(0, 0, width, height)
-		var view = image.data
-		var lightMapBlock = size * 12
+		const canvas = options.canvas
+		const buffer = canvas.getContext('2d')!
+		const image = buffer.getImageData(0, 0, width, height)
+		const view = image.data
+		const lightMapBlock = size * 12
 
 		canvas.width = width
 		canvas.height = height
 
-		var viewType = options.viewType
-		options.terrain = ~~options.terrain || TERRAIN.GREENLAND
+		const viewType = options.viewType
+		options.terrain = ~~(options.terrain ?? TERRAIN.GREENLAND) || TERRAIN.GREENLAND
 
 		switch (viewType) {
 			case 0:
@@ -996,17 +1027,18 @@ export default function Generator(random: XORShift) {
 				break
 			}
 			case 'fast': {
-				let color = colors[options.terrain].data,
-					textureColorOriginal = COLOR.ORIGINAL[options.terrain],
-					g,
+				let g,
 					c1,
 					color1,
 					color2,
 					color3,
+					drawPos = 0
+
+				const color = colors[options.terrain].data,
+					textureColorOriginal = COLOR.ORIGINAL[options.terrain],
 					texturesBlock = size,
 					objectIndexBlock = size * 4,
-					objectTypeBlock = size * 5,
-					drawPos = 0
+					objectTypeBlock = size * 5
 
 				for (let i = 0; i < size; i++) {
 					color1 = null
@@ -1094,18 +1126,21 @@ export default function Generator(random: XORShift) {
 					}
 
 					view[drawPos++] = color1
-					view[drawPos++] = color2
-					view[drawPos++] = color3
+					view[drawPos++] = color2!
+					view[drawPos++] = color3!
 					view[drawPos++] = 255
 				}
 				break
 			}
 			case 'pretty': {
-				let color = colors[options.terrain].data,
-					// row information so we can do some graphical adjustments
-					y = -1,
+				const color = colors[options.terrain].data,
 					textureColorMerri = COLOR.MERRI[options.terrain],
 					textureColorOriginal = COLOR.ORIGINAL[options.terrain],
+					objectIndexBlock = size * 4,
+					objectTypeBlock = size * 5
+
+				// row information so we can do some graphical adjustments
+				let // y = -1,
 					treeIndex,
 					g,
 					g2,
@@ -1128,15 +1163,13 @@ export default function Generator(random: XORShift) {
 					drawNodes,
 					leftNodes,
 					textures,
-					objectIndexBlock = size * 4,
-					objectTypeBlock = size * 5,
 					drawPos = 0
 
 				// and then we just loop through!
 				for (let i = 0; i < size; i++) {
 					// keep track of current row
 					if (i % width === 0) {
-						y++
+						// y++
 					}
 					drawNodes = map.getNodesByIndex(i)
 					leftNodes = map.getNodesByIndex(drawNodes.left)
@@ -1263,8 +1296,8 @@ export default function Generator(random: XORShift) {
 		buffer.putImageData(image, 0, 0)
 	}
 
-	function sanitizeStringAsCP437(text) {
-		var output = '',
+	function sanitizeStringAsCP437(text: string) {
+		let output = '',
 			code,
 			i
 		for (i = 0; i < text.length; i++) {
@@ -1278,10 +1311,11 @@ export default function Generator(random: XORShift) {
 		return output
 	}
 
-	function veryInefficientStringToCP437(text, length) {
-		var output = [],
-			code,
-			i
+	function veryInefficientStringToCP437(text: string, length: number) {
+		const output = []
+
+		let code, i
+
 		for (i = 0; i < length; i++) {
 			code = CP437.indexOf(~~text.charCodeAt(i))
 			if (code > -1) {
@@ -1293,23 +1327,24 @@ export default function Generator(random: XORShift) {
 		return output
 	}
 
-	function getFileBlob(options) {
+	function getFileBlob(options: { title: string; author?: string; terrain?: number }) {
 		// 2577 => header 2352
 		//       + block headers 16 * 14 = 224
 		//       + footer 0xFF
-		var buffer = new ArrayBuffer(2577 + size * 14),
+		const buffer = new ArrayBuffer(2577 + size * 14),
 			view = new DataView(buffer),
-			byteView,
-			pos = 0,
-			i,
 			objectIndexBlock = size * 4,
 			objectTypeBlock = size * 5
+
+		let byteView,
+			pos = 0,
+			i
 
 		options = options || {}
 
 		options.title = options.title || 'Unknown map'
 		options.author = options.author || "Merri'sMapGenerator"
-		options.terrain = ~~options.terrain || TERRAIN.GREENLAND
+		options.terrain = ~~(options.terrain ?? TERRAIN.GREENLAND) || TERRAIN.GREENLAND
 		// WORLD_V1.0
 		view.setUint8(pos++, 0x57)
 		view.setUint8(pos++, 0x4f)
@@ -1474,22 +1509,22 @@ export default function Generator(random: XORShift) {
 		return colorMap
 	}
 
-	function setColorMap(name) {
+	function setColorMap(name: string) {
 		return new Promise(function (resolve, reject) {
 			colorMap = document.createElement('img')
 
 			colorMap.onload = function (e) {
 				// create a canvas where we can get our needs
-				var buffer,
-					canvas = document.createElement('canvas')
+				let buffer
+				const canvas = document.createElement('canvas')
 
 				try {
 					canvas.width = 256
 					canvas.height = 768
 					// get drawing context
-					buffer = canvas.getContext('2d')
+					buffer = canvas.getContext('2d')!
 					// and draw the image
-					buffer.drawImage(e.target, 0, 0)
+					buffer.drawImage(e.target as HTMLImageElement, 0, 0)
 					// greenland
 					colors[0] = buffer.getImageData(0, 0, 256, 256)
 					// wasteland

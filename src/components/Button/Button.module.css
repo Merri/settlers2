@@ -47,14 +47,18 @@
 /* `<input type="button" />` does not allow for pseudo elements */
 :where(input.button),
 .button::before {
-	background: linear-gradient(to bottom, #ffffff33, rgba(255, 255, 255, 0)),
+	background:
+		linear-gradient(to bottom, #ffffff33, rgba(255, 255, 255, 0)),
 		linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
 	/*background-blend-mode: color-dodge;*/
 	background-clip: border-box;
 	border: 0px solid;
 	border-color: rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.25) rgba(255, 255, 255, 0.5);
-	box-shadow: inset -1px -1px 1px 1px rgba(0, 0, 0, 0.2), inset -1px -1px 6px rgba(0, 0, 0, 0.2),
-		inset 1px 1px 1px 1px rgba(255, 255, 255, 0.5), inset 1px 1px 3px rgba(255, 255, 255, 0.5),
+	box-shadow:
+		inset -1px -1px 1px 1px rgba(0, 0, 0, 0.2),
+		inset -1px -1px 6px rgba(0, 0, 0, 0.2),
+		inset 1px 1px 1px 1px rgba(255, 255, 255, 0.5),
+		inset 1px 1px 3px rgba(255, 255, 255, 0.5),
 		2px 2px 4px rgba(0, 0, 0, 0.1);
 	filter: var(--button-hue);
 }
@@ -83,7 +87,9 @@
 :where(input.button):active,
 .button:active::before {
 	border-color: rgba(0, 0, 0, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.25);
-	box-shadow: inset -1px -1px 6px rgba(0, 0, 0, 0.2), inset 1px 1px 3px rgba(255, 255, 255, 0.5),
+	box-shadow:
+		inset -1px -1px 6px rgba(0, 0, 0, 0.2),
+		inset 1px 1px 3px rgba(255, 255, 255, 0.5),
 		-1px -1px 4px rgba(0, 0, 0, 0.1);
 	filter: brightness(85%) contrast(125%) var(--button-hue);
 }
@@ -108,5 +114,5 @@
 }
 
 :where(input.button[data-variant='secondary'], .button[data-variant='secondary']::before) {
-	background-color: #C3C7B3;
+	background-color: #c3c7b3;
 }

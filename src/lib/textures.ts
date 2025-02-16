@@ -1,4 +1,4 @@
-import { Texture, TextureSet } from './types'
+import { Texture, TextureSet } from './types.ts'
 
 /**
  * - noRoad: any node having this type of texture can't have a road
@@ -59,13 +59,13 @@ export const TreeType = {
 	Fellable3: 2,
 	Fellable4: 3,
 	Fellable5: 4,
-	Solid1: 6,
+	Solid1: 5,
 	Fellable6: 6,
 	Fellable7: 7,
 	Fellable8: 8,
 } as const
 
-export type TreeType = typeof TreeType[keyof typeof TreeType]
+export type TreeType = (typeof TreeType)[keyof typeof TreeType]
 
 export interface TextureResource {
 	fish: boolean
@@ -97,7 +97,7 @@ export const SupportedTexture = {
 	PolarNight: 'PolarNight',
 } as const
 
-export type SupportedTexture = typeof SupportedTexture[keyof typeof SupportedTexture]
+export type SupportedTexture = (typeof SupportedTexture)[keyof typeof SupportedTexture]
 
 export const defaultResources = {
 	Fertile: { fish: false, freshWater: true, minerals: false } as TextureResource,

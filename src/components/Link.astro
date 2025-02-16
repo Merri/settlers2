@@ -13,7 +13,7 @@ const props = /^http/.test(href)
 			'aria-describedby': 'link-to-external-site',
 			rel: [...new Set(`${rest.rel || ''} noopener noreferrer`.trim().split(/\s/))].join(' '),
 			target: '_blank',
-	  }
+		}
 	: rest
 ---
 

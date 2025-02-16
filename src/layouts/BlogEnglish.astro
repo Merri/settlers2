@@ -1,11 +1,10 @@
 ---
-import { MarkdownContent } from 'astro'
+import { default as BlogLayout, type Props as Post } from '$/components/BlogPost.astro'
+
 import Layout from './Layout.astro'
-import { default as BlogLayout } from '$/components/BlogPost.astro'
-import { Props as Post } from '$/components/BlogPost.astro'
 
 export interface Props {
-	content: MarkdownContent<Post>
+	content: Post
 }
 
 const {
@@ -18,12 +17,10 @@ const {
 	author,
 	heroImage,
 	alt,
-	disqusIdentifier,
-	disqusCanonical,
 } = Astro.props.content
 ---
 
-<Layout lang="en" description={description} permalink={permalink} title={title}	seriesTitle={seriesTitle}>
+<Layout lang="en" description={description} permalink={permalink} title={title} seriesTitle={seriesTitle}>
 	<BlogLayout
 		title={title}
 		seriesTitle={seriesTitle}

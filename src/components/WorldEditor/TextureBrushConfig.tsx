@@ -1,9 +1,9 @@
-import { ElevationBrush } from '$/lib/PlayerBasedGenerator'
-import { TextureGfxSet, textureGfxSet, TexturePos, texturePos } from '$/lib/textureGfx'
-import { SupportedTexture, TextureBuildFeature } from '$/lib/textures'
-import { Texture } from '$/lib/types'
-import { ComponentProps } from 'preact'
-import { RawTextureCanvas } from './RawTexture'
+import { type ElevationBrush } from '$/lib/PlayerBasedGenerator.ts'
+import { textureGfxSet, texturePos, type TextureGfxSet, type TexturePos } from '$/lib/textureGfx.ts'
+import { SupportedTexture, TextureBuildFeature } from '$/lib/textures.ts'
+import { Texture } from '$/lib/types.ts'
+
+import { RawTextureCanvas } from './RawTexture.tsx'
 
 interface Props {
 	brush: SupportedTexture

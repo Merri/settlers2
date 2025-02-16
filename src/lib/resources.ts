@@ -1,5 +1,5 @@
-import type { MapClass } from './MapClass'
-import { BlockType, ObjectType, ResourceFlag } from './types'
+import type { MapClass } from './MapClass.ts'
+import { BlockType, ObjectType, ResourceFlag } from './types.ts'
 
 interface CalculateResourceOptions {
 	map: MapClass
@@ -20,8 +20,6 @@ export function calculateResources({ map }: CalculateResourceOptions) {
 	const object1 = map.blocks[BlockType.Object1]
 	const object2 = map.blocks[BlockType.Object2]
 	const resource = map.blocks[BlockType.Resource]
-
-	ObjectType.Tree
 
 	const result: ResourceResult = {
 		mineralCoal: 0,

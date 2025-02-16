@@ -1,7 +1,8 @@
-import { RawTextureCanvas } from '../WorldEditor/RawTexture'
-import { textureGfxSet, texturePos } from '$/lib/textureGfx'
-import { SupportedTexture, TerrainSets } from '$/lib/textures'
-import { TextureSet } from '$/lib/types'
+import { textureGfxSet, texturePos } from '$/lib/textureGfx.ts'
+import { SupportedTexture, TerrainSets } from '$/lib/textures.ts'
+import { TextureSet } from '$/lib/types.ts'
+
+import { RawTextureCanvas } from '../WorldEditor/RawTexture.tsx'
 
 const sets = Object.entries(textureGfxSet).map(([terrain, gfxSet]) => ({
 	...TerrainSets[terrain as SupportedTexture],
@@ -31,7 +32,7 @@ function MainTexture({
 	name,
 	textureNames,
 	year,
-}: typeof greenland & { alt: typeof greenland[] }) {
+}: typeof greenland & { alt: (typeof greenland)[] }) {
 	return (
 		<>
 			<h2>{name}</h2>

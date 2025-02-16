@@ -1,9 +1,9 @@
 import { XORShift } from 'random-seedable'
 
-import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass'
-import { getMapHeightRegions } from './mapRegions'
-import { C8ObjectType } from './objects'
-import { isLavaTexture, looksLikeWaterTexture, TextureBuildFeature } from './textures'
+import { getNodesAtRadius, getTextureNodesByIndex, MapClass } from './MapClass.ts'
+import { getMapHeightRegions } from './mapRegions.ts'
+import { C8ObjectType } from './objects.ts'
+import { /*isLavaTexture, */ looksLikeWaterTexture, TextureBuildFeature } from './textures.ts'
 import {
 	BlockType,
 	ConstructionSite,
@@ -13,7 +13,7 @@ import {
 	Texture,
 	TextureFeatureFlag,
 	TextureSet,
-} from './types'
+} from './types.ts'
 
 interface SeedMapOptions {
 	random: XORShift
@@ -28,7 +28,7 @@ interface SeedMapOptions {
  * 4) Determine resources and how competitive you have to be to get them.
  * 5) Ensure all players can reach each other.
  */
-const thing = 0
+//const thing = 0
 
 function generateNoiseArray({ height, random, width }: SeedMapOptions) {
 	return new Float64Array(random.floatArray(width * height))
@@ -40,7 +40,7 @@ export interface Position {
 }
 
 export function generateEmptyMap({ width, height, random }: SeedMapOptions) {
-	const map = new MapClass({ height, width })
+	const map: MapClass = new MapClass({ height, width })
 	const noiseArray = generateNoiseArray({ height, width, random })
 	const rawHeightMap = new Uint8Array(map.blocks[BlockType.HeightMap])
 	return { noiseArray, map, rawHeightMap }
@@ -76,7 +76,7 @@ export const PlayerAssignment = {
 	hexCenter7: 'hexCenter7',
 } as const
 
-export type PlayerAssignment = typeof PlayerAssignment[keyof typeof PlayerAssignment]
+export type PlayerAssignment = (typeof PlayerAssignment)[keyof typeof PlayerAssignment]
 
 interface PlayerAssignmentOptions {
 	assignment: PlayerAssignment
@@ -379,7 +379,7 @@ export function updateHeightMapFromNoiseArray({
 		raw.forEach((value, index) => {
 			if (value < maxRawHeight - peakBoost) return
 			const maxIncrement = Math.floor(noiseArray[index] * peakRadius) + 1
-			const isCrater = noiseArray[index] < 0.625
+			//const isCrater = noiseArray[index] < 0.625
 
 			let radius = maxIncrement + 1
 			while (radius) {
@@ -546,9 +546,9 @@ export function elevationBasedTexturization({
 			const texture = brush.sea
 
 			const isWater = looksLikeWaterTexture(texture)
-			const isLava = isLavaTexture(texture)
-			const useLavaBrush = brush.lavaEdge.length > 0 && isLava
-			const useLowLandBrush = brush.lowLandEdge.length > 0
+			//const isLava = isLavaTexture(texture)
+			//const useLavaBrush = brush.lavaEdge.length > 0 && isLava
+			//const useLowLandBrush = brush.lowLandEdge.length > 0
 
 			while (queue.length) {
 				const index = queue.shift()!
@@ -672,7 +672,7 @@ export function elevationBasedTexturization({
 
 		while (allCoast.length) {
 			const sizeRnd = noiseArray[allCoast.at(0) ?? 0]
-			let coastSize = Math.min(32 * sizeRnd + 8, allCoast.length)
+			const coastSize = Math.min(32 * sizeRnd + 8, allCoast.length)
 
 			const coast = allCoast.splice(0, coastSize)
 			const coastRnd = noiseArray[coast.at(1) ?? 0]
@@ -855,7 +855,7 @@ export function elevationBasedTexturization({
 	})
 }
 
-function isBuildingSite(value: number) {
+export function isBuildingSite(value: number) {
 	return (
 		value === ConstructionSite.Castle ||
 		value === ConstructionSite.OccupiedCastle ||
@@ -897,7 +897,7 @@ export function adjustPlayerLocations({ limitToOneLand, map }: AdjustPlayerLocat
 						if (item[3] > map.regions[index][3]) return currentIndex
 						return index
 					}, -1),
-			  ]
+				]
 			: harbours.keys()
 	)
 
@@ -936,7 +936,7 @@ export function adjustPlayerLocations({ limitToOneLand, map }: AdjustPlayerLocat
 		for (let radius = 1; newIndex == null && radius < maxRadius; radius++) {
 			const nodes = getNodesAtRadius(item.index, radius, map.width, map.height)
 
-			for (let nodeIndex of nodes) {
+			for (const nodeIndex of nodes) {
 				if (
 					validPlayerRegions.has(regionMap[nodeIndex]) &&
 					isCastleSite(buildSite[nodeIndex]) &&
@@ -982,7 +982,6 @@ export function addSubterrainResources({
 	noiseArray,
 }: AddSubterrainResourcesOptions) {
 	const tex1 = map.blocks[BlockType.Texture1]
-	const object1 = map.blocks[BlockType.Object1]
 	const object2 = map.blocks[BlockType.Object2]
 	const buildSite = map.blocks[BlockType.BuildSite]
 	const resource = map.blocks[BlockType.Resource]

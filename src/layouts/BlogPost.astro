@@ -1,13 +1,10 @@
 ---
 import BaseHead from '$/components/BaseHead.astro'
 import BlogHeader from '$/components/BlogHeader.astro'
-import { default as BlogLayout } from '$/components/BlogPost.astro'
-
-import { Props as Post } from '$/components/BlogPost.astro'
-import { MarkdownContent } from 'astro'
+import { default as BlogLayout, type Props as Post } from '$/components/BlogPost.astro'
 
 export interface Props {
-	content: MarkdownContent<Post>
+	content: Post
 }
 
 const {
@@ -70,17 +67,18 @@ const {
 			}
 		</style>
 		<script>
+			// eslint-disable-next-line
 			var disqus_config = function () {
-				var el = document.getElementById('disqus-comments')
+				const el = document.getElementById('disqus-comments')
 				if (!el) return
-				var thread = el.dataset
-				/* @ts-ignore */
+				const thread = el.dataset
+				/* @ts-expect-error Disqus */
 				this.page.url = thread.url
-				/* @ts-ignore */
+				/* @ts-expect-error Disqus */
 				this.page.identifier = thread.identifier
 			}
 			;(function () {
-				var s = document.createElement('script')
+				const s = document.createElement('script')
 				s.src = 'https://settlers2.disqus.com/embed.js'
 				s.async = true
 				s.setAttribute('data-timestamp', '' + Date.now())

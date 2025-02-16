@@ -9,7 +9,8 @@ export function NumberInput({ onChange, value }: Props) {
 	const ref = useRef<HTMLInputElement>(null)
 
 	const onInput = useCallback(() => {
-		let value = ref.current?.value
+		const value = ref.current?.value
+
 		if (value != null) {
 			const cleanValue = value.replace(/\D/g, '')
 			console.log('cleanValue', cleanValue)

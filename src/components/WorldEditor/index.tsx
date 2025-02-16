@@ -1,15 +1,16 @@
-import { ChangeEvent, useCallback, useState } from 'preact/compat'
-import { MapClass } from '$/lib/MapClass'
-import { AnimalType, BlockType, Texture, Textures } from '$/lib/types'
-import { cp437ToString, sanitizeAsCp437 } from '$/lib/cp437'
+import { useCallback, useState, type ChangeEvent } from 'preact/compat'
+
+import { cp437ToString, sanitizeAsCp437 } from '$/lib/cp437.ts'
+import { asHex } from '$/lib/hex.ts'
+import { MapClass } from '$/lib/MapClass.ts'
+import { validateMapClass } from '$/lib/MapValidation.ts'
+import { flipX } from '$/lib/swdUtils/flipX.ts'
+import { hexRotate } from '$/lib/swdUtils/hexRotate.ts'
+import { setMapSize } from '$/lib/swdUtils/setMapSize.ts'
+import { AnimalType, BlockType, Textures } from '$/lib/types.ts'
 
 import styles from './index.module.css'
-import { MapCanvas } from './Map'
-import { asHex } from '$/lib/hex'
-import { validateMapClass } from '$/lib/MapValidation'
-import { flipX } from '$/lib/swdUtils/flipX'
-import { hexRotate } from '$/lib/swdUtils/hexRotate'
-import { setMapSize } from '$/lib/swdUtils/setMapSize'
+import { MapCanvas } from './Map.tsx'
 
 interface WorldFile {
 	filename: string
@@ -241,7 +242,7 @@ export function WorldEditor() {
 		function handleTextInput(event: ChangeEvent<HTMLInputElement>) {
 			if (!(event.target instanceof HTMLInputElement)) return
 			const { world } = worlds[~~event.target.dataset.index!]!
-			world[event.target.name] = sanitizeAsCp437(event.target.value)
+			world[event.target.name as 'title'] = sanitizeAsCp437(event.target.value)
 			setWorlds((worlds) => worlds.slice(0))
 		},
 		[worlds]
@@ -254,10 +255,10 @@ export function WorldEditor() {
 			if (indices?.includes('-')) {
 				const [index, itemIndex] = indices.split('-').map((x) => ~~x)
 				const { world } = worlds[index]
-				world[event.target.name][itemIndex] = ~~event.target.value
+				world[event.target.name as 'hqX'][itemIndex] = ~~event.target.value
 			} else {
 				const { world } = worlds[~~(indices || 0)]
-				world[event.target.name] = ~~event.target.value
+				world[event.target.name as 'terrain'] = ~~event.target.value
 			}
 			setWorlds((worlds) => worlds.slice(0))
 		},
@@ -293,12 +294,12 @@ export function WorldEditor() {
 		const form = event.target
 		if (!(form instanceof HTMLFormElement)) return
 		event.preventDefault()
-		const button: HTMLButtonElement = form.elements['mapSize']
+		const button = form.elements.namedItem('mapSize') as HTMLButtonElement
 		const targetIndex = ~~button.value
-		const widthElement: HTMLInputElement = form.elements['width']
-		const heightElement: HTMLInputElement = form.elements['height']
-		const textureElement: HTMLInputElement = form.elements['texture']
-		const alignElement: HTMLInputElement = form.elements['align']
+		const widthElement = form.elements.namedItem('width') as HTMLInputElement
+		const heightElement = form.elements.namedItem('height') as HTMLInputElement
+		const textureElement = form.elements.namedItem('texture') as HTMLInputElement
+		const alignElement = form.elements.namedItem('align') as HTMLInputElement
 		const [yAlign, xAlign] = alignElement.value.split('-', 2)
 		setWorlds((worlds) => {
 			return worlds.map((worldFile, index) => {
@@ -674,7 +675,7 @@ export function WorldEditor() {
 								<td>
 									{Object.entries(
 										world.animals.reduce(
-											(record, [animalType, animalX, animalY]) => {
+											(record, [animalType]) => {
 												const name = getAnimalName(animalType)
 												if (record[name] == null) record[name] = 0
 												record[name]++

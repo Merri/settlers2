@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useState } from 'preact/compat'
+import { useCallback, useState, type ChangeEventHandler } from 'preact/compat'
 
 interface Props {
 	delay?: number

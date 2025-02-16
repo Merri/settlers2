@@ -1,5 +1,5 @@
-import { MapClass } from '../MapClass'
-import { BlockType, Texture } from '../types'
+import { MapClass } from '../MapClass.ts'
+import { BlockType, Texture } from '../types.ts'
 
 interface Options {
 	width: number
@@ -64,14 +64,17 @@ export function setMapSize(
 
 	newWorld.title = world.title
 	newWorld.author = world.author
-	newWorld.animals = world.animals.reduce((animals, [type, x, y]) => {
-		const newX = x + xDiff
-		const newY = y + yDiff
-		if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
-			animals.push([type, newX, newY])
-		}
-		return animals
-	}, [] as [number, number, number][])
+	newWorld.animals = world.animals.reduce(
+		(animals, [type, x, y]) => {
+			const newX = x + xDiff
+			const newY = y + yDiff
+			if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
+				animals.push([type, newX, newY])
+			}
+			return animals
+		},
+		[] as [number, number, number][]
+	)
 	newWorld.hqX = world.hqX.map((x, index) => {
 		const y = world.hqY[index]
 		if (x === 0xffff || y === 0xffff) return x

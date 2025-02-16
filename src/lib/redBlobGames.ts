@@ -1,11 +1,18 @@
 // https://www.redblobgames.com/grids/hexagons/codegen/output/lib.ts
 
 export class Point {
-	constructor(public x: number, public y: number) {}
+	constructor(
+		public x: number,
+		public y: number
+	) {}
 }
 
 export class Hex {
-	constructor(public q: number, public r: number, public s: number) {
+	constructor(
+		public q: number,
+		public r: number,
+		public s: number
+	) {
 		if (Math.round(q + r + s) !== 0) throw 'q + r + s must be 0'
 	}
 
@@ -68,12 +75,12 @@ export class Hex {
 	}
 
 	public round(): Hex {
-		var qi: number = Math.round(this.q)
-		var ri: number = Math.round(this.r)
-		var si: number = Math.round(this.s)
-		var q_diff: number = Math.abs(qi - this.q)
-		var r_diff: number = Math.abs(ri - this.r)
-		var s_diff: number = Math.abs(si - this.s)
+		let qi: number = Math.round(this.q)
+		let ri: number = Math.round(this.r)
+		let si: number = Math.round(this.s)
+		const q_diff: number = Math.abs(qi - this.q)
+		const r_diff: number = Math.abs(ri - this.r)
+		const s_diff: number = Math.abs(si - this.s)
 		if (q_diff > r_diff && q_diff > s_diff) {
 			qi = -ri - si
 		} else if (r_diff > s_diff) {
@@ -89,13 +96,13 @@ export class Hex {
 	}
 
 	public linedraw(b: Hex): Hex[] {
-		var N: number = this.distance(b)
-		var a_nudge: Hex = new Hex(this.q + 1e-6, this.r + 1e-6, this.s - 2e-6)
-		var b_nudge: Hex = new Hex(b.q + 1e-6, b.r + 1e-6, b.s - 2e-6)
-		var results: Hex[] = []
-		var step: number = 1.0 / Math.max(N, 1)
+		const N: number = this.distance(b)
+		const a_nudge: Hex = new Hex(this.q + 1e-6, this.r + 1e-6, this.s - 2e-6)
+		const b_nudge: Hex = new Hex(b.q + 1e-6, b.r + 1e-6, b.s - 2e-6)
+		const results: Hex[] = []
+		const step: number = 1.0 / Math.max(N, 1)
 
-		for (var i = 0; i <= N; i++) {
+		for (let i = 0; i <= N; i++) {
 			results.push(a_nudge.lerp(b_nudge, step * i).round())
 		}
 
@@ -104,13 +111,16 @@ export class Hex {
 }
 
 export class OffsetCoord {
-	constructor(public col: number, public row: number) {}
+	constructor(
+		public col: number,
+		public row: number
+	) {}
 	public static EVEN: number = 1
 	public static ODD: number = -1
 
 	public static qoffsetFromCube(offset: number, h: Hex): OffsetCoord {
-		var col: number = h.q
-		var row: number = h.r + (h.q + offset * (h.q & 1)) / 2
+		const col: number = h.q
+		const row: number = h.r + (h.q + offset * (h.q & 1)) / 2
 		if (offset !== OffsetCoord.EVEN && offset !== OffsetCoord.ODD) {
 			throw 'offset must be EVEN (+1) or ODD (-1)'
 		}
@@ -118,9 +128,9 @@ export class OffsetCoord {
 	}
 
 	public static qoffsetToCube(offset: number, h: OffsetCoord): Hex {
-		var q: number = h.col
-		var r: number = h.row - (h.col + offset * (h.col & 1)) / 2
-		var s: number = -q - r
+		const q: number = h.col
+		const r: number = h.row - (h.col + offset * (h.col & 1)) / 2
+		const s: number = -q - r
 		if (offset !== OffsetCoord.EVEN && offset !== OffsetCoord.ODD) {
 			throw 'offset must be EVEN (+1) or ODD (-1)'
 		}
@@ -128,8 +138,8 @@ export class OffsetCoord {
 	}
 
 	public static roffsetFromCube(offset: number, h: Hex): OffsetCoord {
-		var col: number = h.q + (h.r + offset * (h.r & 1)) / 2
-		var row: number = h.r
+		const col: number = h.q + (h.r + offset * (h.r & 1)) / 2
+		const row: number = h.r
 		if (offset !== OffsetCoord.EVEN && offset !== OffsetCoord.ODD) {
 			throw 'offset must be EVEN (+1) or ODD (-1)'
 		}
@@ -137,9 +147,9 @@ export class OffsetCoord {
 	}
 
 	public static roffsetToCube(offset: number, h: OffsetCoord): Hex {
-		var q: number = h.col - (h.row + offset * (h.row & 1)) / 2
-		var r: number = h.row
-		var s: number = -q - r
+		const q: number = h.col - (h.row + offset * (h.row & 1)) / 2
+		const r: number = h.row
+		const s: number = -q - r
 		if (offset !== OffsetCoord.EVEN && offset !== OffsetCoord.ODD) {
 			throw 'offset must be EVEN (+1) or ODD (-1)'
 		}
@@ -148,31 +158,34 @@ export class OffsetCoord {
 }
 
 export class DoubledCoord {
-	constructor(public col: number, public row: number) {}
+	constructor(
+		public col: number,
+		public row: number
+	) {}
 
 	public static qdoubledFromCube(h: Hex): DoubledCoord {
-		var col: number = h.q
-		var row: number = 2 * h.r + h.q
+		const col: number = h.q
+		const row: number = 2 * h.r + h.q
 		return new DoubledCoord(col, row)
 	}
 
 	public qdoubledToCube(): Hex {
-		var q: number = this.col
-		var r: number = (this.row - this.col) / 2
-		var s: number = -q - r
+		const q: number = this.col
+		const r: number = (this.row - this.col) / 2
+		const s: number = -q - r
 		return new Hex(q, r, s)
 	}
 
 	public static rdoubledFromCube(h: Hex): DoubledCoord {
-		var col: number = 2 * h.q + h.r
-		var row: number = h.r
+		const col: number = 2 * h.q + h.r
+		const row: number = h.r
 		return new DoubledCoord(col, row)
 	}
 
 	public rdoubledToCube(): Hex {
-		var q: number = (this.col - this.row) / 2
-		var r: number = this.row
-		var s: number = -q - r
+		const q: number = (this.col - this.row) / 2
+		const r: number = this.row
+		const s: number = -q - r
 		return new Hex(q, r, s)
 	}
 }
@@ -192,7 +205,11 @@ export class Orientation {
 }
 
 export class Layout {
-	constructor(public orientation: Orientation, public size: Point, public origin: Point) {}
+	constructor(
+		public orientation: Orientation,
+		public size: Point,
+		public origin: Point
+	) {}
 
 	public static pointy: Orientation = new Orientation(
 		Math.sqrt(3.0),
@@ -219,37 +236,37 @@ export class Layout {
 	)
 
 	public hexToPixel(h: Hex): Point {
-		var M: Orientation = this.orientation
-		var size: Point = this.size
-		var origin: Point = this.origin
-		var x: number = (M.f0 * h.q + M.f1 * h.r) * size.x
-		var y: number = (M.f2 * h.q + M.f3 * h.r) * size.y
+		const M: Orientation = this.orientation
+		const size: Point = this.size
+		const origin: Point = this.origin
+		const x: number = (M.f0 * h.q + M.f1 * h.r) * size.x
+		const y: number = (M.f2 * h.q + M.f3 * h.r) * size.y
 		return new Point(x + origin.x, y + origin.y)
 	}
 
 	public pixelToHex(p: Point): Hex {
-		var M: Orientation = this.orientation
-		var size: Point = this.size
-		var origin: Point = this.origin
-		var pt: Point = new Point((p.x - origin.x) / size.x, (p.y - origin.y) / size.y)
-		var q: number = M.b0 * pt.x + M.b1 * pt.y
-		var r: number = M.b2 * pt.x + M.b3 * pt.y
+		const M: Orientation = this.orientation
+		const size: Point = this.size
+		const origin: Point = this.origin
+		const pt: Point = new Point((p.x - origin.x) / size.x, (p.y - origin.y) / size.y)
+		const q: number = M.b0 * pt.x + M.b1 * pt.y
+		const r: number = M.b2 * pt.x + M.b3 * pt.y
 		return new Hex(q, r, -q - r)
 	}
 
 	public hexCornerOffset(corner: number): Point {
-		var M: Orientation = this.orientation
-		var size: Point = this.size
-		var angle: number = (2.0 * Math.PI * (M.start_angle - corner)) / 6.0
+		const M: Orientation = this.orientation
+		const size: Point = this.size
+		const angle: number = (2.0 * Math.PI * (M.start_angle - corner)) / 6.0
 		return new Point(size.x * Math.cos(angle), size.y * Math.sin(angle))
 	}
 
 	public polygonCorners(h: Hex): Point[] {
-		var corners: Point[] = []
-		var center: Point = this.hexToPixel(h)
+		const corners: Point[] = []
+		const center: Point = this.hexToPixel(h)
 
-		for (var i = 0; i < 6; i++) {
-			var offset: Point = this.hexCornerOffset(i)
+		for (let i = 0; i < 6; i++) {
+			const offset: Point = this.hexCornerOffset(i)
 			corners.push(new Point(center.x + offset.x, center.y + offset.y))
 		}
 

@@ -1,36 +1,35 @@
+import { type ChangeEventHandler } from 'preact/compat'
+import { useCallback, useEffect, useReducer, useState } from 'preact/hooks'
+import { XORShift } from 'random-seedable'
+
+import { sanitizeAsCp437 } from '$/lib/cp437.ts'
+import { validateMapClass } from '$/lib/MapValidation.ts'
 import {
 	addSubterrainResources,
 	adjustPlayerLocations,
 	assignPlayerPositions,
 	blockadeMapEdges,
-	ElevationBrush,
-	generateEmptyMap,
-	PlayerAssignment,
 	elevationBasedTexturization,
-	updateHeightMapFromNoiseArray,
-	setHeight,
+	generateEmptyMap,
 	isCastleSite,
 	isHarbourSite,
 	isMiningSite,
-} from '$/lib/PlayerBasedGenerator'
-import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types'
-import { ChangeEventHandler } from 'preact/compat'
-import { useCallback, useEffect, useReducer, useState } from 'preact/hooks'
-import { XORShift } from 'random-seedable'
+	PlayerAssignment,
+	setHeight,
+	updateHeightMapFromNoiseArray,
+	type ElevationBrush,
+} from '$/lib/PlayerBasedGenerator.ts'
+import { calculateResources } from '$/lib/resources.ts'
+import { SupportedTexture, TerrainSets, type TextureGroup } from '$/lib/textures.ts'
+import { BlockType, RegionType, Texture, TextureSet } from '$/lib/types.ts'
 
-import { IncDec } from '../MapGenerator/IncDec'
-import { MapCanvas } from './Map'
-
+import { Button } from '../Button/Button.tsx'
+import { IncDec } from '../MapGenerator/IncDec.tsx'
+import { NumberInput } from '../MapGenerator/NumberInput.tsx'
 import styles from './Generator.module.css'
-//import { calculateHeightElevations } from '.'
-import { validateMapClass } from '$/lib/MapValidation'
-import { NumberInput } from '../MapGenerator/NumberInput'
-import Button from '../Button'
-import { SupportedTexture, TerrainSets, TextureGroup } from '$/lib/textures'
-import { sanitizeAsCp437 } from '$/lib/cp437'
-import { calculateResources } from '$/lib/resources'
-import { ResourceStats } from './ResourceStats'
-import { TextureBrushConfig } from './TextureBrushConfig'
+import { MapCanvas } from './Map.tsx'
+import { ResourceStats } from './ResourceStats.tsx'
+import { TextureBrushConfig } from './TextureBrushConfig.tsx'
 
 const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[0, []],
@@ -38,7 +37,7 @@ const terrainMap = new Map<TextureSet, TextureGroup[]>([
 	[2, []],
 ])
 
-Object.entries(TerrainSets).forEach(([_key, terrain]) => void terrainMap.get(terrain.type)!.push(terrain))
+Object.entries(TerrainSets).forEach(([, terrain]) => void terrainMap.get(terrain.type)!.push(terrain))
 
 const terrainType = ['Greenland', 'Wasteland', 'Winter World']
 
@@ -264,6 +263,7 @@ export function Generator() {
 				const { elevationOptions = {}, ...rest } = JSON.parse(opts)
 				Object.assign(options, rest)
 				options.elevationOptions = { ...options.elevationOptions, ...elevationOptions }
+				// eslint-disable-next-line
 			} catch (e) {}
 		}
 
@@ -271,6 +271,7 @@ export function Generator() {
 			try {
 				const minerals = JSON.parse(mnrls)
 				options.minerals = { ...options.minerals, ...minerals }
+				// eslint-disable-next-line
 			} catch (e) {}
 		}
 
@@ -302,37 +303,37 @@ export function Generator() {
 	})
 	const [resources, setResources] = useState(() => calculateResources({ map: world.map }))
 
-	const handleAssignment: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
+	const handleAssignment: ChangeEventHandler<HTMLSelectElement> = useCallback((event: Event) => {
 		if (event.target instanceof HTMLSelectElement) {
 			dispatchOptions({ type: 'options', payload: { assignment: event.target.value as PlayerAssignment } })
 		}
 	}, [])
 
-	const handleBrush: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
+	const handleBrush: ChangeEventHandler<HTMLSelectElement> = useCallback((event: Event) => {
 		if (event.target instanceof HTMLSelectElement && event.target.value in TerrainBrush) {
 			dispatchOptions({ type: 'options', payload: { brush: event.target.value as SupportedTexture } })
 		}
 	}, [])
 
-	const handleMirror: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
+	const handleMirror: ChangeEventHandler<HTMLSelectElement> = useCallback((event: Event) => {
 		if (event.target instanceof HTMLSelectElement) {
 			dispatchOptions({ type: 'options', payload: { mirror: event.target.value } })
 		}
 	}, [])
 
-	const handleNoise: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
+	const handleNoise: ChangeEventHandler<HTMLSelectElement> = useCallback((event: Event) => {
 		if (event.target instanceof HTMLSelectElement) {
 			dispatchOptions({ type: 'options', payload: { noise: Number(event.target.value) || 0 } })
 		}
 	}, [])
 
-	const handleTitle: ChangeEventHandler<HTMLInputElement> = (event) => {
+	const handleTitle: ChangeEventHandler<HTMLInputElement> = (event: Event) => {
 		if (event.target instanceof HTMLInputElement) {
 			setTitle(sanitizeAsCp437(event.target.value))
 		}
 	}
 
-	const handleAuthor: ChangeEventHandler<HTMLInputElement> = (event) => {
+	const handleAuthor: ChangeEventHandler<HTMLInputElement> = (event: Event) => {
 		if (event.target instanceof HTMLInputElement) {
 			setAuthor(sanitizeAsCp437(event.target.value))
 		}
@@ -347,7 +348,7 @@ export function Generator() {
 		if (compatibility !== 'balanced') params.set('compatibility', compatibility)
 		if (invertHeight) params.set('invertHeight', '')
 		if (WLD && compatibility === 's2') params.set('WLD', '')
-		mirror && params.set('mirror', mirror)
+		if (mirror) params.set('mirror', mirror)
 		params.set('minerals', JSON.stringify(minerals))
 		params.set('options', JSON.stringify(limitedOptions))
 		history.replaceState(null, '', `?${params}`)
@@ -492,7 +493,7 @@ export function Generator() {
 	}, [])
 
 	const rawRegions = world.map.regions
-		.map(([type, _x, _y, size], index) => ({ index, size, type }))
+		.map(([type, , , size], index) => ({ index, size, type }))
 		.filter(({ size, type }) => type === RegionType.Land && size)
 		.sort((a, b) => b.size - a.size)
 

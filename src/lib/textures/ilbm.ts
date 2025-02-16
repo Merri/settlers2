@@ -5,7 +5,7 @@ const IFF_COLOR_MAP = 0x434d4150
 const IFF_BODY = 0x424f4459
 const IFF_BITMAP_HEADER = 0x424d4844
 
-export function getAmigaPalette(arrayBuffer: ArrayBuffer) {
+export function getAmigaPalette(arrayBuffer?: ArrayBuffer | Uint8Array) {
 	if (!arrayBuffer) return false
 
 	if ('buffer' in arrayBuffer && arrayBuffer.buffer instanceof ArrayBuffer) arrayBuffer = arrayBuffer.buffer
@@ -47,7 +47,7 @@ export function getAmigaPalette(arrayBuffer: ArrayBuffer) {
 	return rgba
 }
 
-export function getAmigaImage(arrayBuffer: ArrayBuffer) {
+export function getAmigaImage(arrayBuffer?: ArrayBuffer | Uint8Array) {
 	if (!arrayBuffer) return false
 
 	if ('buffer' in arrayBuffer && arrayBuffer.buffer instanceof ArrayBuffer) arrayBuffer = arrayBuffer.buffer

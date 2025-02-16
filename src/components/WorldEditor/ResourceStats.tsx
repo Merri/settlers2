@@ -1,5 +1,6 @@
-import { MapClass } from '$/lib/MapClass'
-import type { ResourceResult } from '$/lib/resources'
+import { MapClass } from '$/lib/MapClass.ts'
+import type { ResourceResult } from '$/lib/resources.ts'
+
 import styles from './ResourceStats.module.css'
 
 interface Props {

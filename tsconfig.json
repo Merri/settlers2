@@ -1,19 +1,19 @@
 {
+	"extends": "astro/tsconfigs/strict",
 	"compilerOptions": {
 		"plugins": [{ "name": "typescript-plugin-css-modules" }],
-		"module": "esnext",
-		"moduleResolution": "node",
 		"baseUrl": ".",
+		"module": "NodeNext",
+		"moduleResolution": "nodenext",
 		"paths": {
 			"$/*": ["src/*"],
 			"$layouts/*": ["src/layouts/*"]
 		},
-		"target": "esnext",
-		"jsx": "preserve",
+		"target": "ES2022",
+		"jsx": "react-jsx",
 		"jsxImportSource": "preact",
-		"strict": true,
 		"skipLibCheck": false
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules", "dist", "public"]
+	"include": [".astro/types.d.ts", "src/**/*"],
+	"exclude": ["dist", "public"]
 }

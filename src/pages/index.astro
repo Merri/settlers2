@@ -1,12 +1,12 @@
 ---
-import { MarkdownInstance } from 'astro'
+import { type MarkdownInstance } from 'astro'
 import { format, isBefore } from 'date-fns'
 
-import { inlineFlex } from '$/components/inlineFlex.module.css'
-import Layout from '$/layouts/Layout.astro'
+import styles from '$/components/inlineFlex.module.css'
 import Link from '$/components/Link.astro'
+import Layout from '$/layouts/Layout.astro'
 
-import { Props as Post } from '../components/BlogPost.astro'
+import { type Props as Post } from '../components/BlogPost.astro'
 
 const title = 'Settlers 2.net'
 const description =
@@ -15,14 +15,17 @@ const permalink = 'https://settlers2.net/'
 
 const now = new Date()
 
-const allPosts = await Astro.glob<MarkdownInstance<Post>>('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/**/*.(md|mdx)')
+const allPosts = Object.values(
+	import.meta.glob<MarkdownInstance<Post>>('./[0-9][0-9][0-9][0-9]/[0-9][0-9]/**/*.(md|mdx)', { eager: true })
+)
 
-const posts = allPosts.filter((post) => post.frontmatter.tags?.includes('news') && isBefore(new Date(post.frontmatter.pubDate), now))
+const posts = allPosts.filter(
+	(post) => post.frontmatter.tags?.includes('news') && isBefore(new Date(post.frontmatter.pubDate), now)
+)
 posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.pubDate))
 
-const published = new Date(posts[0].frontmatter.pubDate);
+const published = new Date(posts[0].frontmatter.pubDate)
 const datePublished = format(published, 'PPP')
-
 ---
 
 <Layout lang="en" title={title} description={description} permalink={permalink}>
@@ -34,49 +37,103 @@ const datePublished = format(published, 'PPP')
 				<p>An online encyclopedia on <em>The Settlers II Gold Edition</em> and <em>Return to the Roots</em></p>
 			</hgroup>
 			<figure style="text-align: center;">
-				<img alt="The Settlers II Gold Edition screenshot" src="/assets/docs/settlers2-gold-edition.png" height="480" width="640" loading="lazy" />
+				<img
+					alt="The Settlers II Gold Edition screenshot"
+					src="/assets/docs/settlers2-gold-edition.png"
+					height="480"
+					width="640"
+					loading="lazy"
+				/>
 				<figcaption>Wonderful pixel art game from the 90s!</figcaption>
 			</figure>
 			<blockquote>
 				<hgroup>
-					<p><strong>Latest news</strong> from <time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time></p>
+					<p>
+						<strong>Latest news</strong> from <time datetime={published.toISOString().slice(0, 10)}
+							>{datePublished}</time
+						>
+					</p>
 					<h2 class="news-title"><a href={posts[0].url}>{posts[0].frontmatter.title}</a></h2>
 				</hgroup>
 				<p>{posts[0].frontmatter.description}</p>
-				<div class={inlineFlex}>
-					<img alt="" src="/assets/bluebyte/read2.gif" width="32" height="40" loading="lazy" style="image-rendering: pixelated;" />
+				<div class={styles.inlineFlex}>
+					<img
+						alt=""
+						src="/assets/bluebyte/read2.gif"
+						width="32"
+						height="40"
+						loading="lazy"
+						style="image-rendering: pixelated;"
+					/>
 					<a href={posts[0].url}>Read more!</a>
 				</div>
 			</blockquote>
 			<div class="cards">
 				<div class="card">
 					<h2>New to the game?</h2>
-					<p>Have a look at our <a href="/guides/">game guide</a> on how to get started and to learn about the options!</p>
-					<img alt="" src="/assets/bluebyte/jump2.gif" width="50" height="54" loading="lazy" style="image-rendering: pixelated;" />
+					<p>
+						Have a look at our <a href="/guides/">game guide</a> on how to get started and to learn about the
+						options!
+					</p>
+					<img
+						alt=""
+						src="/assets/bluebyte/jump2.gif"
+						width="50"
+						height="54"
+						loading="lazy"
+						style="image-rendering: pixelated;"
+					/>
 				</div>
 				<div class="card">
 					<h2>Online play!</h2>
-					<p><a href="/return-to-the-roots">Return to the Roots</a> is a remake/add-on for multiplayer action over the Internet.</p>
-					<img alt="" src="/assets/webkit1/animations/cart.gif" width="64" height="64" loading="lazy" style="image-rendering: pixelated;" />
+					<p>
+						<a href="/return-to-the-roots">Return to the Roots</a> is a remake/add-on for multiplayer action
+						over the Internet.
+					</p>
+					<img
+						alt=""
+						src="/assets/webkit1/animations/cart.gif"
+						width="64"
+						height="64"
+						loading="lazy"
+						style="image-rendering: pixelated;"
+					/>
 				</div>
 				<div class="card">
 					<h2>Looking for something?</h2>
-					<p>Our <a href="/download">downloads</a> has updates, language packs and new textures. On <a href="/utilities/">utilities</a> section you find tools such as a random map generator!</p>
+					<p>
+						Our <a href="/download">downloads</a> has updates, language packs and new textures. On <a
+							href="/utilities/">utilities</a
+						> section you find tools such as a random map generator!
+					</p>
 				</div>
 				<div class="card">
 					<h2>Want to see under the hood?</h2>
-					<p>Our <a href="/documentation/">technical documentation</a> covers most of the game files so you can learn to modify the game.</p>
+					<p>
+						Our <a href="/documentation/">technical documentation</a> covers most of the game files so you can
+						learn to modify the game.
+					</p>
 				</div>
 			</div>
 			<h2>Join the community!</h2>
 			<ul>
 				<li>Chat on <Link href="https://discord.gg/kyTQsSx">Return to the Roots Discord</Link></li>
-				<li>Discuss on <Link href="https://www.siedler25.org/index.php?com=forum">Return to the Roots forums</Link></li>
-				<li>Use <code>#RttR</code> and <code>#settlers2</code> on social media sites such as Mastodon to find other fans!</li>
+				<li>
+					Discuss on <Link href="https://www.siedler25.org/index.php?com=forum"
+						>Return to the Roots forums</Link
+					>
+				</li>
+				<li>
+					Use <code>#RttR</code> and <code>#settlers2</code> on social media sites such as Mastodon to find other
+					fans!
+				</li>
 			</ul>
 			<blockquote>
 				<small>
-					<em>Some of the art and animations on this site are from the removed Blue Byte site dedicated for promoting the game, and from a "webkit#1" package freely distributed by Blue Byte in 2006.</em>
+					<em
+						>Some of the art and animations on this site are from the removed Blue Byte site dedicated for
+						promoting the game, and from a "webkit#1" package freely distributed by Blue Byte in 2006.</em
+					>
 				</small>
 			</blockquote>
 		</article>

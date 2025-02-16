@@ -1,8 +1,8 @@
 ---
+import { type MarkdownInstance } from 'astro'
 import { format } from 'date-fns'
 
-import { Props as Post } from '$/components/BlogPost.astro'
-import { MarkdownInstance } from 'astro'
+import { type Props as Post } from '$/components/BlogPost.astro'
 
 export interface Props {
 	posts: MarkdownInstance<Post>[]
@@ -28,7 +28,6 @@ Astro.props.posts.forEach((post) => {
 	const yearGroup = postsByYear.get(year)?.push(item)
 	if (yearGroup == null) postsByYear.set(year, [item])
 })
-
 ---
 
 <h2>Post Archive</h2>

@@ -1,5 +1,5 @@
-import { getNodesAtRadius, getNodesByIndex, MapClass } from './MapClass'
-import { BlockType, ConstructionSite, Texture, TextureFeatureFlag } from './types'
+import { getNodesAtRadius, getNodesByIndex, MapClass } from './MapClass.ts'
+import { BlockType, ConstructionSite, Texture, TextureFeatureFlag } from './types.ts'
 
 const NodeDir = {
 	left: 0x01,
@@ -10,7 +10,7 @@ const NodeDir = {
 	bottomLeft: 0x20,
 } as const
 
-type NodeDir = typeof NodeDir[keyof typeof NodeDir]
+type NodeDir = (typeof NodeDir)[keyof typeof NodeDir]
 
 /**
  * When filling region these are the next directions that can be checked based on from the direction that this node was expanded to.
@@ -25,7 +25,7 @@ const NextFillFlags = {
 	bottomLeft: NodeDir.bottomRight | NodeDir.bottomLeft | NodeDir.left,
 } as const
 
-type NextFillFlags = typeof NextFillFlags[keyof typeof NextFillFlags]
+type NextFillFlags = (typeof NextFillFlags)[keyof typeof NextFillFlags]
 
 interface HeightRegion {
 	borders: number[][]

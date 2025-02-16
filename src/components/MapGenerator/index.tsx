@@ -1,18 +1,17 @@
 import './index.css'
 
+import { Component, createRef, type ChangeEventHandler, type JSX } from 'preact/compat'
 import { XORShift } from 'random-seedable'
 
+import Generator from '$/lib/generator.ts'
+
+import { Button } from '../Button/Button.tsx'
+import { IncDec } from './IncDec.tsx'
+import { NumberInput } from './NumberInput.tsx'
+import { StatisticsTable } from './StatisticsTable.tsx'
+import { TextureOptions } from './TextureOptions.tsx'
+
 const random = new XORShift()
-
-import { ChangeEventHandler, Component, createRef } from 'preact/compat'
-
-import Generator from '$/lib/generator'
-
-import { IncDec } from './IncDec'
-import { StatisticsTable } from './StatisticsTable'
-import { TextureOptions } from './TextureOptions'
-import { NumberInput } from './NumberInput'
-import Button from '../Button'
 
 const generator = Generator(random)
 
@@ -21,6 +20,7 @@ const hasLocalStorage = (function (key) {
 		localStorage[key] = key
 		localStorage.removeItem(key)
 		return true
+		// eslint-disable-next-line
 	} catch (error) {
 		return false
 	}
@@ -35,8 +35,8 @@ interface State {
 	compatibility: string
 	maxPlayers: number
 	playerMinDistance: number
-	players: any[]
-	resources: Record<string, any>
+	players: { x: number; y: number }[]
+	resources: Partial<ReturnType<typeof generateAndGetResources>>
 	viewType: number | 'fast' | 'pretty' | 'seed'
 	heightOptions: {
 		baseLevel: number
@@ -66,11 +66,11 @@ interface State {
 	seed: bigint
 }
 
-export class MapGenerator extends Component<{}, State> {
+export class MapGenerator extends Component<JSX.IntrinsicElements['div'], State> {
 	canvasRef = createRef()
 	seedRef = createRef()
 
-	constructor(props: {}) {
+	constructor(props: JSX.IntrinsicElements['div']) {
 		super(props)
 
 		const width = (hasLocalStorage && ~~localStorage.width) || 160
@@ -198,7 +198,7 @@ export class MapGenerator extends Component<{}, State> {
 		this.generateTextures()
 		this.setState({
 			players: [],
-			resources: [],
+			resources: {},
 		})
 		console.timeEnd('Height Map, Textures and Resources')
 		this.handleDraw()
@@ -233,7 +233,7 @@ export class MapGenerator extends Component<{}, State> {
 			})
 		)
 		link.href = blobUrl
-		link.download = this.state.title.replace(/[\|&;\$%@"<>\(\)\+,]/g, '_') + '.swd'
+		link.download = this.state.title.replace(/[|&;$%@"<>()+,]/g, '_') + '.swd'
 		link.click()
 		URL.revokeObjectURL(blobUrl)
 	}
@@ -262,7 +262,7 @@ export class MapGenerator extends Component<{}, State> {
 			this.generateTextures()
 			this.setState({
 				players: [],
-				resources: [],
+				resources: {},
 			})
 			this.handleDraw()
 		}
@@ -320,7 +320,7 @@ export class MapGenerator extends Component<{}, State> {
 
 	handleViewTypeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
 		if (event.target instanceof HTMLSelectElement) {
-			var value: string | number = event.target.value
+			let value: string | number = event.target.value
 
 			if (value === '' + ~~value) value = ~~value
 
@@ -341,7 +341,7 @@ export class MapGenerator extends Component<{}, State> {
 		}
 	}
 
-	isRttROnly = (areas: any[]) => {
+	isRttROnly = (areas: { mass: number; type: number }[]) => {
 		return this.state.width > 256 || this.state.height > 256 || areas.length > 250
 	}
 
@@ -421,11 +421,11 @@ export class MapGenerator extends Component<{}, State> {
 							Width:{' '}
 							<select value={this.state.seedOptions.width} onChange={this.handleSetWidth}>
 								<optgroup label="The Settlers II &amp; RttR">
-									{[64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256].map(function (
-										value
-									) {
-										return <option value={value}>{value}</option>
-									})}
+									{[64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256].map(
+										function (value) {
+											return <option value={value}>{value}</option>
+										}
+									)}
 								</optgroup>
 								<optgroup label="Return to the Roots only">
 									{[320, 384, 448, 512, 640, 768, 1024].map(function (value) {
@@ -440,11 +440,11 @@ export class MapGenerator extends Component<{}, State> {
 							Height:{' '}
 							<select value={this.state.seedOptions.height} onChange={this.handleSetHeight}>
 								<optgroup label="The Settlers II &amp; RttR">
-									{[64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256].map(function (
-										value
-									) {
-										return <option value={value}>{value}</option>
-									})}
+									{[64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256].map(
+										function (value) {
+											return <option value={value}>{value}</option>
+										}
+									)}
 								</optgroup>
 								<optgroup label="Return to the Roots only">
 									{[320, 384, 448, 512, 640, 768, 1024].map(function (value) {

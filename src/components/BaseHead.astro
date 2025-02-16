@@ -1,16 +1,15 @@
 ---
 export interface Props {
-  title: string;
-  description: string;
-  permalink: string;
+	title: string
+	description: string
+	permalink: string
 }
-const { title, description, permalink } = Astro.props;
+const { title, description, permalink } = Astro.props
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width" />
-
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
@@ -32,81 +31,85 @@ const { title, description, permalink } = Astro.props;
 <meta property="twitter:image" content="/social.jpg?v=1" />
 
 <!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gentium+Basic:ital,wght@0,400;0,700;1,400;1,700&amp;family=Kaisei+Tokumin:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	href="https://fonts.googleapis.com/css2?family=Gentium+Basic:ital,wght@0,400;0,700;1,400;1,700&family=Kaisei+Tokumin:wght@400;500;700&display=swap"
+	rel="stylesheet"
+/>
 
-<script type="module">
+<script is:inline>
+	function accordionDetails(details, transitionMs = 250) {
+		const accordion = details.querySelector('.accordion')
+		const summary = details.querySelector('summary')
+		const div = accordion && accordion.querySelector('div')
+		if (!accordion || !summary || !div) return
 
-function accordionDetails(details, transitionMs = 250) {
-	const accordion = details.querySelector('.accordion');
-	const summary = details.querySelector('summary');
-	const div = accordion && accordion.querySelector('div');
-	if (!accordion || !summary || !div) return;
+		let timeout
 
-	let timeout
-
-	function setOpen(open) {
-		accordion.setAttribute('data-open', open);
-		summary.setAttribute('data-open', open);
-	}
-
-	/**
-	 * When we are about to close we need to delay the actual close.
-	 * If we didn't do that the contents would close immediately.
-	 */
-	function beforeToggle(event) {
-		if (event.defaultPrevented) return;
-		// Just to allow animated accordion to follow fast toggles
-		if (timeout) {
-			event.preventDefault();
-			setOpen(true);
-			clearTimeout(timeout);
-			timeout = undefined;
-		} else if (details.open) {
-			event.preventDefault();
-			setOpen(false);
-			timeout = setTimeout(() => {
-				details.open = false;
-				timeout = undefined;
-			}, transitionMs);
+		function setOpen(open) {
+			accordion.setAttribute('data-open', open)
+			summary.setAttribute('data-open', open)
 		}
-	}
 
-	function afterToggle() {
-		setOpen(details.open);
-	}
-
-	/**
-	 * To cover all basic usability track clicks, Enter, and Space.
-	 */
-	summary.addEventListener('click', beforeToggle);
-	summary.addEventListener('keydown', (event) => {
-		if (event.key === 'Enter' || event.key === 'Space') {
-			beforeToggle(event);
+		/**
+		 * When we are about to close we need to delay the actual close.
+		 * If we didn't do that the contents would close immediately.
+		 */
+		function beforeToggle(event) {
+			if (event.defaultPrevented) return
+			// Just to allow animated accordion to follow fast toggles
+			if (timeout) {
+				event.preventDefault()
+				setOpen(true)
+				clearTimeout(timeout)
+				timeout = undefined
+			} else if (details.open) {
+				event.preventDefault()
+				setOpen(false)
+				timeout = setTimeout(() => {
+					details.open = false
+					timeout = undefined
+				}, transitionMs)
+			}
 		}
-	});
-	details.addEventListener('toggle', afterToggle);
 
-	// Provide customized transition time to CSS.
-	const transitionStyle = transitionMs > 0 ? `--ms:${transitionMs}ms;` : '';
+		function afterToggle() {
+			setOpen(details.open)
+		}
 
-	// Always know the actual height of the contents.
-	const observer = new ResizeObserver(entries => {
-		const entry = entries[0];
-		const height = Math.ceil(entry.contentBoxSize
-			? (entry.contentBoxSize[0] || entry.contentBoxSize).blockSize
-			: entry.contentRect.height);
-		details.style = `${transitionStyle}--height:${Math.ceil(height)}px;`;
-	});
+		/**
+		 * To cover all basic usability track clicks, Enter, and Space.
+		 */
+		summary.addEventListener('click', beforeToggle)
+		summary.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' || event.key === 'Space') {
+				beforeToggle(event)
+			}
+		})
+		details.addEventListener('toggle', afterToggle)
 
-	// And we are ready to initialize.
-	observer.observe(div);
-	afterToggle();
-}
+		// Provide customized transition time to CSS.
+		const transitionStyle = transitionMs > 0 ? `--ms:${transitionMs}ms;` : ''
 
-const elements = document.body.querySelectorAll('details');
-elements.forEach((details) => {
-	accordionDetails(details);
-});
+		// Always know the actual height of the contents.
+		const observer = new ResizeObserver((entries) => {
+			const entry = entries[0]
+			const height = Math.ceil(
+				entry.contentBoxSize
+					? (entry.contentBoxSize[0] || entry.contentBoxSize).blockSize
+					: entry.contentRect.height
+			)
+			details.style = `${transitionStyle}--height:${Math.ceil(height)}px;`
+		})
+
+		// And we are ready to initialize.
+		observer.observe(div)
+		afterToggle()
+	}
+
+	const elements = document.body.querySelectorAll('details')
+	elements.forEach((details) => {
+		accordionDetails(details)
+	})
 </script>

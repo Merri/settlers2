@@ -3,7 +3,7 @@ export const AREA = {
 	LAND: 1,
 	WATER: 2,
 	IMPASSABLE: 254,
-}
+} as const
 
 export const COLOR = {
 	ORIGINAL: [
@@ -46,7 +46,7 @@ export const COLOR = {
 			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 		],
 	],
-}
+} as const
 
 export const CP437 = [
 	0, 9786, 9787, 9829, 9830, 9827, 9824, 8226, 9688, 9675, 9689, 9794, 9792, 9834, 9835, 9788, 9658, 9668, 8597, 8252,
@@ -67,7 +67,7 @@ export const OBJECT_TYPE = {
 	TREE: 0xc4,
 	GRANITE: 0xcc,
 	MATCH: 0xfc,
-}
+} as const
 
 export const RESOURCE = {
 	FRESH_WATER: 0x21,
@@ -80,7 +80,7 @@ export const RESOURCE = {
 	// 0x58 - 0x5F
 	GRANITE: 0x58,
 	FISH: 0x87,
-}
+} as const
 
 export const SITE = {
 	FLAG: 0x01,
@@ -95,13 +95,13 @@ export const SITE = {
 	MINE_OCCUPIED: 0x0d,
 	TREE: 0x68,
 	IMPASSABLE: 0x78,
-}
+} as const
 
 export const TERRAIN = {
 	GREENLAND: 0,
 	WASTELAND: 1,
 	WINTERWORLD: 2,
-}
+} as const
 
 export const TEXTURE = {
 	// texture is usable in The Settlers II
@@ -139,7 +139,7 @@ export const TEXTURE = {
 	UNKNOWN: 0x80,
 	// to get rid of support flags
 	DROP_SUPPORT: 0xfc,
-}
+} as const
 
 export const TEXTURE_INFO = {
 	0: {
@@ -430,7 +430,7 @@ export const TEXTURE_INFO = {
 		WIDTH: 37,
 		HEIGHT: 31,
 	},
-}
+} as const
 
 export const TREE_INFO = [
 	[
@@ -438,63 +438,63 @@ export const TREE_INFO = [
 			RED: 21,
 			GREEN: 73,
 			BLUE: 15,
-			ALPHA: 0.62352941176470588235294117647059,
+			ALPHA: 0.6235294117647059,
 			NAME: 'Pine',
 		},
 		{
 			RED: 23,
 			GREEN: 70,
 			BLUE: 27,
-			ALPHA: 0.55686274509803921568627450980392,
+			ALPHA: 0.5568627450980392,
 			NAME: 'Birch',
 		},
 		{
 			RED: 21,
 			GREEN: 65,
 			BLUE: 16,
-			ALPHA: 0.70196078431372549019607843137255,
+			ALPHA: 0.7019607843137255,
 			NAME: 'Oak',
 		},
 		{
 			RED: 48,
 			GREEN: 87,
 			BLUE: 24,
-			ALPHA: 0.32549019607843137254901960784314,
+			ALPHA: 0.3254901960784314,
 			NAME: 'Palm 1',
 		},
 		{
 			RED: 42,
 			GREEN: 78,
 			BLUE: 19,
-			ALPHA: 0.25490196078431372549019607843137,
+			ALPHA: 0.2549019607843137,
 			NAME: 'Palm 2',
 		},
 		{
 			RED: 34,
 			GREEN: 73,
 			BLUE: 19,
-			ALPHA: 0.36470588235294117647058823529412,
+			ALPHA: 0.3647058823529412,
 			NAME: 'Pine Apple',
 		},
 		{
 			RED: 34,
 			GREEN: 71,
 			BLUE: 18,
-			ALPHA: 0.45882352941176470588235294117647,
+			ALPHA: 0.4588235294117647,
 			NAME: 'Cypress',
 		},
 		{
 			RED: 131,
 			GREEN: 53,
 			BLUE: 36,
-			ALPHA: 0.38431372549019607843137254901961,
+			ALPHA: 0.3843137254901961,
 			NAME: 'Cherry',
 		},
 		{
 			RED: 20,
 			GREEN: 78,
 			BLUE: 18,
-			ALPHA: 0.46274509803921568627450980392157,
+			ALPHA: 0.4627450980392157,
 			NAME: 'Fir',
 		},
 		{
@@ -552,63 +552,63 @@ export const TREE_INFO = [
 			RED: 117,
 			GREEN: 80,
 			BLUE: 62,
-			ALPHA: 0.38431372549019607843137254901961,
+			ALPHA: 0.3843137254901961,
 			NAME: 'Spider',
 		},
 		{
 			RED: 127,
 			GREEN: 70,
 			BLUE: 49,
-			ALPHA: 0.45490196078431372549019607843137,
+			ALPHA: 0.4549019607843137,
 			NAME: 'Marley',
 		},
 		{
 			RED: 117,
 			GREEN: 80,
 			BLUE: 62,
-			ALPHA: 0.38431372549019607843137254901961,
+			ALPHA: 0.3843137254901961,
 			NAME: 'Clone Spider #1',
 		},
 		{
 			RED: 127,
 			GREEN: 70,
 			BLUE: 49,
-			ALPHA: 0.45490196078431372549019607843137,
+			ALPHA: 0.4549019607843137,
 			NAME: 'Clone Marley #1',
 		},
 		{
 			RED: 117,
 			GREEN: 80,
 			BLUE: 62,
-			ALPHA: 0.38431372549019607843137254901961,
+			ALPHA: 0.3843137254901961,
 			NAME: 'Clone Spider #2',
 		},
 		{
 			RED: 34,
 			GREEN: 73,
 			BLUE: 19,
-			ALPHA: 0.36470588235294117647058823529412,
+			ALPHA: 0.3647058823529412,
 			NAME: 'Pine Apple',
 		},
 		{
 			RED: 117,
 			GREEN: 80,
 			BLUE: 62,
-			ALPHA: 0.38431372549019607843137254901961,
+			ALPHA: 0.3843137254901961,
 			NAME: 'Clone Spider #3',
 		},
 		{
 			RED: 131,
 			GREEN: 53,
 			BLUE: 36,
-			ALPHA: 0.38431372549019607843137254901961,
+			ALPHA: 0.3843137254901961,
 			NAME: 'Cherry',
 		},
 		{
 			RED: 127,
 			GREEN: 70,
 			BLUE: 49,
-			ALPHA: 0.45490196078431372549019607843137,
+			ALPHA: 0.4549019607843137,
 			NAME: 'Clone Marley #2',
 		},
 		{
@@ -666,63 +666,63 @@ export const TREE_INFO = [
 			RED: 88,
 			GREEN: 99,
 			BLUE: 77,
-			ALPHA: 0.50196078431372549019607843137255,
+			ALPHA: 0.5019607843137255,
 			NAME: 'Pine',
 		},
 		{
 			RED: 63,
 			GREEN: 82,
 			BLUE: 58,
-			ALPHA: 0.49019607843137254901960784313725,
+			ALPHA: 0.4901960784313725,
 			NAME: 'Birch',
 		},
 		{
 			RED: 77,
 			GREEN: 94,
 			BLUE: 60,
-			ALPHA: 0.4078431372549019607843137254902,
+			ALPHA: 0.407843137254902,
 			NAME: 'Fir',
 		},
 		{
 			RED: 48,
 			GREEN: 87,
 			BLUE: 24,
-			ALPHA: 0.32549019607843137254901960784314,
+			ALPHA: 0.3254901960784314,
 			NAME: 'Palm 1',
 		},
 		{
 			RED: 42,
 			GREEN: 78,
 			BLUE: 19,
-			ALPHA: 0.25490196078431372549019607843137,
+			ALPHA: 0.2549019607843137,
 			NAME: 'Palm 2',
 		},
 		{
 			RED: 34,
 			GREEN: 73,
 			BLUE: 19,
-			ALPHA: 0.36470588235294117647058823529412,
+			ALPHA: 0.3647058823529412,
 			NAME: 'Pine Apple',
 		},
 		{
 			RED: 83,
 			GREEN: 85,
 			BLUE: 58,
-			ALPHA: 0.41176470588235294117647058823529,
+			ALPHA: 0.4117647058823529,
 			NAME: 'Cypress',
 		},
 		{
 			RED: 77,
 			GREEN: 94,
 			BLUE: 60,
-			ALPHA: 0.4078431372549019607843137254902,
+			ALPHA: 0.407843137254902,
 			NAME: 'Clone Fir #1',
 		},
 		{
 			RED: 77,
 			GREEN: 94,
 			BLUE: 60,
-			ALPHA: 0.4078431372549019607843137254902,
+			ALPHA: 0.407843137254902,
 			NAME: 'Clone Fir #2',
 		},
 		{
@@ -775,4 +775,4 @@ export const TREE_INFO = [
 			NAME: 'Unused #7',
 		},
 	],
-]
+] as const
